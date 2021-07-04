@@ -16,7 +16,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import data from "../data/rewards-metrics.json";
-// import axios from "axios";
+import coinSymbolMapJSON from "../data/coins.json";
+import axios from "axios";
 
 /** ===========================================================================
  * Types & Config
@@ -29,7 +30,12 @@ interface Coin {
   symbol: string;
 }
 
-type CoinSymbolMap = Map<string, Coin>;
+type CoinPriceMap = { [key: string]: Coin };
+type CoinSymbolMap = { [key: string]: Coin };
+
+const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
+
+const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
 /**
  * CHART VIEWS:
@@ -64,7 +70,7 @@ const chartKeys = Object.keys(chartKeyMap) as ChartType[];
 interface IState {
   viewTopCoins: boolean;
   chartType: ChartType;
-  coinSymbolMap: CoinSymbolMap;
+  coinPriceMap: CoinPriceMap;
 }
 
 const ChartSelect = Select.ofType<ChartType>();
@@ -89,24 +95,67 @@ class Main extends React.Component<{}, IState> {
     this.state = {
       viewTopCoins: true,
       chartType: "interest_paid",
-      coinSymbolMap: new Map(),
+      coinPriceMap: {},
     };
   }
 
   async componentDidMount() {
-    // const coins = await axios.get(
-    //   "https://api.coingecko.com/api/v3/coins/list",
-    // );
-    // const coinSymbolMap = coins.data.reduce(
-    //   (map: CoinSymbolMap, coin: Coin) => {
-    //     return {
-    //       ...map,
-    //       [coin.symbol]: coin,
-    //     };
-    //   },
-    //   {},
-    // );
-    // this.setState({ coinSymbolMap });
+    const cachedPriceMap = localStorage.getItem(PRICE_MAP_KEY);
+    if (cachedPriceMap) {
+      const priceMap = JSON.parse(cachedPriceMap);
+      const { timestamp, coinPriceMap } = priceMap;
+      const now = Date.now();
+      const elapsed = now - timestamp;
+      const sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
+      if (elapsed <= sixHoursInMilliseconds) {
+        console.log("Using cached coin price map");
+        this.setState({ coinPriceMap });
+        return;
+      }
+    }
+
+    console.log("Price cache expired, fetching new prices...");
+    const coins = Object.keys(data.portfolio);
+    const prices = await Promise.all(
+      coins.map(async (coin: string) => {
+        try {
+          // Not a valid symbol
+          if (coin === "USDT ERC20") {
+            return [coin, 1];
+          }
+
+          const id = coinSymbolMap[coin].id;
+          const response = await axios.get<any>(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
+          );
+          const price = response.data[id].usd;
+          return [coin, price];
+        } catch (err) {
+          console.log(`Failed to fetch prices for coin: ${coin}`);
+          return null;
+        }
+      }),
+    );
+
+    const coinPriceMap = prices.filter(Boolean).reduce((map, result) => {
+      // Null values are filtered above
+      const [coin, price] = result as [number, number];
+      return {
+        ...map,
+        [coin]: price,
+      };
+    }, {});
+
+    this.setState({ coinPriceMap }, () => {
+      const { coinPriceMap } = this.state;
+      localStorage.setItem(
+        PRICE_MAP_KEY,
+        JSON.stringify({
+          timestamp: Date.now(),
+          coinPriceMap,
+        }),
+      );
+    });
   }
 
   render() {
