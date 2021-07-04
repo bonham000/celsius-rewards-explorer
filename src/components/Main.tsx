@@ -181,10 +181,12 @@ class Main extends React.Component<{}, IState> {
         const now = Date.now();
         const elapsed = now - timestamp;
         let sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
-        // Uncomment to bust the cache:
+        // Uncomment to bust the cache.
+        // Note that the CoinGecko API will quickly rate limit requests.
         // sixHoursInMilliseconds = 5000;
 
         if (elapsed <= sixHoursInMilliseconds) {
+          console.log("Using cached price data.");
           this.setState(
             { loading: false, coinPriceMap },
             this.calculateTotalAssetValue,
@@ -231,6 +233,7 @@ class Main extends React.Component<{}, IState> {
   fetchCoinPrice = async (coin: string) => {
     try {
       // Not a valid symbol, this is USDT
+      // TODO: Refactor this.
       if (coin === "USDT ERC20") {
         return ["USDT", 1];
       } else if (coin === "MCDAI") {
@@ -600,6 +603,13 @@ class Main extends React.Component<{}, IState> {
     const { dateRange } = this.state;
     const data = rewardsDataMap.get(dateRange);
     if (data) {
+      // Rename "USDT ERC20" to USDT in the original portfolio map
+      // TODO: Refactor this.
+      if (!("USDT" in data.portfolio)) {
+        const USDT = data.portfolio["USDT ERC20"];
+        data.portfolio.USDT = USDT;
+        delete data.portfolio["USDT ERC20"];
+      }
       return data;
     } else {
       this.toast(
