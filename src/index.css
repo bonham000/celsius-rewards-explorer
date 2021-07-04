@@ -40,3 +40,12 @@ code {
 .bp3-toast-container .bp3-intent-warning .bp3-icon svg {
   fill: rgb(50, 50, 50) !important;
 }
+
+code {
+  padding: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-radius: 2px;
+  color: rgb(244, 65, 171);
+  background-color: rgb(40, 40, 40);
+}

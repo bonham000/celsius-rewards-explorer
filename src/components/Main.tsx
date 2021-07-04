@@ -1,5 +1,6 @@
 import React from "react";
 import { isMobile } from "react-device-detect";
+import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
 import {
   Button,
   Card,
@@ -511,7 +512,32 @@ class Main extends React.Component<{}, IState> {
                 width: isMobile ? "95vw" : 500,
               }}
             >
-              <CardTitle>Celsius Loyalty Tiers</CardTitle>
+              <Row style={{ marginBottom: 6 }}>
+                <CardTitle>Celsius Loyalty Tiers</CardTitle>
+                <Tooltip2
+                  position="top"
+                  content={
+                    <div style={{ maxWidth: isMobile ? 300 : 500 }}>
+                      <p>
+                        Many users are labeled with the <code>NONE</code>{" "}
+                        loyalty tier, which does not appear to be correct. This
+                        is inconsistent with the rewards distribution data and
+                        the in-app reported number of "earn in CEL" users, which
+                        is over 50%.
+                      </p>
+                      <p>
+                        I counted these by relying on the{" "}
+                        <code>loyaltyTier.title</code> field for each user in
+                        the CSV file, and doubled checked the logic and results
+                        were correct. I may still have made a mistake, but I
+                        could not find where.
+                      </p>
+                    </div>
+                  }
+                >
+                  <Button icon="help" />
+                </Tooltip2>
+              </Row>
               <PieChart width={isMobile ? 250 : 400} height={200}>
                 <Legend
                   align="right"
