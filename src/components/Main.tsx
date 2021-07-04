@@ -48,7 +48,7 @@ const chartKeyMap = {
     description: "Total interest paid in USD for all coins",
   },
   earning_in_cel: {
-    title: "Number Earning in CEL",
+    title: "Earning in CEL",
     description: "Number of users earning in CEL for each coin",
   },
   number_of_users: {
@@ -119,7 +119,7 @@ class Main extends React.Component<{}, IState> {
           </ChartTitle>
           <ChartControls>
             <Switch
-              style={{ margin: 0, marginRight: 8, width: 200 }}
+              style={{ margin: 0, marginRight: 8, width: 180 }}
               checked={this.state.viewTopCoins}
               onChange={this.handleToggleViewAll}
               label={
@@ -173,7 +173,7 @@ class Main extends React.Component<{}, IState> {
                 width: isMobile ? 300 : 500,
               }}
             >
-              <h2>Summary Metrics</h2>
+              <h2 style={{ marginTop: 2, marginBottom: 8 }}>Summary Metrics</h2>
               <p>
                 <b>Data Range:</b> June 18, 2021 - June 25, 2021
               </p>
@@ -195,6 +195,16 @@ class Main extends React.Component<{}, IState> {
                 </a>{" "}
                 feature, which summarizes the Celsius rewards distributions from
                 the week of June 18 to June 25.
+              </p>
+              <p>
+                Link to the{" "}
+                <a
+                  target="__blank"
+                  href="https://etherscan.io/tx/0xef41ef12b1d1378af48e8f3461efeb98be550cdfd13eca8a49c348fe94d86b79"
+                >
+                  Etherscan Proof
+                </a>{" "}
+                of the CSV rewards data.
               </p>
             </Card>
           </div>
