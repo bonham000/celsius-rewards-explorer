@@ -459,7 +459,6 @@ class Main extends React.Component<{}, IState> {
         <SummaryRow>
           <div>
             <Card
-              interactive={true}
               elevation={Elevation.TWO}
               style={{
                 margin: 0,
@@ -516,7 +515,6 @@ class Main extends React.Component<{}, IState> {
           </div>
           <div style={{ marginTop: isMobile ? 24 : 0 }}>
             <Card
-              interactive={true}
               elevation={Elevation.TWO}
               style={{
                 minHeight: 300,
