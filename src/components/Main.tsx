@@ -112,7 +112,7 @@ class Main extends React.Component<{}, IState> {
   render() {
     return (
       <Page>
-        <PageTitle>Celsius Rewards Data</PageTitle>
+        <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
         <ChartTitleRow>
           <ChartTitle>
             {chartKeyMap[this.state.chartType].description}
@@ -158,7 +158,7 @@ class Main extends React.Component<{}, IState> {
                 fontSize={10}
               />
               <Tooltip formatter={(value: string) => formatValue(value)} />
-              <Bar dataKey="value" fill="#8884d8" />
+              <Bar dataKey="value" fill="rgb(215, 64, 176)" />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -168,9 +168,9 @@ class Main extends React.Component<{}, IState> {
               interactive={true}
               elevation={Elevation.TWO}
               style={{
-                width: isMobile ? 300 : 500,
-                textAlign: "left",
                 minHeight: 300,
+                textAlign: "left",
+                width: isMobile ? 300 : 500,
               }}
             >
               <h2>Summary Metrics</h2>
@@ -203,13 +203,13 @@ class Main extends React.Component<{}, IState> {
               interactive={true}
               elevation={Elevation.TWO}
               style={{
-                width: isMobile ? 300 : 500,
-                textAlign: "left",
                 minHeight: 300,
+                textAlign: "left",
+                width: isMobile ? 300 : 500,
               }}
             >
               <h2>Celsius Loyalty Tiers</h2>
-              <PieChart width={isMobile ? 300 : 400} height={200}>
+              <PieChart width={isMobile ? 250 : 400} height={200}>
                 <Legend
                   layout="vertical"
                   verticalAlign="middle"
@@ -219,8 +219,8 @@ class Main extends React.Component<{}, IState> {
                 <Pie
                   nameKey="tier"
                   dataKey="value"
-                  innerRadius={40}
-                  outerRadius={100}
+                  innerRadius={isMobile ? 20 : 40}
+                  outerRadius={isMobile ? 60 : 100}
                   data={this.getLoyaltyTiersData()}
                 />
               </PieChart>
@@ -267,7 +267,9 @@ class Main extends React.Component<{}, IState> {
     const sortedResult = chart.sort((a, b) => b.value - a.value);
 
     if (this.state.viewTopCoins) {
-      return sortedResult.slice(0, 10);
+      // Limit to less on mobile
+      const limit = isMobile ? 10 : 20;
+      return sortedResult.slice(0, limit);
     } else {
       return sortedResult;
     }
@@ -335,7 +337,7 @@ const ChartControls = styled.div`
   justify-content: center;
   flex-direction: row;
 
-  @media {
+  @media ${MOBILE} {
     margin-top: 12px;
   }
 `;
