@@ -31,7 +31,7 @@ import {
 } from "recharts";
 import rewards_01 from "../data/01-rewards.json";
 import coinSymbolMapJSON from "../data/coins.json";
-import originalCSV from "../data/csv-row-example.json";
+import originalCSV from "../data/csv-row-sample.json";
 import axios from "axios";
 import JSONPretty from "react-json-pretty";
 
@@ -403,7 +403,7 @@ class Main extends React.Component<{}, IState> {
         </Dialog>
         <Drawer
           icon="document"
-          title="Original CSV Row Data"
+          title="Sample CSV Row Data"
           isOpen={this.state.drawerOpen}
           onClose={() => this.setState({ drawerOpen: false })}
         >
