@@ -1,6 +1,14 @@
 import React from "react";
 import { isMobile } from "react-device-detect";
-import { Button, Card, Elevation, MenuItem, Switch } from "@blueprintjs/core";
+import {
+  Button,
+  Card,
+  Classes,
+  Dialog,
+  Elevation,
+  MenuItem,
+  Switch,
+} from "@blueprintjs/core";
 import styled from "styled-components";
 import { Select } from "@blueprintjs/select";
 import {
@@ -61,6 +69,8 @@ type ChartType = keyof typeof chartKeyMap;
 const chartKeys = Object.keys(chartKeyMap) as ChartType[];
 
 interface IState {
+  loading: boolean;
+  dialogOpen: boolean;
   viewTopCoins: boolean;
   chartType: ChartType;
   coinPriceMap: CoinPriceMap;
@@ -87,8 +97,10 @@ class Main extends React.Component<{}, IState> {
 
     this.state = {
       viewTopCoins: true,
-      chartType: "interest_paid",
+      dialogOpen: false,
       coinPriceMap: {},
+      chartType: "total",
+      loading: true,
     };
   }
 
@@ -102,7 +114,7 @@ class Main extends React.Component<{}, IState> {
       const sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
       if (elapsed <= sixHoursInMilliseconds) {
         console.log("Using cached coin price map");
-        this.setState({ coinPriceMap });
+        this.setState({ loading: false, coinPriceMap });
         return;
       }
     }
@@ -114,6 +126,9 @@ class Main extends React.Component<{}, IState> {
         try {
           // Not a valid symbol
           if (coin === "USDT ERC20") {
+            return [coin, 1];
+          } else if (coin === "MCDAI") {
+            // I assume this is DAI?
             return [coin, 1];
           }
 
@@ -139,7 +154,7 @@ class Main extends React.Component<{}, IState> {
       };
     }, {});
 
-    this.setState({ coinPriceMap }, () => {
+    this.setState({ loading: false, coinPriceMap }, () => {
       const { coinPriceMap } = this.state;
       localStorage.setItem(
         PRICE_MAP_KEY,
@@ -154,6 +169,58 @@ class Main extends React.Component<{}, IState> {
   render() {
     return (
       <Page>
+        <Dialog
+          canEscapeKeyClose
+          canOutsideClickClose
+          isOpen={this.state.dialogOpen}
+          onClose={() => this.setState({ dialogOpen: false })}
+        >
+          <div className={Classes.DIALOG_BODY}>
+            <b>Proof of Community:</b>
+            <p>
+              The data on this page is compiled from the recently launched{" "}
+              <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
+                Celsius Proof of Community
+              </a>{" "}
+              feature, which summarizes the Celsius rewards distributions from
+              the week of June 18 to June 25.
+            </p>
+            <p>
+              Link to the{" "}
+              <a
+                target="__blank"
+                href="https://etherscan.io/tx/0xef41ef12b1d1378af48e8f3461efeb98be550cdfd13eca8a49c348fe94d86b79"
+              >
+                Etherscan Proof
+              </a>{" "}
+              of the CSV rewards data.
+            </p>
+            <b>Observations:</b>
+            <p>
+              • There is a strong preference for users to earn in CEL. Over 75%
+              of BTC holders, which is the largest coin holding (CEL is 2nd),
+              are earning in CEL.
+            </p>
+            <p>
+              • All of the charts appear to follow a power law distribution,
+              with most of users concentrated around a few coins and a long tail
+              of smaller coins with few holders.{" "}
+            </p>
+            <p>
+              • The smallest coins have very few users, e.g. ZUSD only has 3
+              holders.
+            </p>
+            <p>
+              • The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and
+              USDC.
+            </p>
+            <b>By the way:</b>
+            <p>
+              • If you know anyone at Celsius, I am interested in working for
+              them. 🙂
+            </p>
+          </div>
+        </Dialog>
         <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
         <Subtitle>
           Built by a Celsius user. View the{" "}
@@ -200,20 +267,24 @@ class Main extends React.Component<{}, IState> {
           </ChartControls>
         </ChartTitleRow>
         <ChartContainer>
-          <ResponsiveContainer width="100%" height={300} minWidth="0">
-            <BarChart data={this.getChartData()}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis fontSize={10} dataKey="coin" />
-              <YAxis
-                tickFormatter={(tick) => {
-                  return tick.toLocaleString();
-                }}
-                fontSize={10}
-              />
-              <Tooltip formatter={(value: string) => formatValue(value)} />
-              <Bar dataKey="value" fill="rgb(215, 64, 176)" />
-            </BarChart>
-          </ResponsiveContainer>
+          {this.state.loading ? (
+            <span>Loading chart data...</span>
+          ) : (
+            <ResponsiveContainer width="100%" height={300} minWidth="0">
+              <BarChart data={this.getChartData()}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis fontSize={10} dataKey="coin" />
+                <YAxis
+                  tickFormatter={(tick) => {
+                    return tick.toLocaleString();
+                  }}
+                  fontSize={10}
+                />
+                <Tooltip formatter={this.formatTooltipValue("BAR")} />
+                <Bar dataKey="value" fill="rgb(215, 64, 176)" />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </ChartContainer>
         <SummaryRow>
           <div>
@@ -226,9 +297,9 @@ class Main extends React.Component<{}, IState> {
                 width: isMobile ? 300 : 500,
               }}
             >
-              <CardTitle>Summary Metrics</CardTitle>
+              <CardTitle>Summary</CardTitle>
               <p>
-                <b>Data Range:</b> June 18, 2021 - June 25, 2021
+                <b>Data Range:</b> June 18 - June 25, 2021
               </p>
               <p>
                 <b>Total Users Earning:</b> {formatValue(data.stats.totalUsers)}
@@ -242,23 +313,17 @@ class Main extends React.Component<{}, IState> {
                 {formatValue(data.stats.averageNumberOfCoinsPerUser)}
               </p>
               <p>
-                The data on this page is compiled from the recently launched{" "}
-                <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
-                  Celsius Proof of Community
-                </a>{" "}
-                feature, which summarizes the Celsius rewards distributions from
-                the week of June 18 to June 25.
+                <b>Maximum User Portfolio Size:</b>{" "}
+                {formatValue(data.stats.maximumPortfolioSize)}
               </p>
               <p>
-                Link to the{" "}
-                <a
-                  target="__blank"
-                  href="https://etherscan.io/tx/0xef41ef12b1d1378af48e8f3461efeb98be550cdfd13eca8a49c348fe94d86b79"
-                >
-                  Etherscan Proof
-                </a>{" "}
-                of the CSV rewards data.
+                The data here is compiled from the Celsius Proof of Community
+                dataset.
               </p>
+              <Button
+                text="View More Info & Analysis"
+                onClick={this.toggleDialog}
+              />
             </Card>
           </div>
           <div style={{ marginTop: isMobile ? 24 : 0 }}>
@@ -274,16 +339,18 @@ class Main extends React.Component<{}, IState> {
               <CardTitle>Celsius Loyalty Tiers</CardTitle>
               <PieChart width={isMobile ? 250 : 400} height={200}>
                 <Legend
+                  align="right"
                   layout="vertical"
                   verticalAlign="middle"
-                  align="right"
                 />
-                <Tooltip formatter={(value: string) => formatValue(value)} />
+                <Tooltip formatter={this.formatTooltipValue("PIE")} />
                 <Pie
                   nameKey="tier"
                   dataKey="value"
-                  innerRadius={isMobile ? 20 : 40}
-                  outerRadius={isMobile ? 60 : 100}
+                  cy={100}
+                  cx={isMobile ? 60 : 100}
+                  innerRadius={isMobile ? 20 : 30}
+                  outerRadius={isMobile ? 60 : 90}
                   data={this.getLoyaltyTiersData()}
                 />
               </PieChart>
@@ -294,11 +361,33 @@ class Main extends React.Component<{}, IState> {
     );
   }
 
+  formatTooltipValue = (chart: "BAR" | "PIE") => (value: string) => {
+    const formattedValue = formatValue(value);
+
+    if (chart === "PIE") {
+      return `${formattedValue} users`;
+    }
+
+    switch (this.state.chartType) {
+      case "interest_paid":
+      case "total": {
+        return `$${formattedValue}`;
+      }
+      case "number_of_users":
+      case "earning_in_cel": {
+        return `${formattedValue} users`;
+      }
+    }
+  };
+
   getChartData = () => {
     const { chartType, coinPriceMap } = this.state;
     let chart = [];
 
-    const portfolio = Object.entries(data.portfolio);
+    // Exclude TCAD... reference: https://www.coingecko.com/en/coins/truecad
+    const portfolio = Object.entries(data.portfolio).filter(
+      ([coin]) => coin !== "TCAD",
+    );
 
     switch (chartType) {
       case "total": {
@@ -361,6 +450,12 @@ class Main extends React.Component<{}, IState> {
       viewTopCoins: !prevState.viewTopCoins,
     }));
   };
+
+  toggleDialog = () => {
+    this.setState((prevState) => ({
+      dialogOpen: !prevState.dialogOpen,
+    }));
+  };
 }
 
 /** ===========================================================================
@@ -382,6 +477,7 @@ export const MOBILE = `(max-width: 768px)`;
 const Page = styled.div`
   padding: 75px;
   padding-top: 15px;
+  padding-bottom: 0;
 
   @media ${MOBILE} {
     padding: 8px;

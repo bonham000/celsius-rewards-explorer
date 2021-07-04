@@ -47,13 +47,14 @@ const readCSV = () => {
     },
     stats: {
       totalUsers: "0",
+      maximumPortfolioSize: "0",
       totalInterestPaidInUsd: "0",
       averageNumberOfCoinsPerUser: "0",
       totalPortfolioCoinPositions: "0",
     },
   };
 
-  console.log("- Processing CSV file...");
+  console.log("- Processing CSV file... Please wait a moment.");
 
   // Process CSV line by line
   lineReaderInterface.on("line", (line) => {
@@ -90,14 +91,24 @@ const readCSV = () => {
         .plus(Object.keys(data).length)
         .toString();
 
+      // Determine maximum portfolio size
+      const currentMax = new BigNumber(
+        metrics.stats.maximumPortfolioSize,
+      ).toNumber();
+      const currentSize = Object.keys(data).length;
+      const newMax = Math.max(currentMax, currentSize);
+      metrics.stats.maximumPortfolioSize = String(newMax);
+
+      // Process the rest of the row data
       parseCelsiusRewardsData(data, metrics);
     }
 
-    // End early if debug is enabled
+    // Exit early if debug is enabled
     if (debug) {
       count++;
       debugOutput[uuid] = data;
       if (count === max) {
+        // Write debug file data to JSON
         writeJSON(debugOutput, debugFile);
         lineReaderInterface.close();
       }
@@ -105,6 +116,14 @@ const readCSV = () => {
   });
 
   lineReaderInterface.on("close", () => {
+    // Exit early if debug is enabled
+    if (debug) {
+      console.log(
+        `Exiting early in DEBUG mode - will not update rewards output file: ${output}`,
+      );
+      return;
+    }
+
     // Calculate average coins held per user
     const averageNumberOfCoinsPerUser = new BigNumber(
       metrics.stats.totalPortfolioCoinPositions,

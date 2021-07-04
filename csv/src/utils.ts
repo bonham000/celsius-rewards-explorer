@@ -66,6 +66,7 @@ interface LoyaltyTierSummary {
 
 interface Stats {
   totalUsers: string;
+  maximumPortfolioSize: string;
   averageNumberOfCoinsPerUser: string;
   totalPortfolioCoinPositions: string;
   totalInterestPaidInUsd: string;
@@ -136,6 +137,9 @@ export const parseCelsiusRewardsData = (
     totalInterestInUsd = totalInterestInUsd.plus(data.totalInterestInUsd);
     numberOfUsersHolding = numberOfUsersHolding.plus(1);
     if (data.earningInterestInCel) {
+      totalEarnInCEL = totalEarnInCEL.plus(1);
+    } else if (interestCoin === "CEL") {
+      // The earningInterestInCel flag happens to be false for CEL earning CEL
       totalEarnInCEL = totalEarnInCEL.plus(1);
     }
 
