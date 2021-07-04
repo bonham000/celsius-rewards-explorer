@@ -17,3 +17,12 @@ code {
 .bp3-control.bp3-switch input:checked ~ .bp3-control-indicator {
   background-color: rgb(215, 64, 176) !important;
 }
+
+.bp3-toast-container .bp3-button-text {
+  color: rgb(50, 50, 50) !important;
+}
+
+.bp3-toast-container .bp3-intent-warning {
+  color: rgb(50, 50, 50) !important;
+  background-color: #ffdf75 !important;
+}

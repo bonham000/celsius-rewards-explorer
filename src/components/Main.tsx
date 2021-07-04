@@ -7,7 +7,9 @@ import {
   Dialog,
   Elevation,
   MenuItem,
+  Position,
   Switch,
+  Toaster,
 } from "@blueprintjs/core";
 import styled from "styled-components";
 import { Select } from "@blueprintjs/select";
@@ -23,23 +25,61 @@ import {
   PieChart,
   ResponsiveContainer,
 } from "recharts";
-import data from "../data/rewards-metrics.json";
+import rewards_01 from "../data/01-rewards.json";
 import coinSymbolMapJSON from "../data/coins.json";
 import axios from "axios";
+
+/** ===========================================================================
+ * JSON rewards data type
+ * ============================================================================
+ */
+
+interface PortfolioCoinEntry {
+  total: string;
+  totalEarnInCEL: string;
+  totalInterestInCoin: string;
+  totalInterestInUsd: string;
+  numberOfUsersHolding: string;
+}
+
+type Portfolio = { [coin: string]: PortfolioCoinEntry };
+
+interface CelsiusRewardsDataType {
+  portfolio: Portfolio;
+  loyaltyTierSummary: {
+    platinum: number;
+    gold: number;
+    silver: number;
+    bronze: number;
+    none: number;
+  };
+  stats: {
+    totalUsers: string;
+    maximumPortfolioSize: string;
+    totalInterestPaidInUsd: string;
+    averageNumberOfCoinsPerUser: string;
+    totalPortfolioCoinPositions: string;
+  };
+}
 
 /** ===========================================================================
  * Types & Config
  * ============================================================================
  */
 
-interface Coin {
+const AppToaster = Toaster.create({
+  className: "app-toaster",
+  position: Position.TOP,
+});
+
+interface CoinGeckoCoin {
   id: string;
   name: string;
   symbol: string;
 }
 
 type CoinPriceMap = { [key: string]: number };
-type CoinSymbolMap = { [key: string]: Coin };
+type CoinSymbolMap = { [key: string]: CoinGeckoCoin };
 
 const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
 
@@ -68,23 +108,27 @@ type ChartType = keyof typeof chartKeyMap;
 
 const chartKeys = Object.keys(chartKeyMap) as ChartType[];
 
+type DateRangesType = "June 18, 2021 - June 25, 2021";
+
+const dateRanges: DateRangesType[] = ["June 18, 2021 - June 25, 2021"];
+
+const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
+
+// Initialize map with data
+rewardsDataMap.set(dateRanges[0], rewards_01);
+
+const DateSelect = Select.ofType<DateRangesType>();
+const ChartSelect = Select.ofType<ChartType>();
+
 interface IState {
   loading: boolean;
   dialogOpen: boolean;
   viewTopCoins: boolean;
   chartType: ChartType;
   coinPriceMap: CoinPriceMap;
+  dateRange: DateRangesType;
+  totalAssetValue: number | null;
 }
-
-const ChartSelect = Select.ofType<ChartType>();
-
-const loyaltyTierColors = {
-  platinum: "rgb(161, 167, 195)",
-  gold: "rgb(206, 165, 98)",
-  silver: "rgb(214, 214, 214)",
-  bronze: "rgb(254, 189, 149)",
-  none: "rgb(50, 50, 50)",
-};
 
 /** ===========================================================================
  * React Component
@@ -96,55 +140,67 @@ class Main extends React.Component<{}, IState> {
     super(props);
 
     this.state = {
+      loading: true,
       viewTopCoins: true,
       dialogOpen: false,
       coinPriceMap: {},
       chartType: "total",
-      loading: true,
+      totalAssetValue: null,
+      dateRange: dateRanges[0],
     };
   }
 
   async componentDidMount() {
+    // First try to restore price data from local cache
+    const didRestorePriceDataFromCache = this.restorePriceDataFromCache();
+
+    // If restoring from the cache, fetch the data.
+    if (didRestorePriceDataFromCache === "failure") {
+      console.log("Price cache expired, fetching new prices...");
+      this.fetchCoinPriceData();
+    }
+  }
+
+  restorePriceDataFromCache = (): "success" | "failure" => {
     const cachedPriceMap = localStorage.getItem(PRICE_MAP_KEY);
     if (cachedPriceMap) {
-      const priceMap = JSON.parse(cachedPriceMap);
-      const { timestamp, coinPriceMap } = priceMap;
-      const now = Date.now();
-      const elapsed = now - timestamp;
-      const sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
-      if (elapsed <= sixHoursInMilliseconds) {
-        console.log("Using cached coin price map");
-        this.setState({ loading: false, coinPriceMap });
-        return;
+      try {
+        // Try to restore coin price data from local cache
+        const priceMap = JSON.parse(cachedPriceMap);
+        const { timestamp, coinPriceMap } = priceMap;
+        const now = Date.now();
+        const elapsed = now - timestamp;
+        const sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
+
+        if (elapsed <= sixHoursInMilliseconds) {
+          console.log("Using cached coin price map");
+          this.setState(
+            { loading: false, coinPriceMap },
+            this.calculateTotalAssetValue,
+          );
+          return "success";
+        }
+      } catch (err) {
+        // If any error happens fall through to fetch the price data again
+        console.warn(
+          "Unexpected error restoring price data from cache, error: ",
+          err,
+        );
       }
     }
 
-    console.log("Price cache expired, fetching new prices...");
+    return "failure";
+  };
+
+  fetchCoinPriceData = async () => {
+    // Fetch all price data for current dataset
+    const data = this.getCurrentDataSet();
     const coins = Object.keys(data.portfolio);
-    const prices = await Promise.all(
-      coins.map(async (coin: string) => {
-        try {
-          // Not a valid symbol
-          if (coin === "USDT ERC20") {
-            return [coin, 1];
-          } else if (coin === "MCDAI") {
-            // I assume this is DAI?
-            return [coin, 1];
-          }
 
-          const id = coinSymbolMap[coin].id;
-          const response = await axios.get<any>(
-            `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
-          );
-          const price = response.data[id].usd;
-          return [coin, price];
-        } catch (err) {
-          console.log(`Failed to fetch prices for coin: ${coin}`);
-          return null;
-        }
-      }),
-    );
+    // Fetch the price for each coin
+    const prices = await Promise.all(coins.map(this.fetchCoinPrice));
 
+    // Reduce list of prices into a map
     const coinPriceMap = prices.filter(Boolean).reduce((map, result) => {
       // Null values are filtered above
       const [coin, price] = result as [number, number];
@@ -154,19 +210,85 @@ class Main extends React.Component<{}, IState> {
       };
     }, {});
 
+    // Update state and calculate total asset value using the new prices
     this.setState({ loading: false, coinPriceMap }, () => {
-      const { coinPriceMap } = this.state;
-      localStorage.setItem(
-        PRICE_MAP_KEY,
-        JSON.stringify({
-          timestamp: Date.now(),
-          coinPriceMap,
-        }),
-      );
+      this.cacheCoinPriceMap();
+      this.calculateTotalAssetValue();
     });
-  }
+  };
+
+  fetchCoinPrice = async (coin: string) => {
+    try {
+      // Not a valid symbol
+      if (coin === "USDT ERC20") {
+        return [coin, 1];
+      } else if (coin === "MCDAI") {
+        // I assume this is DAI?
+        return [coin, 1];
+      }
+
+      const id = coinSymbolMap[coin].id;
+      type CoinGeckoResponse = { [id: string]: { usd: number } };
+      const response = await axios.get<CoinGeckoResponse>(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
+      );
+      const price = response.data[id].usd;
+      return [coin, price];
+    } catch (err) {
+      console.log(`Failed to fetch prices for coin: ${coin}`);
+      this.toast("Failed to fetch coin price data.", "error");
+      return null;
+    }
+  };
+
+  cacheCoinPriceMap = () => {
+    const { coinPriceMap } = this.state;
+    const timestamp = Date.now();
+    const serializedData = JSON.stringify({ timestamp, coinPriceMap });
+    localStorage.setItem(PRICE_MAP_KEY, serializedData);
+  };
 
   render() {
+    const data = this.getCurrentDataSet();
+
+    const DateRangeSelect = (
+      <DateSelect
+        items={dateRanges}
+        filterable={false}
+        activeItem={this.state.dateRange}
+        onItemSelect={(item) => {
+          /**
+           * Update state with the new data rage.
+           *
+           * NOTE: It's possible the new dataset has coins which
+           * don't have price data yet (i.e.) did not exist in the
+           * previous dataset. If that happens we would want to re-fetch
+           * coin prices here.
+           */
+          this.setState({ dateRange: item });
+        }}
+        itemRenderer={(item, { handleClick }) => {
+          const isActive = item === this.state.dateRange;
+          return (
+            <MenuItem
+              text={item}
+              disabled={isActive}
+              onClick={(e: any) => handleClick(e)}
+            />
+          );
+        }}
+      >
+        <Button
+          rightIcon="calendar"
+          style={{ marginLeft: 8 }}
+          text={this.state.dateRange}
+          onClick={() =>
+            this.toast("Only one date range exists currently.", "warning")
+          }
+        />
+      </DateSelect>
+    );
+
     return (
       <Page>
         <Dialog
@@ -214,11 +336,24 @@ class Main extends React.Component<{}, IState> {
               • The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and
               USDC.
             </p>
+            <b>Source code:</b>
+            <p>
+              • This project is open source and relies on the public CSV Proof
+              of Community data published by Celsius. You can find the{" "}
+              <a
+                target="__blank"
+                href="https://github.com/bonham000/celsius-rewards-explorer"
+              >
+                project source code on GitHub
+              </a>
+              .
+            </p>
             <b>By the way:</b>
             <p>
               • If you know anyone at Celsius, I am interested in working for
               them. 🙂
             </p>
+            <Button text="dismiss" icon="disable" onClick={this.toggleDialog} />
           </div>
         </Dialog>
         <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
@@ -238,7 +373,6 @@ class Main extends React.Component<{}, IState> {
           </ChartTitle>
           <ChartControls>
             <Switch
-              color="red"
               style={{ margin: 0, marginRight: 8, width: 180 }}
               checked={this.state.viewTopCoins}
               onChange={this.handleToggleViewAll}
@@ -251,19 +385,25 @@ class Main extends React.Component<{}, IState> {
             <ChartSelect
               items={chartKeys}
               filterable={false}
+              activeItem={this.state.chartType}
               onItemSelect={(item) => this.setState({ chartType: item })}
-              itemRenderer={(item, { handleClick }) => (
-                <MenuItem
-                  text={chartKeyMap[item].title}
-                  onClick={(e: any) => handleClick(e)}
-                />
-              )}
+              itemRenderer={(item, { handleClick }) => {
+                const isActive = item === this.state.chartType;
+                return (
+                  <MenuItem
+                    disabled={isActive}
+                    text={chartKeyMap[item].title}
+                    onClick={(e: any) => handleClick(e)}
+                  />
+                );
+              }}
             >
               <Button
                 rightIcon="double-caret-vertical"
                 text={chartKeyMap[this.state.chartType].title}
               />
             </ChartSelect>
+            {!isMobile && DateRangeSelect}
           </ChartControls>
         </ChartTitleRow>
         <ChartContainer>
@@ -281,49 +421,62 @@ class Main extends React.Component<{}, IState> {
                   fontSize={10}
                 />
                 <Tooltip formatter={this.formatTooltipValue("BAR")} />
-                <Bar dataKey="value" fill="rgb(215, 64, 176)" />
+                <Bar dataKey="value" fill={RANDOM_COLOR} />
               </BarChart>
             </ResponsiveContainer>
           )}
         </ChartContainer>
+        <ChartTitleRow>{isMobile && DateRangeSelect}</ChartTitleRow>
         <SummaryRow>
           <div>
             <Card
               interactive={true}
               elevation={Elevation.TWO}
               style={{
+                margin: 0,
                 minHeight: 300,
                 textAlign: "left",
-                width: isMobile ? 300 : 500,
+                marginRight: isMobile ? 0 : 24,
+                width: isMobile ? "95vw" : 500,
               }}
             >
-              <CardTitle>Summary</CardTitle>
+              <Row style={{ marginBottom: 6 }}>
+                <CardTitle>Summary</CardTitle>
+                <Button
+                  icon="info-sign"
+                  text="View More Info"
+                  onClick={this.toggleDialog}
+                />
+              </Row>
               <p>
                 <b>Data Range:</b> June 18 - June 25, 2021
               </p>
               <p>
-                <b>Total Users Earning:</b> {formatValue(data.stats.totalUsers)}
+                <b>Total Users Earning:</b>{" "}
+                {this.formatValue(data.stats.totalUsers)}
               </p>
               <p>
                 <b>Total Interest Paid in USD:</b> $
-                {formatValue(data.stats.totalInterestPaidInUsd)}
+                {this.formatValue(data.stats.totalInterestPaidInUsd)}
+              </p>
+              <p>
+                <b>Total Asset Value in USD:</b> $
+                {this.state.totalAssetValue
+                  ? this.formatValue(String(this.state.totalAssetValue))
+                  : "Loading..."}
               </p>
               <p>
                 <b>Average Number of Coins Per User:</b>{" "}
-                {formatValue(data.stats.averageNumberOfCoinsPerUser)}
+                {this.formatValue(data.stats.averageNumberOfCoinsPerUser)}
               </p>
               <p>
                 <b>Maximum User Portfolio Size:</b>{" "}
-                {formatValue(data.stats.maximumPortfolioSize)}
+                {this.formatValue(data.stats.maximumPortfolioSize)}
               </p>
               <p>
                 The data here is compiled from the Celsius Proof of Community
                 dataset.
               </p>
-              <Button
-                text="View More Info & Analysis"
-                onClick={this.toggleDialog}
-              />
             </Card>
           </div>
           <div style={{ marginTop: isMobile ? 24 : 0 }}>
@@ -333,7 +486,7 @@ class Main extends React.Component<{}, IState> {
               style={{
                 minHeight: 300,
                 textAlign: "left",
-                width: isMobile ? 300 : 500,
+                width: isMobile ? "95vw" : 500,
               }}
             >
               <CardTitle>Celsius Loyalty Tiers</CardTitle>
@@ -342,6 +495,10 @@ class Main extends React.Component<{}, IState> {
                   align="right"
                   layout="vertical"
                   verticalAlign="middle"
+                  formatter={(label) => {
+                    // Capitalize label
+                    return label[0].toUpperCase() + label.slice(1);
+                  }}
                 />
                 <Tooltip formatter={this.formatTooltipValue("PIE")} />
                 <Pie
@@ -362,7 +519,7 @@ class Main extends React.Component<{}, IState> {
   }
 
   formatTooltipValue = (chart: "BAR" | "PIE") => (value: string) => {
-    const formattedValue = formatValue(value);
+    const formattedValue = this.formatValue(value);
 
     if (chart === "PIE") {
       return `${formattedValue} users`;
@@ -380,14 +537,54 @@ class Main extends React.Component<{}, IState> {
     }
   };
 
+  getCurrentDataSet = (): CelsiusRewardsDataType => {
+    // Return the data set at the currently selected date range.
+    const { dateRange } = this.state;
+    const data = rewardsDataMap.get(dateRange);
+    if (data) {
+      return data;
+    } else {
+      this.toast(
+        "No date found for this date range. Check the console for more info.",
+        "error",
+      );
+      throw new Error(
+        `No data found for date range key: ${dateRange}. Are you sure this dataset exists and is imported correctly?`,
+      );
+    }
+  };
+
+  getCoinPortfolioEntries = () => {
+    // Exclude TCAD... reference: https://www.coingecko.com/en/coins/truecad
+    const data = this.getCurrentDataSet();
+    const portfolio = Object.entries(data.portfolio).filter(
+      ([coin]) => coin !== "TCAD",
+    );
+
+    return portfolio;
+  };
+
+  calculateTotalAssetValue = () => {
+    const { coinPriceMap } = this.state;
+
+    let sum = 0;
+
+    for (const [coin, values] of this.getCoinPortfolioEntries()) {
+      // Calculate actual USD value using price data
+      const total = parseFloat(values.total);
+      const price = coinPriceMap[coin];
+      const value = total * price;
+      sum += value;
+    }
+
+    this.setState({ totalAssetValue: sum });
+  };
+
   getChartData = () => {
     const { chartType, coinPriceMap } = this.state;
     let chart = [];
 
-    // Exclude TCAD... reference: https://www.coingecko.com/en/coins/truecad
-    const portfolio = Object.entries(data.portfolio).filter(
-      ([coin]) => coin !== "TCAD",
-    );
+    const portfolio = this.getCoinPortfolioEntries();
 
     switch (chartType) {
       case "total": {
@@ -432,6 +629,7 @@ class Main extends React.Component<{}, IState> {
   };
 
   getLoyaltyTiersData = () => {
+    const data = this.getCurrentDataSet();
     const tiers = Object.entries(data.loyaltyTierSummary).map(
       ([key, value]) => {
         const color = loyaltyTierColors[key as keyof typeof loyaltyTierColors];
@@ -456,6 +654,26 @@ class Main extends React.Component<{}, IState> {
       dialogOpen: !prevState.dialogOpen,
     }));
   };
+
+  toast = (message: string, type?: "warning" | "error") => {
+    const className =
+      type === "warning"
+        ? Classes.INTENT_WARNING
+        : type === "error"
+        ? Classes.INTENT_DANGER
+        : "";
+
+    AppToaster.show({ message, className });
+  };
+
+  formatValue = (value: string) => {
+    const options = {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    };
+
+    return parseFloat(value).toLocaleString("en", options);
+  };
 }
 
 /** ===========================================================================
@@ -463,14 +681,27 @@ class Main extends React.Component<{}, IState> {
  * ============================================================================
  */
 
-const formatValue = (value: string) => {
-  const options = {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  };
-
-  return parseFloat(value).toLocaleString("en", options);
+const loyaltyTierColors = {
+  platinum: "rgb(161, 167, 195)",
+  gold: "rgb(206, 165, 98)",
+  silver: "rgb(214, 214, 214)",
+  bronze: "rgb(254, 189, 149)",
+  none: "rgb(50, 50, 50)",
 };
+
+const colors = [
+  "rgb(15, 27, 100)",
+  "rgb(112, 31, 191)",
+  "rgb(188, 62, 179)",
+  "rgb(215, 64, 176)",
+  "rgb(244, 65, 171)",
+];
+
+const getColor = () => {
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
+const RANDOM_COLOR = getColor();
 
 export const MOBILE = `(max-width: 768px)`;
 
@@ -496,12 +727,12 @@ const Subtitle = styled.p`
 
 const CardTitle = styled.h2`
   margin-top: 2px;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 `;
 
-const ChartTitle = styled.p`
+const ChartTitle = styled.h3`
   margin: 0;
-  font-weight: 600;
+  margin-left: 2px;
 `;
 
 const ChartControls = styled.div`
@@ -521,8 +752,9 @@ const ChartContainer = styled.div`
 `;
 
 const ChartTitleRow = styled.div`
-  padding-left: 80px;
-  padding-right: 25px;
+  padding-left: 65px;
+  padding-right: 10px;
+  padding-bottom: 2px;
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -535,19 +767,24 @@ const ChartTitleRow = styled.div`
 `;
 
 const SummaryRow = styled.div`
-  padding-left: 80px;
-  padding-right: 80px;
+  padding-left: 60px;
   margin-top: 25px;
   display: flex;
   align-items: center;
   flex-direction: row;
-  justify-content: space-between;
 
   @media ${MOBILE} {
     padding: 0px;
     flex-direction: column;
     justify-content: center;
   }
+`;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 `;
 
 /** ===========================================================================

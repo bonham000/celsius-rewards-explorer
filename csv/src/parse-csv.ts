@@ -7,8 +7,10 @@ import {
   parseCelsiusRewardsData,
 } from "./utils";
 
+// Increment the identifier when adding a future CSV file
+const identifier = "01";
 const input = "csv/original-csv-data/rewards.csv";
-const output = "./src/data/rewards-metrics.json";
+const output = `./src/data/${identifier}-rewards.json`;
 const debugFile = "./csv/output/debug.json";
 
 const lineReaderInterface = readline.createInterface({
