@@ -1,0 +1,445 @@
+{
+  "5d53401a-375b-4f77-884e-80a447a3bcb3": {
+    "BNT": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "0.738803180020160004",
+      "totalInterestInUsd": "4.2887206575918293707231007125224",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "1.097508485323076923120823416336",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "1064.747038",
+          "newBalance": "1064.747038",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "1064.747038",
+          "regInterestRateAmount": "1.097508485323076923120823416336",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "1.097508485323076923120823416336",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "BNT",
+      "totalInterestInOriginalInterestCoin": "1.371885606653846154"
+    },
+    "BTC": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "0.005354308044971026",
+      "totalInterestInUsd": "0.0310815277202119747378880199956",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "7.15106624242136913490142726508147015e-7",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "0.001077841868422931",
+          "newBalance": "0.001077841868422931",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "0.001077841868422931",
+          "regInterestRateAmount": "7.15106624242136913490142726508147015e-7",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "7.15106624242136913490142726508147015e-7",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "BTC",
+      "totalInterestInOriginalInterestCoin": "0.000000893883280303"
+    },
+    "BUSD": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "2.107358434638407654",
+      "totalInterestInUsd": "12.2331249999999999981379019556124",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "9.78650000000000000039146",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "5980",
+          "newBalance": "5980",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "5980",
+          "regInterestRateAmount": "9.78650000000000000039146",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "9.78650000000000000039146",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "BUSD",
+      "totalInterestInOriginalInterestCoin": "12.233125000000000000"
+    },
+    "CEL": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "4.774562707491279693",
+      "totalInterestInUsd": "27.7161309917841298378376962499058",
+      "distributionRuleUsed": "InterestRegular",
+      "interest_on_first_n_coins": "4.774562707491279693104440153590569604173675",
+      "earningInterestInCel": false,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "5208.284965677302621613",
+          "newBalance": "5208.284965677302621613",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "5208.284965677302621613",
+          "regInterestRateAmount": "4.757567997493689894932946950668978365020475",
+          "totalInterest": "4.757567997493689894932946950668978365020475"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "1.253045256392076444",
+          "newBalance": "5209.538010933694698057",
+          "originalInterestCoin": "ETH",
+          "regInterestRateBasis": "1.253045256392076444",
+          "regInterestRateAmount": "0.0011446048625843322282043926870390090864",
+          "totalInterest": "0.0011446048625843322282043926870390090864"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "0.023938251151132167",
+          "newBalance": "5209.561949184845830224",
+          "originalInterestCoin": "ETC",
+          "regInterestRateBasis": "0.023938251151132167",
+          "regInterestRateAmount": "0.0000218665994141695136401149386899293852",
+          "totalInterest": "0.0000218665994141695136401149386899293852"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "0.097198938303777161",
+          "newBalance": "5209.659148123149607385",
+          "originalInterestCoin": "LINK",
+          "regInterestRateBasis": "0.097198938303777161",
+          "regInterestRateAmount": "0.0000887871981103661548322148565361348516",
+          "totalInterest": "0.0000887871981103661548322148565361348516"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "4.757567950200120466",
+          "newBalance": "5214.416716073349727851",
+          "originalInterestCoin": "CEL",
+          "regInterestRateBasis": "4.757567950200120466",
+          "regInterestRateAmount": "0.0043458409679103642579496214922636961096",
+          "totalInterest": "0.0043458409679103642579496214922636961096"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "0.457118109706901899",
+          "newBalance": "5214.87383418305662975",
+          "originalInterestCoin": "BNT",
+          "regInterestRateBasis": "0.457118109706901899",
+          "regInterestRateAmount": "0.0004175584309320136218511835168244828844",
+          "totalInterest": "0.0004175584309320136218511835168244828844"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "1.825303788651540452",
+          "newBalance": "5216.699137971708170202",
+          "originalInterestCoin": "BUSD",
+          "regInterestRateBasis": "1.825303788651540452",
+          "regInterestRateAmount": "0.0016673392932349388297660368342211495312",
+          "totalInterest": "0.0016673392932349388297660368342211495312"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "9.653940765303322837",
+          "newBalance": "5226.353078737011493039",
+          "originalInterestCoin": "USDC",
+          "regInterestRateBasis": "9.653940765303322837",
+          "regInterestRateAmount": "0.0088184744219723352509599026366778396372",
+          "totalInterest": "0.0088184744219723352509599026366778396372"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "0.005076258303902346",
+          "newBalance": "5226.358154995315395385",
+          "originalInterestCoin": "BTC",
+          "regInterestRateBasis": "0.005076258303902346",
+          "regInterestRateAmount": "0.0000046369513860261410383030573782446376",
+          "totalInterest": "0.0000046369513860261410383030573782446376"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "0.531607361041968175",
+          "newBalance": "5226.88976235635736356",
+          "originalInterestCoin": "EOS",
+          "regInterestRateBasis": "0.531607361041968175",
+          "regInterestRateAmount": "0.00048560127204525217325143290196075303",
+          "totalInterest": "0.00048560127204525217325143290196075303"
+        }
+      ]
+    },
+    "EOS": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "0.493216071511671832",
+      "totalInterestInUsd": "2.8630980642106547122737440692592",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "0.5869230769230769231004",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "700",
+          "newBalance": "700",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "700",
+          "regInterestRateAmount": "0.5869230769230769231004",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "0.5869230769230769231004",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "EOS",
+      "totalInterestInOriginalInterestCoin": "0.733653846153846154"
+    },
+    "ETC": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "0.081614127433896035",
+      "totalInterestInUsd": "0.473766496602695768729144212171",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "0.008634343338461538461883835272",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "15.168441",
+          "newBalance": "15.168441",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "15.168441",
+          "regInterestRateAmount": "0.008634343338461538461883835272",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "0.008634343338461538461883835272",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "ETC",
+      "totalInterestInOriginalInterestCoin": "0.010792929173076923"
+    },
+    "ETH": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "1.213355010867856016",
+      "totalInterestInUsd": "7.0434736081665705195692772596896",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "0.00284243890384615384626754371",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "2.99811",
+          "newBalance": "2.99811",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "2.99811",
+          "regInterestRateAmount": "0.00284243890384615384626754371",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "0.00284243890384615384626754371",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "ETH",
+      "totalInterestInOriginalInterestCoin": "0.003553048629807692"
+    },
+    "LINK": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "0.092286942980385203",
+      "totalInterestInUsd": "0.5357217314294412445067899695118",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "0.02267933763553846153936871196696",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "39.84207963",
+          "newBalance": "39.84207963",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "39.84207963",
+          "regInterestRateAmount": "0.02267933763553846153936871196696",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "0.02267933763553846153936871196696",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "LINK",
+      "totalInterestInOriginalInterestCoin": "0.028349172044423077"
+    },
+    "MATIC": {
+      "interestCoin": "MATIC",
+      "totalInterestInCoin": "12.470288231135985858",
+      "totalInterestInUsd": "14.9503027252401393420292286791608",
+      "distributionRuleUsed": "InterestRegular",
+      "interest_on_first_n_coins": "12.470288231135985857538168480017722183724",
+      "earningInterestInCel": false,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "6472.103568412109223596",
+          "newBalance": "6472.103568412109223596",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "6472.103568412109223596",
+          "regInterestRateAmount": "12.446353016177133122797854120647085324892",
+          "totalInterest": "12.446353016177133122797854120647085324892"
+        },
+        {
+          "type": "interest",
+          "dateCoefficient": "0.01923070563695563696",
+          "date": "2021-06-18T05:00:01.000Z",
+          "value": "12.446352937177949767",
+          "newBalance": "6484.549921349287173363",
+          "originalInterestCoin": "MATIC",
+          "regInterestRateBasis": "12.446352937177949767",
+          "regInterestRateAmount": "0.023935214958852734740314359370636858832",
+          "totalInterest": "0.023935214958852734740314359370636858832"
+        }
+      ],
+      "earningInCelUsd": "18.687878406550174176844438671261720377316646923622778"
+    },
+    "USDC": {
+      "interestCoin": "CEL",
+      "totalInterestInCoin": "17.748327792998120921",
+      "totalInterestInUsd": "103.0282788461538461590573892262826",
+      "distributionRuleUsed": "InterestWithThreshold_FirstNCoins",
+      "interest_on_first_n_coins": "82.422623076923076926373828",
+      "earningInterestInCel": true,
+      "loyaltyTier": {
+        "title": "PLATINUM",
+        "level": 4,
+        "minimum_cel_percentage": "0.25",
+        "maximum_cel_percentage": "1",
+        "interest_bonus": "0.25",
+        "loan_interest_bonus": "0.25"
+      },
+      "distributionData": [
+        {
+          "type": "initialBalance",
+          "dateCoefficient": "0.01923076923076923077",
+          "date": "2021-06-18T05:00:00.000Z",
+          "value": "50364",
+          "newBalance": "50364",
+          "originalInterestCoin": null,
+          "regInterestRateBasis": "50364",
+          "regInterestRateAmount": "82.422623076923076926373828",
+          "specInterestRateBasis": "0",
+          "specInterestRateAmount": "0",
+          "totalInterest": "82.422623076923076926373828",
+          "threshold": "0"
+        }
+      ],
+      "originalInterestCoin": "USDC",
+      "totalInterestInOriginalInterestCoin": "103.028278846153846158"
+    }
+  }
+}

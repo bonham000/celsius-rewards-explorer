@@ -10,6 +10,9 @@ import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 
+// Import JSON pretty CSS
+import "react-json-pretty/themes/monikai.css";
+
 ReactDOM.render(
   <React.StrictMode>
     <App />

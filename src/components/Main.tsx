@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   Icon,
+  Drawer,
   Classes,
   Dialog,
   Elevation,
@@ -30,7 +31,9 @@ import {
 } from "recharts";
 import rewards_01 from "../data/01-rewards.json";
 import coinSymbolMapJSON from "../data/coins.json";
+import originalCSV from "../data/csv-row-example.json";
 import axios from "axios";
+import JSONPretty from "react-json-pretty";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -138,6 +141,7 @@ interface IState {
   chartType: ChartType;
   coinPriceMap: CoinPriceMap;
   dateRange: DateRangesType;
+  drawerOpen: boolean;
   totalAssetValue: number | null;
 }
 
@@ -152,6 +156,7 @@ class Main extends React.Component<{}, IState> {
 
     this.state = {
       loading: true,
+      drawerOpen: false,
       viewTopCoins: true,
       dialogOpen: false,
       coinPriceMap: {},
@@ -303,7 +308,7 @@ class Main extends React.Component<{}, IState> {
       >
         <Button
           rightIcon="calendar"
-          style={{ marginLeft: 8 }}
+          style={{ marginLeft: 4 }}
           text={this.state.dateRange}
           onClick={() =>
             this.toast("Only one date range exists currently.", "warning")
@@ -396,6 +401,22 @@ class Main extends React.Component<{}, IState> {
             </RightSide>
           </div>
         </Dialog>
+        <Drawer
+          icon="document"
+          title="Original CSV Row Data"
+          isOpen={this.state.drawerOpen}
+          onClose={() => this.setState({ drawerOpen: false })}
+        >
+          <div className={Classes.DRAWER_BODY}>
+            <div className={Classes.DIALOG_BODY}>
+              <JSONPretty
+                id="json-pretty"
+                data={originalCSV}
+                mainStyle="background:rgb(26,26,26);border-radius:8px;"
+              ></JSONPretty>
+            </div>
+          </div>
+        </Drawer>
         <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
         <Subtitle>
           Built by a Celsius user. View the{" "}
@@ -415,7 +436,7 @@ class Main extends React.Component<{}, IState> {
             <Switch
               style={{
                 margin: 0,
-                marginRight: 8,
+                marginRight: 4,
                 width: 165,
                 textAlign: "left",
               }}
@@ -449,6 +470,19 @@ class Main extends React.Component<{}, IState> {
               />
             </ChartSelect>
             {!isMobile && DateRangeSelect}
+            {!isMobile && (
+              <Tooltip2
+                position="bottom"
+                content="View original CSV row data"
+                openOnTargetFocus={false}
+              >
+                <Button
+                  icon="document-open"
+                  style={{ marginLeft: 4 }}
+                  onClick={this.toggleDrawer}
+                />
+              </Tooltip2>
+            )}
           </ChartControls>
         </ChartTitleRow>
         <ChartContainer>
@@ -726,6 +760,12 @@ class Main extends React.Component<{}, IState> {
   toggleDialog = () => {
     this.setState((prevState) => ({
       dialogOpen: !prevState.dialogOpen,
+    }));
+  };
+
+  toggleDrawer = () => {
+    this.setState((prevState) => ({
+      drawerOpen: !prevState.drawerOpen,
     }));
   };
 
