@@ -150,6 +150,8 @@ export const parseCelsiusRewardsData = (
     totalInterestInCoin = totalInterestInCoin.plus(data.totalInterestInCoin);
     totalInterestInUsd = totalInterestInUsd.plus(data.totalInterestInUsd);
     numberOfUsersHolding = numberOfUsersHolding.plus(1);
+
+    // Increment earningInterestInCel value
     if (data.earningInterestInCel) {
       totalEarnInCEL = totalEarnInCEL.plus(1);
     } else if (interestCoin === "CEL") {
@@ -157,18 +159,19 @@ export const parseCelsiusRewardsData = (
       totalEarnInCEL = totalEarnInCEL.plus(1);
     }
 
-    // Update in portfolio metrics total
-    let existing = metrics.portfolio[coin];
+    // Update coin in portfolio metrics total
+    const existingCoin = metrics.portfolio[coin];
     metrics.portfolio[coin] = {
-      ...existing,
+      ...existingCoin,
       total: total.toString(),
       totalEarnInCEL: totalEarnInCEL.toString(),
       numberOfUsersHolding: numberOfUsersHolding.toString(),
     };
 
-    existing = metrics.portfolio[interestCoin];
+    // Update interest coin in portfolio metrics total
+    const existingInterestCoin = metrics.portfolio[interestCoin];
     metrics.portfolio[interestCoin] = {
-      ...existing,
+      ...existingInterestCoin,
       totalInterestInUsd: totalInterestInUsd.toString(),
       totalInterestInCoin: totalInterestInCoin.toString(),
     };
@@ -182,6 +185,7 @@ export const parseCelsiusRewardsData = (
   }
 
   const tierKey = tier.toLowerCase();
+
   // Increment loyalty tier count
   if (tierKey in metrics.loyaltyTierSummary) {
     metrics.loyaltyTierSummary[tierKey] =

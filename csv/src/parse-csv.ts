@@ -55,25 +55,31 @@ let count = 0;
 const max = 50;
 const debugOutput = {};
 
-const readCSV = () => {
-  const metrics: CelsiusRewardsMetrics = {
-    portfolio: {},
-    loyaltyTierSummary: {
-      platinum: 0,
-      gold: 0,
-      silver: 0,
-      bronze: 0,
-      none: 0,
-    },
-    stats: {
-      totalUsers: "0",
-      maximumPortfolioSize: "0",
-      totalInterestPaidInUsd: "0",
-      averageNumberOfCoinsPerUser: "0",
-      totalPortfolioCoinPositions: "0",
-    },
-  };
+/** ===========================================================================
+ * Process the CSV
+ * ============================================================================
+ */
 
+// Define metrics object which tracks all of the CSV data
+const metrics: CelsiusRewardsMetrics = {
+  portfolio: {},
+  loyaltyTierSummary: {
+    platinum: 0,
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+    none: 0,
+  },
+  stats: {
+    totalUsers: "0",
+    maximumPortfolioSize: "0",
+    totalInterestPaidInUsd: "0",
+    averageNumberOfCoinsPerUser: "0",
+    totalPortfolioCoinPositions: "0",
+  },
+};
+
+const processCSV = (): void => {
   console.log("- Processing CSV file... Please wait a moment.");
 
   // Process CSV line by line
@@ -82,6 +88,7 @@ const readCSV = () => {
     let index = 0;
 
     // Find the first comma to extract the uuid
+    // Although they are all probably the same length...
     for (let i = 0; i < text.length; i++) {
       if (text[i] === ",") {
         index = i;
@@ -115,6 +122,7 @@ const readCSV = () => {
       const currentMax = new BigNumber(
         metrics.stats.maximumPortfolioSize,
       ).toNumber();
+
       const currentSize = Object.keys(data).length;
       const newMax = Math.max(currentMax, currentSize);
       metrics.stats.maximumPortfolioSize = String(newMax);
@@ -157,4 +165,4 @@ const readCSV = () => {
   });
 };
 
-readCSV();
+processCSV();

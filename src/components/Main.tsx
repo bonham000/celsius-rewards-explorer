@@ -116,8 +116,10 @@ type ChartType = keyof typeof chartKeyMap;
 
 const chartKeys = Object.keys(chartKeyMap) as ChartType[];
 
+/**
+ * Add more date ranges here for future weekly datasets.
+ */
 type DateRangesType = "June 18, 2021 - June 25, 2021";
-
 const dateRanges: DateRangesType[] = ["June 18, 2021 - June 25, 2021"];
 
 const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
@@ -184,7 +186,9 @@ class Main extends React.Component<{}, IState> {
     if (cachedPriceMap) {
       try {
         // Try to restore coin price data from local cache
-        const priceMap = JSON.parse(cachedPriceMap);
+        const priceMap: { timestamp: number; coinPriceMap: CoinPriceMap } =
+          JSON.parse(cachedPriceMap);
+
         const { timestamp, coinPriceMap } = priceMap;
         const now = Date.now();
         const elapsed = now - timestamp;
@@ -725,6 +729,7 @@ class Main extends React.Component<{}, IState> {
       }
     }
 
+    // Sort by value
     const sortedResult = chart.sort((a, b) => b.value - a.value);
 
     if (this.state.viewTopCoins) {
@@ -790,7 +795,7 @@ class Main extends React.Component<{}, IState> {
   };
 
   getProjectedAnnualYield = (
-    totalInterestPaid: any,
+    totalInterestPaid: string,
     totalAssetValue: number,
   ) => {
     const interest = parseFloat(totalInterestPaid) / totalAssetValue;
@@ -829,7 +834,7 @@ const getColor = () => {
 
 const RANDOM_COLOR = getColor();
 
-export const MOBILE = `(max-width: 768px)`;
+const MOBILE = `(max-width: 768px)`;
 
 const Page = styled.div`
   padding: 75px;
