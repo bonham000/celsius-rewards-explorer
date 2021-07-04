@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
 
+/** ===========================================================================
+ * Types & Config
+ * ============================================================================
+ */
+
 interface DistributionData {
   type: string;
   dateCoefficient: string;
@@ -27,6 +32,7 @@ interface LoyaltyTier {
 }
 
 export interface CoinData {
+  interestCoin: string;
   totalInterestInCoin: string;
   totalInterestInUsd: string;
   distributionRuleUsed: string;
@@ -71,34 +77,58 @@ export interface CelsiusRewardsMetrics {
   stats: Stats;
 }
 
+/** ===========================================================================
+ * Parse CSV Row Logic
+ * ============================================================================
+ */
+
 export const parseCelsiusRewardsData = (
   rewardsData: CoinDataMap,
   metrics: CelsiusRewardsMetrics,
 ) => {
   let tier = "";
 
+  // Process the row data and update all the values we want to track
   for (const [coin, data] of Object.entries(rewardsData)) {
     // Get loyalty tier
     tier = data.loyaltyTier.title;
+    const interestCoin = data.interestCoin;
 
-    // Initialize all to zero
+    // Initialize all values to zero
     let existingTotal = new BigNumber("0");
     let totalEarnInCEL = new BigNumber("0");
     let totalInterestInCoin = new BigNumber("0");
     let totalInterestInUsd = new BigNumber("0");
     let numberOfUsersHolding = new BigNumber("0");
 
-    // Re-Initialize if coin already exists in portfolio metrics
+    const defaultValues: PortfolioEntry = {
+      total: "0",
+      totalEarnInCEL: "0",
+      totalInterestInCoin: "0",
+      totalInterestInUsd: "0",
+      numberOfUsersHolding: "0",
+    };
+
+    // Re-initialize to current value if coin already exists in metrics
     if (coin in metrics.portfolio) {
       const entry = metrics.portfolio[coin];
       existingTotal = new BigNumber(entry.total);
       totalEarnInCEL = new BigNumber(entry.totalEarnInCEL);
-      totalInterestInCoin = new BigNumber(entry.totalInterestInCoin);
-      totalInterestInUsd = new BigNumber(entry.totalInterestInUsd);
       numberOfUsersHolding = new BigNumber(entry.numberOfUsersHolding);
+    } else {
+      metrics.portfolio[coin] = defaultValues;
     }
 
-    // Add existing coin data to current value
+    // Differentiate interest coin from portfolio coin
+    if (interestCoin in metrics.portfolio) {
+      const entry = metrics.portfolio[interestCoin];
+      totalInterestInCoin = new BigNumber(entry.totalInterestInCoin);
+      totalInterestInUsd = new BigNumber(entry.totalInterestInUsd);
+    } else {
+      metrics.portfolio[interestCoin] = defaultValues;
+    }
+
+    // Add existing coin data to current values
     const distribution = data.distributionData;
     const currentBalance = distribution[distribution.length - 1].newBalance;
     const total = existingTotal.plus(currentBalance);
@@ -110,12 +140,19 @@ export const parseCelsiusRewardsData = (
     }
 
     // Update in portfolio metrics total
+    let existing = metrics.portfolio[coin];
     metrics.portfolio[coin] = {
+      ...existing,
       total: total.toString(),
       totalEarnInCEL: totalEarnInCEL.toString(),
-      totalInterestInCoin: totalInterestInCoin.toString(),
-      totalInterestInUsd: totalInterestInUsd.toString(),
       numberOfUsersHolding: numberOfUsersHolding.toString(),
+    };
+
+    existing = metrics.portfolio[interestCoin];
+    metrics.portfolio[interestCoin] = {
+      ...existing,
+      totalInterestInUsd: totalInterestInUsd.toString(),
+      totalInterestInCoin: totalInterestInCoin.toString(),
     };
 
     // Increment total interest paid in USD metric
@@ -127,8 +164,10 @@ export const parseCelsiusRewardsData = (
   }
 
   const tierKey = tier.toLowerCase();
+  // Increment loyalty tier count
   if (tierKey in metrics.loyaltyTierSummary) {
-    metrics.loyaltyTierSummary[tierKey]++;
+    metrics.loyaltyTierSummary[tierKey] =
+      metrics.loyaltyTierSummary[tierKey] + 1;
   } else {
     console.warn(`Unexpected loyalty tier title found: ${tier}`);
   }
