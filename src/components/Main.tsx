@@ -30,20 +30,13 @@ interface Coin {
   symbol: string;
 }
 
-type CoinPriceMap = { [key: string]: Coin };
+type CoinPriceMap = { [key: string]: number };
 type CoinSymbolMap = { [key: string]: Coin };
 
 const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
 
 const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
-/**
- * CHART VIEWS:
- * - total earned (convert to USD)
- * - total earning in CEL
- * - total interest paid in USD
- * - number of users holding
- */
 const chartKeyMap = {
   total: {
     title: "Total Value",
@@ -302,7 +295,7 @@ class Main extends React.Component<{}, IState> {
   }
 
   getChartData = () => {
-    const { chartType } = this.state;
+    const { chartType, coinPriceMap } = this.state;
     let chart = [];
 
     const portfolio = Object.entries(data.portfolio);
@@ -310,7 +303,11 @@ class Main extends React.Component<{}, IState> {
     switch (chartType) {
       case "total": {
         for (const [coin, values] of portfolio) {
-          chart.push({ coin, value: parseFloat(values.total) });
+          // Calculate actual USD value using price data
+          const total = parseFloat(values.total);
+          const price = coinPriceMap[coin];
+          const value = total * price;
+          chart.push({ coin, value });
         }
         break;
       }
