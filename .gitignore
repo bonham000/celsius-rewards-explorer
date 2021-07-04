@@ -23,4 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # CSV files
-csv/rewards.csv
+csv/original-csv-data
+csv/output

@@ -15,6 +15,6 @@
     "esModuleInterop": true,
     "incremental": true
   },
-  "include": ["parse-csv.ts"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
