@@ -459,9 +459,6 @@ class Main extends React.Component<{}, IState> {
                 />
               </Row>
               <p>
-                <b>Data Range:</b> June 18 - June 25, 2021
-              </p>
-              <p>
                 <b>Total Users Earning:</b>{" "}
                 {this.formatValue(data.stats.totalUsers)}
               </p>
@@ -473,7 +470,16 @@ class Main extends React.Component<{}, IState> {
                 <b>Total Asset Value in USD:</b>
                 {this.state.totalAssetValue === null
                   ? "Loading..."
-                  : `$${this.formatValue(String(this.state.totalAssetValue))}`}
+                  : ` $${this.formatValue(String(this.state.totalAssetValue))}`}
+              </p>
+              <p>
+                <b>Annualized 52 week interest yield:</b>
+                {this.state.totalAssetValue === null
+                  ? "Loading..."
+                  : this.getProjectedAnnualYield(
+                      data.stats.totalInterestPaidInUsd,
+                      this.state.totalAssetValue,
+                    )}
               </p>
               <p>
                 <b>Average Number of Coins Per User:</b>{" "}
@@ -579,13 +585,18 @@ class Main extends React.Component<{}, IState> {
 
     let sum = 0;
 
-    for (const [coin, values] of this.getCoinPortfolioEntries()) {
+    const dataset = this.getCoinPortfolioEntries();
+    for (const [coin, values] of dataset) {
       // Calculate actual USD value using price data
       const total = parseFloat(values.total);
       const price = coinPriceMap[coin];
       const value = total * price;
       sum += value;
     }
+
+    console.log(dataset);
+    console.log(coinPriceMap);
+    console.log(sum);
 
     this.setState({ totalAssetValue: sum });
   };
@@ -683,6 +694,17 @@ class Main extends React.Component<{}, IState> {
     };
 
     return parseFloat(value).toLocaleString("en", options);
+  };
+
+  getProjectedAnnualYield = (
+    totalInterestPaid: any,
+    totalAssetValue: number,
+  ) => {
+    const interest = parseFloat(totalInterestPaid) / totalAssetValue;
+    const annualized = interest * 52;
+    const percent = annualized * 100;
+    const label = ` ${percent.toFixed(2)}%`;
+    return label;
   };
 }
 
