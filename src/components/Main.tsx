@@ -162,7 +162,9 @@ class Main extends React.Component<{}, IState> {
 
     // If restoring from the cache, fetch the data.
     if (didRestorePriceDataFromCache === "failure") {
-      console.log("Price cache expired, fetching new prices...");
+      console.log(
+        "Price cache expired or doesn't exist, fetching new prices...",
+      );
       this.fetchCoinPriceData();
     }
   }
@@ -176,10 +178,12 @@ class Main extends React.Component<{}, IState> {
         const { timestamp, coinPriceMap } = priceMap;
         const now = Date.now();
         const elapsed = now - timestamp;
-        const sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
+        let sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
+        // Uncomment to bust the cache:
+        // sixHoursInMilliseconds = 5000;
 
         if (elapsed <= sixHoursInMilliseconds) {
-          console.log("Using cached coin price map");
+          console.log("Using cached coin price data.");
           this.setState(
             { loading: false, coinPriceMap },
             this.calculateTotalAssetValue,
@@ -466,10 +470,10 @@ class Main extends React.Component<{}, IState> {
                 {this.formatValue(data.stats.totalInterestPaidInUsd)}
               </p>
               <p>
-                <b>Total Asset Value in USD:</b> $
-                {this.state.totalAssetValue
-                  ? this.formatValue(String(this.state.totalAssetValue))
-                  : "Loading..."}
+                <b>Total Asset Value in USD:</b>
+                {this.state.totalAssetValue === null
+                  ? "Loading..."
+                  : `$${this.formatValue(String(this.state.totalAssetValue))}`}
               </p>
               <p>
                 <b>Average Number of Coins Per User:</b>{" "}
@@ -480,8 +484,8 @@ class Main extends React.Component<{}, IState> {
                 {this.formatValue(data.stats.maximumPortfolioSize)}
               </p>
               <p>
-                The data here is compiled from the Celsius Proof of Community
-                dataset.
+                This data represents the Celsius Proof of Community dataset and
+                is currently displaying the week of {this.state.dateRange}.
               </p>
             </Card>
           </div>
