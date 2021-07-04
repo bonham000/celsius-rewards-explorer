@@ -24,7 +24,7 @@ $ yarn build
 
 This application uses the CSV files provided by the Celsius Proof of Community feature. These CSV files are very large and exist in the `csv/original-csv-data/` folder, which is ignored from version control because the files are so large. To work with the raw data locally following the follow steps:
 
-1. Download a CSV file from the Celsius Proof of Community Feature
+1. Download a CSV file from the Celsius Proof of Community Feature.
 2. Open the `parse-csv.ts` file and check the `DATE_IDENTIFIER` on line 11. If the CSV you have is for the most recent dataset, use this identifier.
 3. Name the file following the format `{DATE_IDENTIFIER}-rewards.csv`.
 4. Move the file to the `csv/original-csv-data/` directory.
