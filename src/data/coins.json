@@ -52,7 +52,7 @@
   "ZEC": { "id": "zcash", "symbol": "zec", "name": "Zcash" },
   "DASH": { "id": "dash", "symbol": "dash", "name": "Dash" },
   "TAUD": { "id": "trueaud", "symbol": "taud", "name": "TrueAUD" },
-  "PAX": { "id": "pax-gold", "symbol": "pax", "name": "Pax Gold" },
+  "PAX": { "id": "paxos-standard", "symbol": "pax", "name": "Paxos Standard" },
   "XAUT": { "id": "tether-gold", "symbol": "xaut", "name": "Tether Gold" },
   "TGBP": { "id": "truegbp", "symbol": "tgbp", "name": "TrueGBP" },
   "ZUSD": { "id": "zusd", "symbol": "zusd", "name": "ZUSD" },

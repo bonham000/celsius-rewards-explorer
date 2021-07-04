@@ -244,8 +244,7 @@ class Main extends React.Component<{}, IState> {
       const price = response.data[id].usd;
       return [coin, price];
     } catch (err) {
-      console.log(`Failed to fetch prices for coin: ${coin}`);
-      this.toast("Failed to fetch coin price data.", "error");
+      console.warn(`Failed to fetch prices for coin: ${coin}`);
       return null;
     }
   };
