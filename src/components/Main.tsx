@@ -180,7 +180,7 @@ class Main extends React.Component<{}, IState> {
         const elapsed = now - timestamp;
         let sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
         // Uncomment to bust the cache:
-        sixHoursInMilliseconds = 5000;
+        // sixHoursInMilliseconds = 5000;
 
         if (elapsed <= sixHoursInMilliseconds) {
           this.setState(
@@ -416,7 +416,9 @@ class Main extends React.Component<{}, IState> {
         </ChartTitleRow>
         <ChartContainer>
           {this.state.loading ? (
-            <span>Loading chart data...</span>
+            <ChartLoading>
+              <span>Loading chart data...</span>
+            </ChartLoading>
           ) : (
             <ResponsiveContainer width="100%" height={300} minWidth="0">
               <BarChart data={this.getChartData()}>
@@ -580,12 +582,10 @@ class Main extends React.Component<{}, IState> {
 
   calculateTotalAssetValue = () => {
     const { coinPriceMap } = this.state;
+    const dataset = this.getCoinPortfolioEntries();
 
     let sum = 0;
 
-    const dataset = this.getCoinPortfolioEntries();
-    console.log(dataset);
-    console.log(coinPriceMap);
     for (const [coin, values] of dataset) {
       // Calculate actual USD value using price data
       const total = parseFloat(values.total);
@@ -593,10 +593,7 @@ class Main extends React.Component<{}, IState> {
       const value = total * price;
 
       sum += value;
-      console.log(coin, price, value, sum);
     }
-
-    console.log(sum);
 
     this.setState({ totalAssetValue: sum });
   };
@@ -781,6 +778,13 @@ const ChartControls = styled.div`
 const ChartContainer = styled.div`
   width: 100%;
   height: 100%;
+`;
+
+const ChartLoading = styled.div`
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ChartTitleRow = styled.div`
