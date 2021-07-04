@@ -180,10 +180,9 @@ class Main extends React.Component<{}, IState> {
         const elapsed = now - timestamp;
         let sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
         // Uncomment to bust the cache:
-        // sixHoursInMilliseconds = 5000;
+        sixHoursInMilliseconds = 5000;
 
         if (elapsed <= sixHoursInMilliseconds) {
-          console.log("Using cached coin price data.");
           this.setState(
             { loading: false, coinPriceMap },
             this.calculateTotalAssetValue,
@@ -586,16 +585,18 @@ class Main extends React.Component<{}, IState> {
     let sum = 0;
 
     const dataset = this.getCoinPortfolioEntries();
+    console.log(dataset);
+    console.log(coinPriceMap);
     for (const [coin, values] of dataset) {
       // Calculate actual USD value using price data
       const total = parseFloat(values.total);
       const price = coinPriceMap[coin];
       const value = total * price;
+
       sum += value;
+      console.log(coin, price, value, sum);
     }
 
-    console.log(dataset);
-    console.log(coinPriceMap);
     console.log(sum);
 
     this.setState({ totalAssetValue: sum });

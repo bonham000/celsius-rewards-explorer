@@ -20,7 +20,11 @@
   "LTC": { "id": "litecoin", "symbol": "ltc", "name": "Litecoin" },
   "XLM": { "id": "stellar", "symbol": "xlm", "name": "Stellar" },
   "AAVE": { "id": "aave", "symbol": "aave", "name": "Aave" },
-  "BAT": { "id": "bat-finance", "symbol": "bat", "name": "Bat Finance" },
+  "BAT": {
+    "id": "basic-attention-token",
+    "symbol": "bat",
+    "name": "Basic Attention Token"
+  },
   "BCH": { "id": "bitcoin-cash", "symbol": "bch", "name": "Bitcoin Cash" },
   "COMP": {
     "id": "compound-governance-token",
@@ -31,7 +35,7 @@
   "MANA": { "id": "decentraland", "symbol": "mana", "name": "Decentraland" },
   "PAXG": { "id": "pax-gold", "symbol": "paxg", "name": "PAX Gold" },
   "SNX": { "id": "havven", "symbol": "snx", "name": "Synthetix Network Token" },
-  "UNI": { "id": "universe-token", "symbol": "uni", "name": "UNIVERSE Token" },
+  "UNI": { "id": "uniswap", "symbol": "uni", "name": "Uniswap Token" },
   "XRP": { "id": "ripple", "symbol": "xrp", "name": "XRP" },
   "OMG": { "id": "omisego", "symbol": "omg", "name": "OMG Network" },
   "BSV": { "id": "bitcoin-cash-sv", "symbol": "bsv", "name": "Bitcoin SV" },
@@ -48,9 +52,9 @@
   "ZEC": { "id": "zcash", "symbol": "zec", "name": "Zcash" },
   "DASH": { "id": "dash", "symbol": "dash", "name": "Dash" },
   "TAUD": { "id": "trueaud", "symbol": "taud", "name": "TrueAUD" },
-  "PAX": { "id": "payperex", "symbol": "pax", "name": "PayperEx" },
+  "PAX": { "id": "pax-gold", "symbol": "pax", "name": "Pax Gold" },
   "XAUT": { "id": "tether-gold", "symbol": "xaut", "name": "Tether Gold" },
   "TGBP": { "id": "truegbp", "symbol": "tgbp", "name": "TrueGBP" },
-  "ZUSD": { "id": "zytara-dollar", "symbol": "zusd", "name": "Zytara Dollar" },
+  "ZUSD": { "id": "zusd", "symbol": "zusd", "name": "ZUSD" },
   "WDGLD": { "id": "wrapped-dgld", "symbol": "wdgld", "name": "Wrapped-DGLD" }
 }
