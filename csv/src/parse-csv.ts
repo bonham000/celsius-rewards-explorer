@@ -7,10 +7,28 @@ import {
   parseCelsiusRewardsData,
 } from "./utils";
 
-// Increment the identifier when adding a future CSV file
-const identifier = "01";
-const input = "csv/original-csv-data/rewards.csv";
-const output = `./src/data/${identifier}-rewards.json`;
+/**
+ * Increment the identifier when adding a future CSV file.
+ *
+ * NOTE: This DATE_IDENTIFIER is used to identify the CSV which is currently
+ * being processed. The CSV files each represent a week's worth of rewards
+ * and the idea here is to just increment them as the move into the future,
+ * e.g. the next week would have an identifier of "02". This identifier
+ * is used to identify the original CSV rewards file and the output file,
+ * which the app uses and maps to a specific data range (which must be
+ * manually entered).
+ *
+ * "01" corresponds to the first week's data set, which is from June 18 -15.
+ * This value simply increments for future weeks, e.g. the next (2nd) week
+ * would correspond to "02". After updating the DATE_IDENTIFIER here and
+ * building the output dataset, you would need to add the new data range
+ * to the Main.tsx app file and import the new dataset there.
+ *
+ *  See the README for more instructions.
+ */
+const DATE_IDENTIFIER = "01";
+const input = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
+const output = `./src/data/${DATE_IDENTIFIER}-rewards.json`;
 const debugFile = "./csv/output/debug.json";
 
 const lineReaderInterface = readline.createInterface({

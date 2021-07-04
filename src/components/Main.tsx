@@ -114,7 +114,13 @@ const dateRanges: DateRangesType[] = ["June 18, 2021 - June 25, 2021"];
 
 const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
 
-// Initialize map with data
+/**
+ * Initialize map with data. This is where the DATE_IDENTIFIER values
+ * from the csv script get mapped to specific date ranges which the
+ * app can understand.
+ *
+ * Add additional rewards data here in the future when needed.
+ */
 rewardsDataMap.set(dateRanges[0], rewards_01);
 
 const DateSelect = Select.ofType<DateRangesType>();

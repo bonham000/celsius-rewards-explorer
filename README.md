@@ -1,46 +1,43 @@
-# Getting Started with Create React App
+# Celsius Proof of Community Rewards Explorer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a UI for visualizing this Celsius Proof of Community rewards datasets.
 
-## Available Scripts
+# Getting Started
 
-In the project directory, you can run:
+It's recommended to have [Node](https://nodejs.org/en/), [npm](https://www.npmjs.com/), [yarn](https://yarnpkg.com/lang/en/docs/) installed. You can use [nvm](https://github.com/nvm-sh/nvm) to manage different versions of Node.
 
-### `yarn start`
+```shell
+# Install dependencies
+$ yarn
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Run the application
+$ yarn start
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# Run the tests
+$ yarn test
 
-### `yarn test`
+# Build the application
+$ yarn build
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Working with the CSV Data
 
-### `yarn build`
+This application uses the CSV files provided by the Celsius Proof of Community feature. These CSV files are very large and exist in the `csv/original-csv-data/` folder, which is ignored from version control because the files are so large. To work with the raw data locally following the follow steps:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Download a CSV file from the Celsius Proof of Community Feature
+2. Open the `parse-csv.ts` file and check the `DATE_IDENTIFIER` on line 11. If the CSV you have is for the most recent dataset, use this identifier.
+3. Name the file following the format `{DATE_IDENTIFIER}-rewards.csv`.
+4. Move the file to the `csv/original-csv-data/` directory.
+5. Run the `csv` command, e.g.`yarn csv`. This will read the CSV you entered and then save the data as JSON.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**How does the identifier work?**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The `DATE_IDENTIFIER` is used to identify which rewards dataset is being used currently. Each rewards dataset maps to a specific weekly rewards date range. See the `rewardsDataMap` in `Main.tsx` for details. Basically, to add a new dataset in a future week you would following the following steps:
 
-### `yarn eject`
+1. Download the new CSV file and move it to `csv/original-csv-data/`.
+2. Increment the `DATE_IDENTIFIER`, e.g. for the next week after June 18 - 25, the `DATE_IDENTIFIER` would become `02`.
+3. Run `yarn csv`.
+4. Add the new date range to `DateRangesType` and `dateRanges` in `Main.tsx`.
+5. Add the dataset to the `rewardsDataMap` map in `Main.tsx`.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+That's it, the app should then allow users to select that weeks date range.
