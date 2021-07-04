@@ -12,6 +12,7 @@ import {
   Position,
   Switch,
   Toaster,
+  FocusStyleManager,
 } from "@blueprintjs/core";
 import styled from "styled-components";
 import { Select } from "@blueprintjs/select";
@@ -30,6 +31,8 @@ import {
 import rewards_01 from "../data/01-rewards.json";
 import coinSymbolMapJSON from "../data/coins.json";
 import axios from "axios";
+
+FocusStyleManager.onlyShowFocusOnTabs();
 
 /** ===========================================================================
  * JSON rewards data type
@@ -410,7 +413,12 @@ class Main extends React.Component<{}, IState> {
           </ChartTitle>
           <ChartControls>
             <Switch
-              style={{ margin: 0, marginRight: 8, width: 180 }}
+              style={{
+                margin: 0,
+                marginRight: 8,
+                width: 165,
+                textAlign: "left",
+              }}
               checked={this.state.viewTopCoins}
               onChange={this.handleToggleViewAll}
               label={
@@ -641,8 +649,6 @@ class Main extends React.Component<{}, IState> {
       const value = total * price;
 
       sum += value;
-
-      console.log(coin, price, value, sum);
     }
 
     this.setState({ totalAssetValue: sum });
