@@ -1,0 +1,304 @@
+{
+  "portfolio": {
+    "BNT": {
+      "total": "216171.478235751074092853",
+      "totalEarnInCEL": "452",
+      "totalInterestInCoin": "175.995839774396876363",
+      "totalInterestInUsd": "748.0463778652633682924953423782673",
+      "numberOfUsersHolding": "909"
+    },
+    "BTC": {
+      "total": "77558.179299561856155162",
+      "totalEarnInCEL": "52945",
+      "totalInterestInCoin": "40904.395354424721001068",
+      "totalInterestInUsd": "2143341.4699998734688841464013630588968",
+      "numberOfUsersHolding": "200453"
+    },
+    "BUSD": {
+      "total": "49419997.809884582450594203",
+      "totalEarnInCEL": "1914",
+      "totalInterestInCoin": "60485.111407513875278015",
+      "totalInterestInUsd": "80241.0383468521816318822022871055604",
+      "numberOfUsersHolding": "5797"
+    },
+    "CEL": {
+      "total": "265306818.646939306787107066",
+      "totalEarnInCEL": "0",
+      "totalInterestInCoin": "243290.84734343987644734",
+      "totalInterestInUsd": "1412292.896162627521726940395666382604",
+      "numberOfUsersHolding": "155099"
+    },
+    "EOS": {
+      "total": "3111820.471879412412837452",
+      "totalEarnInCEL": "3206",
+      "totalInterestInCoin": "2702.014811286060247842",
+      "totalInterestInUsd": "11170.8990267482683302812084679369059",
+      "numberOfUsersHolding": "10835"
+    },
+    "ETC": {
+      "total": "289656.126125920561311064",
+      "totalEarnInCEL": "1218",
+      "totalInterestInCoin": "402.899201985991246105",
+      "totalInterestInUsd": "7333.6269870604922392458091253184822",
+      "numberOfUsersHolding": "5297"
+    },
+    "ETH": {
+      "total": "1068812.694829271147785996",
+      "totalEarnInCEL": "26354",
+      "totalInterestInCoin": "55317.057663541647350433",
+      "totalInterestInUsd": "2042475.5141083623497886939113188969966",
+      "numberOfUsersHolding": "114982"
+    },
+    "LINK": {
+      "total": "7878319.623998924238414621",
+      "totalEarnInCEL": "6230",
+      "totalInterestInCoin": "6352.830208830932097891",
+      "totalInterestInUsd": "85478.7395959353041724425530159129646",
+      "numberOfUsersHolding": "29476"
+    },
+    "MATIC": {
+      "total": "334159394.228038134580120095",
+      "totalEarnInCEL": "6802",
+      "totalInterestInCoin": "534894.316678435659851168",
+      "totalInterestInUsd": "803762.5452629974065218859600457802338",
+      "numberOfUsersHolding": "41147"
+    },
+    "USDC": {
+      "total": "756272317.46500162616213412",
+      "totalEarnInCEL": "12996",
+      "totalInterestInCoin": "1056695.898481737065017436",
+      "totalInterestInUsd": "1234689.2786083750482334670028278405844",
+      "numberOfUsersHolding": "59871"
+    },
+    "LTC": {
+      "total": "334179.7467156470294043",
+      "totalEarnInCEL": "9567",
+      "totalInterestInCoin": "1894.624060465934985718",
+      "totalInterestInUsd": "35376.8577884912126622686991876081672",
+      "numberOfUsersHolding": "31331"
+    },
+    "MCDAI": {
+      "total": "12650454.228476427825754458",
+      "totalEarnInCEL": "6691",
+      "totalInterestInCoin": "8934.498696051919224995",
+      "totalInterestInUsd": "11513.592554703725666838460839831995",
+      "numberOfUsersHolding": "24035"
+    },
+    "XLM": {
+      "total": "130694452.194650784220048408",
+      "totalEarnInCEL": "8516",
+      "totalInterestInCoin": "60273.517769903598727908",
+      "totalInterestInUsd": "20701.10716324493739879318463316524962",
+      "numberOfUsersHolding": "34014"
+    },
+    "AAVE": {
+      "total": "133210.438160997234359199",
+      "totalEarnInCEL": "2178",
+      "totalInterestInCoin": "1289.931751340474975308",
+      "totalInterestInUsd": "31098.5250827246378791440119484518646",
+      "numberOfUsersHolding": "11893"
+    },
+    "BAT": {
+      "total": "22699106.55062516267569158",
+      "totalEarnInCEL": "2679",
+      "totalInterestInCoin": "12437.440811184887309906",
+      "totalInterestInUsd": "8940.97240394999849169477577194802085",
+      "numberOfUsersHolding": "11092"
+    },
+    "BCH": {
+      "total": "76249.076873658217535578",
+      "totalEarnInCEL": "3885",
+      "totalInterestInCoin": "1125.371614112530308258",
+      "totalInterestInUsd": "31366.7382575357698633032015771670374",
+      "numberOfUsersHolding": "13113"
+    },
+    "COMP": {
+      "total": "28742.538175153360324383",
+      "totalEarnInCEL": "1981",
+      "totalInterestInCoin": "264.432704275944653956",
+      "totalInterestInUsd": "6309.6607579190578593387283964988866",
+      "numberOfUsersHolding": "10026"
+    },
+    "DOT": {
+      "total": "1365246.815224134308611994",
+      "totalEarnInCEL": "5584",
+      "totalInterestInCoin": "4488.984516391272084434",
+      "totalInterestInUsd": "36593.5035605467688735616073587027588",
+      "numberOfUsersHolding": "11966"
+    },
+    "MANA": {
+      "total": "11206590.09109616267624496",
+      "totalEarnInCEL": "873",
+      "totalInterestInCoin": "3293.661432626970212118",
+      "totalInterestInUsd": "2326.5214550767696039966880177464208",
+      "numberOfUsersHolding": "5150"
+    },
+    "PAXG": {
+      "total": "12887.986966477252037925",
+      "totalEarnInCEL": "822",
+      "totalInterestInCoin": "1119.826927351932794972",
+      "totalInterestInUsd": "24044.8593630736192759686324167882208",
+      "numberOfUsersHolding": "2849"
+    },
+    "SNX": {
+      "total": "5363568.288575995137706946",
+      "totalEarnInCEL": "6339",
+      "totalInterestInCoin": "14340.773830516473111318",
+      "totalInterestInUsd": "90286.6614307931296949647294203655942",
+      "numberOfUsersHolding": "26944"
+    },
+    "UNI": {
+      "total": "2087590.558548573989775429",
+      "totalEarnInCEL": "2906",
+      "totalInterestInCoin": "1555.111048103224024956",
+      "totalInterestInUsd": "18016.3178891022657173285632694833416",
+      "numberOfUsersHolding": "14211"
+    },
+    "XRP": {
+      "total": "101680147.273767988533268109",
+      "totalEarnInCEL": "11625",
+      "totalInterestInCoin": "27516.759690914328747108",
+      "totalInterestInUsd": "33996.17922030580002352122935478689222",
+      "numberOfUsersHolding": "21441"
+    },
+    "OMG": {
+      "total": "1566583.625005037364802833",
+      "totalEarnInCEL": "1503",
+      "totalInterestInCoin": "544.980775711839933077",
+      "totalInterestInUsd": "2350.3077782008871654451796010904514",
+      "numberOfUsersHolding": "5733"
+    },
+    "BSV": {
+      "total": "24102.396721350673463049",
+      "totalEarnInCEL": "986",
+      "totalInterestInCoin": "92.717995460080761346",
+      "totalInterestInUsd": "1269.147080224367157985761994972323",
+      "numberOfUsersHolding": "3799"
+    },
+    "ZRX": {
+      "total": "13558465.022892572949029717",
+      "totalEarnInCEL": "1847",
+      "totalInterestInCoin": "7455.670482101256625773",
+      "totalInterestInUsd": "6150.6639784932512431146928256586784",
+      "numberOfUsersHolding": "8802"
+    },
+    "UMA": {
+      "total": "129917.238649746295951675",
+      "totalEarnInCEL": "397",
+      "totalInterestInCoin": "128.559901096975056586",
+      "totalInterestInUsd": "989.8752442064558599343476433054276",
+      "numberOfUsersHolding": "2422"
+    },
+    "TUSD": {
+      "total": "10645830.141094925630955551",
+      "totalEarnInCEL": "805",
+      "totalInterestInCoin": "10771.728440792801491762",
+      "totalInterestInUsd": "18099.8469831112840240129568277867836",
+      "numberOfUsersHolding": "2549"
+    },
+    "USDT ERC20": {
+      "total": "175301837.564984545252873749",
+      "totalEarnInCEL": "9512",
+      "totalInterestInCoin": "193965.535071769793831771",
+      "totalInterestInUsd": "262951.8413581285363015786855804490692",
+      "numberOfUsersHolding": "24578"
+    },
+    "GUSD": {
+      "total": "53812852.783715807919937418",
+      "totalEarnInCEL": "351",
+      "totalInterestInCoin": "81193.011362459690934767",
+      "totalInterestInUsd": "85408.348777846340799478291362678644",
+      "numberOfUsersHolding": "4525"
+    },
+    "KNC": {
+      "total": "2241187.547528405488985748",
+      "totalEarnInCEL": "895",
+      "totalInterestInCoin": "927.432499270386999227",
+      "totalInterestInUsd": "1542.9399154186734397791599412895862",
+      "numberOfUsersHolding": "4538"
+    },
+    "THKD": {
+      "total": "34532869.88767173487721566",
+      "totalEarnInCEL": "116",
+      "totalInterestInCoin": "38258.54989478950984816",
+      "totalInterestInUsd": "7564.7296332990619031052874093687622",
+      "numberOfUsersHolding": "305"
+    },
+    "ZEC": {
+      "total": "83058.917175152387770246",
+      "totalEarnInCEL": "1626",
+      "totalInterestInCoin": "181.299719698319096289",
+      "totalInterestInUsd": "3713.2651865262846639736551825788382",
+      "numberOfUsersHolding": "6177"
+    },
+    "DASH": {
+      "total": "101398.476251080611423847",
+      "totalEarnInCEL": "3388",
+      "totalInterestInCoin": "567.335008969751552731",
+      "totalInterestInUsd": "11606.6994812943567361858691264493146",
+      "numberOfUsersHolding": "11587"
+    },
+    "TAUD": {
+      "total": "10280486.866684748762768364",
+      "totalEarnInCEL": "231",
+      "totalInterestInCoin": "11117.954140527457623489",
+      "totalInterestInUsd": "13303.9707359885759111334808571010588",
+      "numberOfUsersHolding": "546"
+    },
+    "PAX": {
+      "total": "21677657.534536684747421167",
+      "totalEarnInCEL": "606",
+      "totalInterestInCoin": "28349.901295489074902829",
+      "totalInterestInUsd": "33354.1938809518257294430800571203746",
+      "numberOfUsersHolding": "2050"
+    },
+    "XAUT": {
+      "total": "454.664992616346769134",
+      "totalEarnInCEL": "195",
+      "totalInterestInCoin": "51.807700340567334419",
+      "totalInterestInUsd": "865.0637616615241614807062478387346",
+      "numberOfUsersHolding": "317"
+    },
+    "TCAD": {
+      "total": "5779723.654963423621000246",
+      "totalEarnInCEL": "116",
+      "totalInterestInCoin": "5659.744222347360255921",
+      "totalInterestInUsd": "8022.3722117613704192295286011904812",
+      "numberOfUsersHolding": "326"
+    },
+    "TGBP": {
+      "total": "9962406.526769127999701823",
+      "totalEarnInCEL": "347",
+      "totalInterestInCoin": "11641.251385386907321372",
+      "totalInterestInUsd": "24359.0840656462227175053124634953964",
+      "numberOfUsersHolding": "877"
+    },
+    "ZUSD": {
+      "total": "338591.522024401029304005",
+      "totalEarnInCEL": "0",
+      "totalInterestInCoin": "526.329758591239059795",
+      "totalInterestInUsd": "526.329758591239059795",
+      "numberOfUsersHolding": "3"
+    },
+    "WDGLD": {
+      "total": "1998.606628654071031539",
+      "totalEarnInCEL": "3",
+      "totalInterestInCoin": "3.936734788616320538",
+      "totalInterestInUsd": "362.4355651097576531648921507769076",
+      "numberOfUsersHolding": "5"
+    }
+  },
+  "loyaltyTierSummary": {
+    "platinum": 53654,
+    "gold": 5496,
+    "silver": 3819,
+    "bronze": 5558,
+    "none": 229626
+  },
+  "stats": {
+    "totalUsers": "298153",
+    "totalInterestPaidInUsd": "8654546.66680062501285434633952630677729",
+    "averageNumberOfCoinsPerUser": "3.08925283327687462477",
+    "totalPortfolioCoinPositions": "921070"
+  }
+}

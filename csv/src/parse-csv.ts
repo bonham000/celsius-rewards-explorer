@@ -8,7 +8,8 @@ import {
 } from "./utils";
 
 const filename = "csv/original-csv-data/rewards.csv";
-const output = "./csv/output/rewards-metrics.json";
+// const output = "./csv/output/rewards-metrics.json";
+const output = "./src/data/rewards-metrics.json";
 
 const lineReaderInterface = readline.createInterface({
   input: require("fs").createReadStream(filename),
