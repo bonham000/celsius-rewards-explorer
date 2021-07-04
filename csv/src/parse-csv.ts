@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import fs from "fs";
 import readline from "readline";
 import {
@@ -6,7 +7,8 @@ import {
   parseCelsiusRewardsData,
 } from "./utils";
 
-const filename = "csv/rewards.csv";
+const filename = "csv/original-csv-data/rewards.csv";
+const output = "./csv/output/rewards-metrics.json";
 
 const lineReaderInterface = readline.createInterface({
   input: require("fs").createReadStream(filename),
@@ -15,14 +17,16 @@ const lineReaderInterface = readline.createInterface({
 const writeJSON = (data: any) => {
   console.log("- Done! Writing result to file.");
   const jsonString = JSON.stringify(data, null, 2);
-  fs.writeFileSync("./csv/output/rewards.json", jsonString, "utf-8");
+  fs.writeFileSync(output, jsonString, "utf-8");
 };
 
-const debug = false;
+// Toggle debug mode on/off
+let debug = false;
+// debug = true;
+let count = 0;
+const max = 10;
 
 const readCSV = () => {
-  let count = 0;
-
   const metrics: CelsiusRewardsMetrics = {
     portfolio: {},
     loyaltyTierSummary: {
@@ -33,9 +37,10 @@ const readCSV = () => {
       none: 0,
     },
     stats: {
-      totalUsers: 0,
-      averageNumberOfCoinsPerUser: 0,
-      totalPortfolioCoinPositions: 0,
+      totalUsers: "0",
+      totalInterestPaidInUsd: "0",
+      averageNumberOfCoinsPerUser: "0",
+      totalPortfolioCoinPositions: "0",
     },
   };
 
@@ -59,16 +64,22 @@ const readCSV = () => {
       const json = text.slice(index + 1);
       const data: CoinDataMap = JSON.parse(json);
 
-      metrics.stats.totalUsers = metrics.stats.totalUsers + 1;
-      metrics.stats.totalPortfolioCoinPositions =
-        metrics.stats.totalPortfolioCoinPositions + Object.keys(data).length;
+      metrics.stats.totalUsers = new BigNumber(metrics.stats.totalUsers)
+        .plus(1)
+        .toString();
+
+      metrics.stats.totalPortfolioCoinPositions = new BigNumber(
+        metrics.stats.totalPortfolioCoinPositions,
+      )
+        .plus(Object.keys(data).length)
+        .toString();
 
       parseCelsiusRewardsData(data, metrics);
     }
 
     if (debug) {
       count++;
-      if (count === 2) {
+      if (count === max) {
         lineReaderInterface.close();
       }
     }
@@ -76,9 +87,11 @@ const readCSV = () => {
 
   lineReaderInterface.on("close", () => {
     // Calculate average coins held per user
-    const averageNumberOfCoinsPerUser =
-      metrics.stats.totalPortfolioCoinPositions / metrics.stats.totalUsers;
-    metrics.stats.averageNumberOfCoinsPerUser = averageNumberOfCoinsPerUser;
+    const averageNumberOfCoinsPerUser = new BigNumber(
+      metrics.stats.totalPortfolioCoinPositions,
+    ).dividedBy(metrics.stats.totalUsers);
+    metrics.stats.averageNumberOfCoinsPerUser =
+      averageNumberOfCoinsPerUser.toString();
 
     // Write resulting data to JSON
     writeJSON(metrics);

@@ -59,9 +59,10 @@ interface LoyaltyTierSummary {
 }
 
 interface Stats {
-  totalUsers: number;
-  averageNumberOfCoinsPerUser: number;
-  totalPortfolioCoinPositions: number;
+  totalUsers: string;
+  averageNumberOfCoinsPerUser: string;
+  totalPortfolioCoinPositions: string;
+  totalInterestPaidInUsd: string;
 }
 
 export interface CelsiusRewardsMetrics {
@@ -116,6 +117,13 @@ export const parseCelsiusRewardsData = (
       totalInterestInUsd: totalInterestInUsd.toString(),
       numberOfUsersHolding: numberOfUsersHolding.toString(),
     };
+
+    // Increment total interest paid in USD metric
+    const totalInterestPaidInUsd = metrics.stats.totalInterestPaidInUsd;
+    const totalInterest = new BigNumber(data.totalInterestInUsd)
+      .plus(totalInterestPaidInUsd)
+      .toString();
+    metrics.stats.totalInterestPaidInUsd = totalInterest;
   }
 
   const tierKey = tier.toLowerCase();
