@@ -88,19 +88,19 @@ const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 const chartKeyMap = {
   total: {
     title: "Total Value",
-    description: "Total USD value of all accounts in each coin",
+    description: "Total Asset Value Held in Each Coin (USD)",
   },
   interest_paid: {
     title: "Interest Paid",
-    description: "Total interest paid in USD for all coins",
+    description: "Total Interest Paid for Each Coins (USD)",
   },
   earning_in_cel: {
     title: "Earning in CEL",
-    description: "Number of users earning in CEL for each coin",
+    description: "Number of Users Earning in CEL for Each Coin",
   },
   number_of_users: {
     title: "Number of Users",
-    description: "Number of users holding each coin",
+    description: "Number of Users Holding Each Coin",
   },
 };
 
@@ -479,7 +479,7 @@ class Main extends React.Component<{}, IState> {
                   : ` $${this.formatValue(String(this.state.totalAssetValue))}`}
               </p>
               <p>
-                <b>Annualized 52 week interest yield:</b>
+                <b>Annualized 52 Week Interest Yield:</b>
                 {this.state.totalAssetValue === null
                   ? "Loading..."
                   : this.getProjectedAnnualYield(
@@ -488,11 +488,11 @@ class Main extends React.Component<{}, IState> {
                     )}
               </p>
               <p>
-                <b>Average Number of Coins Per User:</b>{" "}
+                <b>Average Number of Coins Held Per User:</b>{" "}
                 {this.formatValue(data.stats.averageNumberOfCoinsPerUser)}
               </p>
               <p>
-                <b>Maximum User Portfolio Size:</b>{" "}
+                <b>Maximum Single User Portfolio Holdings:</b>{" "}
                 {this.formatValue(data.stats.maximumPortfolioSize)}
               </p>
               <p>
