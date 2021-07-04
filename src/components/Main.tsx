@@ -228,12 +228,12 @@ class Main extends React.Component<{}, IState> {
 
   fetchCoinPrice = async (coin: string) => {
     try {
-      // Not a valid symbol
+      // Not a valid symbol, this is USDT
       if (coin === "USDT ERC20") {
-        return [coin, 1];
+        return ["USDT", 1];
       } else if (coin === "MCDAI") {
         // I assume this is DAI?
-        return [coin, 1];
+        return ["DAI", 1];
       }
 
       const id = coinSymbolMap[coin].id;
@@ -361,7 +361,13 @@ class Main extends React.Component<{}, IState> {
               • If you know anyone at Celsius, I am interested in working for
               them. 🙂
             </p>
-            <Button text="dismiss" icon="disable" onClick={this.toggleDialog} />
+            <RightSide>
+              <Button
+                text="dismiss"
+                icon="disable"
+                onClick={this.toggleDialog}
+              />
+            </RightSide>
           </div>
         </Dialog>
         <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
@@ -821,6 +827,14 @@ const Row = styled.div`
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+const RightSide = styled.div`
+  padding-top: 4px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 `;
 
 /** ===========================================================================
