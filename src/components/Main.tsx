@@ -1,6 +1,6 @@
 import React from "react";
 import { isMobile } from "react-device-detect";
-import { Popover2, Tooltip2 } from "@blueprintjs/popover2";
+import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   Button,
   Card,
