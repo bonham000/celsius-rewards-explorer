@@ -4,6 +4,7 @@ import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   Button,
   Card,
+  Icon,
   Classes,
   Dialog,
   Elevation,
@@ -345,7 +346,14 @@ class Main extends React.Component<{}, IState> {
               • The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and
               USDC.
             </p>
-            <b>Source code:</b>
+            <b>Loyalty Tiers:</b>
+            <p>
+              • I'm not sure if the loyalty tier breakdown is correct. I made a
+              note about this in the{" "}
+              <Icon color="rgb(130, 130, 130)" icon="help" /> tooltip next to
+              that pie chart.
+            </p>
+            <b>Source Code:</b>
             <p>
               • This project is open source and relies on the public CSV Proof
               of Community data published by Celsius. You can find the{" "}
@@ -357,14 +365,18 @@ class Main extends React.Component<{}, IState> {
               </a>
               .
             </p>
-            <b>By the way:</b>
+            <b>By the Way:</b>
             <p>
-              • If you know anyone at Celsius, I am interested in working for
-              them. 🙂
+              • If you happen to know anyone at Celsius, I am interested in
+              working for them,{" "}
+              <a target="__blank" href="mailto:sean.smith.2009@gmail.com">
+                this is my contact email
+              </a>{" "}
+              🙂
             </p>
             <RightSide>
               <Button
-                text="dismiss"
+                text="Dismiss"
                 icon="disable"
                 onClick={this.toggleDialog}
               />
