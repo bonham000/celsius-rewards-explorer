@@ -2,7 +2,7 @@
 
 This is a UI for visualizing the weekly [Celsius Network](https://celsius.network/) Proof of Community rewards datasets.
 
-<img width="1440" alt="proof-of-community" src="https://user-images.githubusercontent.com/18126719/124392496-779adc00-dd28-11eb-8d94-633b17622d89.png">
+<img width="1440" alt="Celsius Proof of Community" src="https://user-images.githubusercontent.com/18126719/124401978-a1232a00-dd5f-11eb-91e2-4143dd394f83.png">
 
 # Getting Started
 
