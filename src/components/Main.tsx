@@ -765,6 +765,7 @@ const loyaltyTierColors = {
 const colors = [
   "rgb(15, 27, 100)",
   "rgb(112, 31, 191)",
+  "rgb(112, 31, 185)",
   "rgb(188, 62, 179)",
   "rgb(215, 64, 176)",
   "rgb(244, 65, 171)",
