@@ -17,6 +17,8 @@
   "LINK": { "id": "chainlink", "symbol": "link", "name": "Chainlink" },
   "MATIC": { "id": "matic-network", "symbol": "matic", "name": "Polygon" },
   "USDC": { "id": "usd-coin", "symbol": "usdc", "name": "USD Coin" },
+  "USDT": { "id": "tether", "symbol": "usdt", "name": "Tether" },
+  "DAI": { "id": "dai", "symbol": "dai", "name": "Dai" },
   "LTC": { "id": "litecoin", "symbol": "ltc", "name": "Litecoin" },
   "XLM": { "id": "stellar", "symbol": "xlm", "name": "Stellar" },
   "AAVE": { "id": "aave", "symbol": "aave", "name": "Aave" },

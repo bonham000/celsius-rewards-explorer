@@ -185,6 +185,17 @@ class Main extends React.Component<{}, IState> {
         // Note that the CoinGecko API will quickly rate limit requests.
         // sixHoursInMilliseconds = 5000;
 
+        const dataset = this.getCurrentDataSet();
+        const coins = Object.keys(dataset.portfolio);
+
+        // Bust the cache if the dataset has a coin not found in the cache.
+        for (const coin of coins) {
+          if (!(coin in coinPriceMap)) {
+            console.warn(`Found missing coin in cached data: ${coin}.`);
+            return "failure";
+          }
+        }
+
         if (elapsed <= sixHoursInMilliseconds) {
           console.log("Using cached price data.");
           this.setState(
@@ -232,13 +243,9 @@ class Main extends React.Component<{}, IState> {
 
   fetchCoinPrice = async (coin: string) => {
     try {
-      // Not a valid symbol, this is USDT
-      // TODO: Refactor this.
-      if (coin === "USDT ERC20") {
-        return ["USDT", 1];
-      } else if (coin === "MCDAI") {
-        // I assume this is DAI?
-        return ["DAI", 1];
+      // TCAD... reference: https://www.coingecko.com/en/coins/truecad
+      if (coin === "TCAD") {
+        return ["TCAD", 0.777879];
       }
 
       const id = coinSymbolMap[coin].id;
@@ -490,13 +497,13 @@ class Main extends React.Component<{}, IState> {
               <p>
                 <b>Total Asset Value in USD:</b>
                 {this.state.totalAssetValue === null
-                  ? "Loading..."
+                  ? " Loading..."
                   : ` $${this.formatValue(String(this.state.totalAssetValue))}`}
               </p>
               <p>
                 <b>Annualized 52 Week Interest Yield:</b>
                 {this.state.totalAssetValue === null
-                  ? "Loading..."
+                  ? " Loading..."
                   : this.getProjectedAnnualYield(
                       data.stats.totalInterestPaidInUsd,
                       this.state.totalAssetValue,
@@ -603,13 +610,6 @@ class Main extends React.Component<{}, IState> {
     const { dateRange } = this.state;
     const data = rewardsDataMap.get(dateRange);
     if (data) {
-      // Rename "USDT ERC20" to USDT in the original portfolio map
-      // TODO: Refactor this.
-      if (!("USDT" in data.portfolio)) {
-        const USDT = data.portfolio["USDT ERC20"];
-        data.portfolio.USDT = USDT;
-        delete data.portfolio["USDT ERC20"];
-      }
       return data;
     } else {
       this.toast(
@@ -623,12 +623,8 @@ class Main extends React.Component<{}, IState> {
   };
 
   getCoinPortfolioEntries = () => {
-    // Exclude TCAD... reference: https://www.coingecko.com/en/coins/truecad
     const data = this.getCurrentDataSet();
-    const portfolio = Object.entries(data.portfolio).filter(
-      ([coin]) => coin !== "TCAD",
-    );
-
+    const portfolio = Object.entries(data.portfolio);
     return portfolio;
   };
 
@@ -645,6 +641,8 @@ class Main extends React.Component<{}, IState> {
       const value = total * price;
 
       sum += value;
+
+      console.log(coin, price, value, sum);
     }
 
     this.setState({ totalAssetValue: sum });

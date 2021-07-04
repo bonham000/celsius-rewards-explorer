@@ -77,7 +77,7 @@
       "totalInterestInUsd": "25475.45397771652158091053992279144",
       "numberOfUsersHolding": "31331"
     },
-    "MCDAI": {
+    "DAI": {
       "total": "12650454.228476427825754458",
       "totalEarnInCEL": "6691",
       "totalInterestInCoin": "8397.74178370649678792",
@@ -196,7 +196,7 @@
       "totalInterestInUsd": "9246.612063627583221756",
       "numberOfUsersHolding": "2549"
     },
-    "USDT ERC20": {
+    "USDT": {
       "total": "175301837.564984545252873749",
       "totalEarnInCEL": "9512",
       "totalInterestInCoin": "179608.214715953828611089",

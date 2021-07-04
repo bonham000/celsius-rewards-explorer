@@ -90,10 +90,24 @@ export const parseCelsiusRewardsData = (
   let tier = "";
 
   // Process the row data and update all the values we want to track
-  for (const [coin, data] of Object.entries(rewardsData)) {
+  for (let [coin, data] of Object.entries(rewardsData)) {
     // Get loyalty tier
     tier = data.loyaltyTier.title;
-    const interestCoin = data.interestCoin;
+    let interestCoin = data.interestCoin;
+
+    // Convert troublesome coin symbols
+    if (coin === "USDT ERC20") {
+      coin = "USDT";
+    } else if (coin === "MCDAI") {
+      coin = "DAI";
+    }
+
+    // Convert troublesome coin symbols
+    if (interestCoin === "USDT ERC20") {
+      interestCoin = "USDT";
+    } else if (interestCoin === "MCDAI") {
+      interestCoin = "DAI";
+    }
 
     // Initialize all values to zero
     let existingTotal = new BigNumber("0");
