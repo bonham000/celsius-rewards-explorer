@@ -113,12 +113,23 @@ class Main extends React.Component<{}, IState> {
     return (
       <Page>
         <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
+        <Subtitle>
+          Built by a Celsius user. View the{" "}
+          <a
+            target="__blank"
+            href="https://github.com/bonham000/celsius-rewards-explorer"
+          >
+            source code here
+          </a>
+          .
+        </Subtitle>
         <ChartTitleRow>
           <ChartTitle>
             {chartKeyMap[this.state.chartType].description}
           </ChartTitle>
           <ChartControls>
             <Switch
+              color="red"
               style={{ margin: 0, marginRight: 8, width: 180 }}
               checked={this.state.viewTopCoins}
               onChange={this.handleToggleViewAll}
@@ -173,12 +184,12 @@ class Main extends React.Component<{}, IState> {
                 width: isMobile ? 300 : 500,
               }}
             >
-              <h2 style={{ marginTop: 2, marginBottom: 8 }}>Summary Metrics</h2>
+              <CardTitle>Summary Metrics</CardTitle>
               <p>
                 <b>Data Range:</b> June 18, 2021 - June 25, 2021
               </p>
               <p>
-                <b>Total Users:</b> {data.stats.totalUsers}
+                <b>Total Users Earning:</b> {formatValue(data.stats.totalUsers)}
               </p>
               <p>
                 <b>Total Interest Paid in USD:</b> $
@@ -218,7 +229,7 @@ class Main extends React.Component<{}, IState> {
                 width: isMobile ? 300 : 500,
               }}
             >
-              <h2>Celsius Loyalty Tiers</h2>
+              <CardTitle>Celsius Loyalty Tiers</CardTitle>
               <PieChart width={isMobile ? 250 : 400} height={200}>
                 <Legend
                   layout="vertical"
@@ -334,6 +345,16 @@ const Page = styled.div`
 
 const PageTitle = styled.h1`
   font-weight: 600;
+  margin-bottom: 4px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 12px;
+`;
+
+const CardTitle = styled.h2`
+  margin-top: 2px;
+  margin-bottom: 8px;
 `;
 
 const ChartTitle = styled.p`

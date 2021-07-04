@@ -13,3 +13,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.bp3-control.bp3-switch input:checked ~ .bp3-control-indicator {
+  background-color: rgb(215, 64, 176) !important;
+}
