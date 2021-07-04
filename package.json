@@ -7,6 +7,12 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "prettier": "prettier --list-different './src/**/*.{ts,tsx}'",
+    "prettier:fix": "prettier --write './src/**/*.{ts,tsx}'",
+    "eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "eslint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "format": "yarn prettier:fix && yarn eslint:fix",
+    "lint": "yarn prettier && yarn eslint",
     "csv": "ts-node csv/src/parse-csv.ts"
   },
   "dependencies": {
