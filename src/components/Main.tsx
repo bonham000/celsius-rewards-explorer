@@ -79,6 +79,7 @@ interface CelsiusRewardsDataType {
     totalUsers: string;
     maximumPortfolioSize: string;
     totalInterestPaidInUsd: string;
+    totalUsersEarningInCel: string;
     averageNumberOfCoinsPerUser: string;
     totalPortfolioCoinPositions: string;
   };
@@ -582,6 +583,10 @@ class Main extends React.Component<{}, IState> {
                 {this.formatValue(data.stats.totalUsers)}
               </p>
               <p>
+                <b>Total Users Earning in CEL:</b>{" "}
+                {this.formatValue(data.stats.totalUsersEarningInCel)}
+              </p>
+              <p>
                 <b>Total Interest Paid in USD:</b> $
                 {this.formatValue(data.stats.totalInterestPaidInUsd)}
               </p>
@@ -606,10 +611,7 @@ class Main extends React.Component<{}, IState> {
                   Celsius Proof of Community
                 </a>{" "}
                 feature, which summarizes the Celsius rewards distributions from
-                the week of June 18 to June 25.
-              </p>
-              <p>
-                Link to the{" "}
+                the week of June 18 to June 25. Link to the{" "}
                 <a
                   target="__blank"
                   href="https://etherscan.io/tx/0xef41ef12b1d1378af48e8f3461efeb98be550cdfd13eca8a49c348fe94d86b79"

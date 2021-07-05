@@ -54,7 +54,7 @@ const debugFlag = process.argv[2] === "debug";
 debug = debugFlag;
 
 let count = 0;
-const max = 50;
+const max = 500;
 const debugOutput = {};
 
 /**
@@ -94,6 +94,7 @@ const metrics: CelsiusRewardsMetrics = {
   },
   stats: {
     totalUsers: "0",
+    totalUsersEarningInCel: "0",
     maximumPortfolioSize: "0",
     totalInterestPaidInUsd: "0",
     averageNumberOfCoinsPerUser: "0",
@@ -133,28 +134,6 @@ const processCSV = (): void => {
 
     json = text.slice(index + 1);
     data = JSON.parse(json);
-
-    // Increment the total user count
-    metrics.stats.totalUsers = new BigNumber(metrics.stats.totalUsers)
-      .plus(1)
-      .toString();
-
-    // Increment the total portfolio coin positions by the number
-    // of coins in this row
-    metrics.stats.totalPortfolioCoinPositions = new BigNumber(
-      metrics.stats.totalPortfolioCoinPositions,
-    )
-      .plus(Object.keys(data).length)
-      .toString();
-
-    // Determine maximum portfolio size
-    const currentMax = new BigNumber(
-      metrics.stats.maximumPortfolioSize,
-    ).toNumber();
-
-    const currentSize = Object.keys(data).length;
-    const newMax = Math.max(currentMax, currentSize);
-    metrics.stats.maximumPortfolioSize = String(newMax);
 
     // Process the rest of the row data
     parseCelsiusRewardsData(uuid, data, metrics);

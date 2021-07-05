@@ -78,6 +78,7 @@ interface LoyaltyTierSummary {
 
 interface Stats {
   totalUsers: string;
+  totalUsersEarningInCel: string;
   maximumPortfolioSize: string;
   averageNumberOfCoinsPerUser: string;
   totalPortfolioCoinPositions: string;
@@ -103,6 +104,7 @@ export const parseCelsiusRewardsData = (
   metrics: CelsiusRewardsMetrics,
 ) => {
   let tier = "";
+  let isEarningInCel = false;
 
   // Process the row data and update all the values we want to track
   for (let [coin, data] of Object.entries(rewardsData)) {
@@ -175,11 +177,19 @@ export const parseCelsiusRewardsData = (
     metrics.coinDistributions[coin].push([uuid, currentBalance]);
 
     // Increment earningInterestInCel value
-    if (data.earningInterestInCel) {
+    const shouldIncrementEarnInCelCount =
+      data.earningInterestInCel || interestCoin === "CEL";
+
+    if (shouldIncrementEarnInCelCount) {
       totalEarnInCEL = totalEarnInCEL.plus(1);
-    } else if (interestCoin === "CEL") {
-      // The earningInterestInCel flag happens to be false for CEL earning CEL
-      totalEarnInCEL = totalEarnInCEL.plus(1);
+
+      // Only flip isEarningInCel to true, not back to false if it is already
+      // true. It's a bit subjective how this value is determined, e.g. a user
+      // may earn in CEL on BTC but not on ETH. So... they still choose to
+      // earn in CEL.
+      if (isEarningInCel === false) {
+        isEarningInCel = true;
+      }
     }
 
     // Update coin in portfolio metrics total
@@ -205,6 +215,36 @@ export const parseCelsiusRewardsData = (
       .plus(totalInterestPaidInUsd)
       .toString();
     metrics.stats.totalInterestPaidInUsd = totalInterest;
+  }
+
+  // Increment the total user count
+  metrics.stats.totalUsers = new BigNumber(metrics.stats.totalUsers)
+    .plus(1)
+    .toString();
+
+  // Increment the total portfolio coin positions by the number
+  // of coins in this row
+  metrics.stats.totalPortfolioCoinPositions = new BigNumber(
+    metrics.stats.totalPortfolioCoinPositions,
+  )
+    .plus(Object.keys(rewardsData).length)
+    .toString();
+
+  // Determine maximum portfolio size
+  const currentMax = new BigNumber(
+    metrics.stats.maximumPortfolioSize,
+  ).toNumber();
+
+  const currentSize = Object.keys(rewardsData).length;
+  const newMax = Math.max(currentMax, currentSize);
+  metrics.stats.maximumPortfolioSize = String(newMax);
+
+  if (isEarningInCel) {
+    metrics.stats.totalUsersEarningInCel = new BigNumber(
+      metrics.stats.totalUsersEarningInCel,
+    )
+      .plus(1)
+      .toString();
   }
 
   const tierKey = tier.toLowerCase();

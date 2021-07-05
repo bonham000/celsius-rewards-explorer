@@ -16302,6 +16302,7 @@
   },
   "stats": {
     "totalUsers": "298153",
+    "totalUsersEarningInCel": "156293",
     "maximumPortfolioSize": "35",
     "totalInterestPaidInUsd": "8654546.66680062501285434633952630677729",
     "averageNumberOfCoinsPerUser": "3.08925283327687462477",
