@@ -4,7 +4,6 @@ import { Tooltip2 } from "@blueprintjs/popover2";
 import {
   Button,
   Card,
-  Icon,
   Drawer,
   Classes,
   Dialog,
