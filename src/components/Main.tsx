@@ -175,7 +175,10 @@ interface IState {
 }
 
 /** ===========================================================================
- * React Component
+ * Main Component
+ * ----------------------------------------------------------------------------
+ * This is a big file. If it grows any more it might be worth refactoring it
+ * to reduce the size.
  * ============================================================================
  */
 
@@ -834,7 +837,7 @@ class Main extends React.Component<{}, IState> {
         <SummaryRow style={{ marginBottom: 75 }}>
           {this.state.loading ? (
             <div style={{ height: 200 }}>
-              <span>Loading..</span>
+              <span>Loading...</span>
             </div>
           ) : (
             <Card
@@ -892,27 +895,6 @@ class Main extends React.Component<{}, IState> {
             </Card>
           )}
         </SummaryRow>
-        <Footer>
-          <p>
-            All of the data displayed here comes from the Celsius Proof of
-            Community CSV. If you find any issues or problems, feel free to
-            bring them up in The Celsians Club Discord or{" "}
-            <a
-              target="__blank"
-              href="https://github.com/bonham000/celsius-rewards-explorer/issues/new"
-            >
-              open an issue on GitHub
-            </a>
-            .
-          </p>
-          <p>
-            This tool is powered by the Celsians Community.{" "}
-            <a target="__blank" href="https://celsius.network/">
-              Visit Celsius
-            </a>{" "}
-            to learn more about how you can unbank yourself.
-          </p>
-        </Footer>
       </Page>
     );
   }
@@ -1071,18 +1053,17 @@ class Main extends React.Component<{}, IState> {
       displayFiatInDistributionChart,
     } = this.state;
 
+    const useFiat = displayFiatInDistributionChart;
     const coin = coinDistributionChartSelection;
     const price = coinPriceMap[coin];
     const data = this.getCurrentDataSet();
     const { coinDistributions } = data;
-    const distributions = coinDistributions[coinDistributionChartSelection];
+    const distributions = coinDistributions[coin];
 
     return distributions.map(([uuid, amount]) => ({
       coin,
       uuid,
-      value: displayFiatInDistributionChart
-        ? String(parseFloat(amount) * price)
-        : amount,
+      value: useFiat ? String(parseFloat(amount) * price) : amount,
     }));
   };
 
@@ -1419,19 +1400,6 @@ const CoinHoldingsControls = styled.div`
   flex-direction: row;
 `;
 
-const Footer = styled.div`
-  padding-top: 24px;
-  padding-bottom: 48px;
-  text-align: center;
-  width: 500px;
-  margin: auto;
-  border-top: 1px solid rgba(5, 5, 5, 0.5);
-
-  @media ${MOBILE} {
-    width: 300px;
-  }
-`;
-
 const DialogBodyContent = (
   <>
     <b>Observations:</b>
@@ -1449,12 +1417,6 @@ const DialogBodyContent = (
       • The smallest coins have very few users, e.g. ZUSD only has 3 holders.
     </p>
     <p>• The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and USDC.</p>
-    <b>Loyalty Tiers:</b>
-    <p>
-      • I'm not sure if the loyalty tier breakdown is correct. I made a note
-      about this in the <Icon color="rgb(130, 130, 130)" icon="help" /> tooltip
-      next to that pie chart.
-    </p>
     <b>Source Code:</b>
     <p>
       • This project is open source and relies on the public CSV Proof of
@@ -1464,6 +1426,19 @@ const DialogBodyContent = (
         href="https://github.com/bonham000/celsius-rewards-explorer"
       >
         project source code on GitHub
+      </a>
+      .
+    </p>
+    <b>Issues or Bugs:</b>
+    <p>
+      • All of the data displayed here comes from the Celsius Proof of Community
+      CSV. If you find any issues or problems, feel free to bring them up in The
+      Celsians Club Discord or{" "}
+      <a
+        target="__blank"
+        href="https://github.com/bonham000/celsius-rewards-explorer/issues/new"
+      >
+        open an issue on GitHub
       </a>
       .
     </p>
