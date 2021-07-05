@@ -208,11 +208,11 @@ class Main extends React.Component<{}, IState> {
       chartType: "total",
       totalAssetValue: null,
       portfolioView: "all",
-      dateRange: dateRanges[0],
       portfolioAllocations: [],
       currentPortfolioAllocation: [],
       displayFiatInDistributionChart: false,
-      coinDistributionChartSelection: "BTC",
+      coinDistributionChartSelection: "CEL",
+      dateRange: dateRanges[dateRanges.length - 1],
     };
   }
 
