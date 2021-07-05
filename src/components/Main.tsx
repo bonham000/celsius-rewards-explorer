@@ -53,12 +53,22 @@ interface PortfolioCoinEntry {
 
 type Portfolio = { [coin: string]: PortfolioCoinEntry };
 
+interface CoinDistributionLevels {
+  topOne: string;
+  topTen: string;
+  topHundred: string;
+  topThousand: string;
+  topTenThousand: string;
+}
+
 type CoinDistribution = [string, string];
 type CoinDistributions = { [coin: string]: CoinDistribution[] };
+type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
 
 interface CelsiusRewardsDataType {
   portfolio: Portfolio;
   coinDistributions: CoinDistributions;
+  coinDistributionsLevels: CoinDistributionLevelsMap;
   loyaltyTierSummary: {
     platinum: number;
     gold: number;
@@ -354,6 +364,91 @@ class Main extends React.Component<{}, IState> {
       </DateSelect>
     );
 
+    const ChartSelectMenu = (
+      <ChartSelect
+        items={chartKeys}
+        filterable={false}
+        activeItem={this.state.chartType}
+        onItemSelect={(item) => this.setState({ chartType: item })}
+        itemRenderer={(item, { handleClick }) => {
+          const isActive = item === this.state.chartType;
+          return (
+            <MenuItem
+              disabled={isActive}
+              text={chartKeyMap[item].title}
+              onClick={(e: any) => handleClick(e)}
+            />
+          );
+        }}
+      >
+        <Button
+          rightIcon="double-caret-vertical"
+          text={chartKeyMap[this.state.chartType].title}
+        />
+      </ChartSelect>
+    );
+
+    const PortfolioSelectMenu = (
+      <PortfolioSelect
+        items={["all", "top", "bottom"]}
+        filterable={false}
+        activeItem={this.state.portfolioView}
+        onItemSelect={(item) =>
+          this.setState(
+            { portfolioView: item },
+            this.setCurrentPortfolioAllocations,
+          )
+        }
+        itemRenderer={(item, { handleClick }) => {
+          const isActive = item === this.state.portfolioView;
+          return (
+            <MenuItem
+              disabled={isActive}
+              text={getPortfolioSelectText(item)}
+              onClick={(e: any) => handleClick(e)}
+            />
+          );
+        }}
+      >
+        <Button
+          rightIcon="double-caret-vertical"
+          text={getPortfolioSelectText(this.state.portfolioView)}
+        />
+      </PortfolioSelect>
+    );
+
+    const CoinDistributionSelectMenu = (
+      <CoinDistributionSelect
+        filterable={!isMobile}
+        popoverProps={{
+          popoverClassName: "coin-distribution-select",
+        }}
+        items={this.getSortedDistributionSelectMenuOptions()}
+        activeItem={this.state.coinDistributionChartSelection}
+        onItemSelect={(item) => {
+          this.setState({ coinDistributionChartSelection: item });
+        }}
+        itemPredicate={(query, item) => {
+          return item.toLowerCase().includes(query.toLowerCase());
+        }}
+        itemRenderer={(item, { handleClick }) => {
+          const isActive = item === this.state.coinDistributionChartSelection;
+          return (
+            <MenuItem
+              text={item}
+              disabled={isActive}
+              onClick={(e: any) => handleClick(e)}
+            />
+          );
+        }}
+      >
+        <Button
+          rightIcon="caret-down"
+          text={this.state.coinDistributionChartSelection}
+        />
+      </CoinDistributionSelect>
+    );
+
     return (
       <Page>
         <Dialog
@@ -363,53 +458,7 @@ class Main extends React.Component<{}, IState> {
           onClose={() => this.setState({ dialogOpen: false })}
         >
           <div className={Classes.DIALOG_BODY}>
-            <b>Observations:</b>
-            <p>
-              • There is a strong preference for users to earn in CEL. Over 75%
-              of BTC holders, which is the largest coin holding (CEL is 2nd),
-              are earning in CEL.
-            </p>
-            <p>
-              • All of the charts appear to follow a power law distribution,
-              with most of users concentrated around a few coins and a long tail
-              of smaller coins with few holders.{" "}
-            </p>
-            <p>
-              • The smallest coins have very few users, e.g. ZUSD only has 3
-              holders.
-            </p>
-            <p>
-              • The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and
-              USDC.
-            </p>
-            <b>Loyalty Tiers:</b>
-            <p>
-              • I'm not sure if the loyalty tier breakdown is correct. I made a
-              note about this in the{" "}
-              <Icon color="rgb(130, 130, 130)" icon="help" /> tooltip next to
-              that pie chart.
-            </p>
-            <b>Source Code:</b>
-            <p>
-              • This project is open source and relies on the public CSV Proof
-              of Community data published by Celsius. You can find the{" "}
-              <a
-                target="__blank"
-                href="https://github.com/bonham000/celsius-rewards-explorer"
-              >
-                project source code on GitHub
-              </a>
-              .
-            </p>
-            <b>By the Way:</b>
-            <p>
-              • If you happen to know anyone at Celsius, I am interested in
-              working for them,{" "}
-              <a target="__blank" href="mailto:sean.smith.2009@gmail.com">
-                this is my contact email
-              </a>{" "}
-              🙂
-            </p>
+            {DialogBodyContent}
             <RightSide>
               <Button
                 text="Dismiss"
@@ -466,27 +515,7 @@ class Main extends React.Component<{}, IState> {
                   : "Viewing All Coins"
               }
             />
-            <ChartSelect
-              items={chartKeys}
-              filterable={false}
-              activeItem={this.state.chartType}
-              onItemSelect={(item) => this.setState({ chartType: item })}
-              itemRenderer={(item, { handleClick }) => {
-                const isActive = item === this.state.chartType;
-                return (
-                  <MenuItem
-                    disabled={isActive}
-                    text={chartKeyMap[item].title}
-                    onClick={(e: any) => handleClick(e)}
-                  />
-                );
-              }}
-            >
-              <Button
-                rightIcon="double-caret-vertical"
-                text={chartKeyMap[this.state.chartType].title}
-              />
-            </ChartSelect>
+            {ChartSelectMenu}
             {!isMobile && DateRangeSelect}
             {!isMobile && (
               <Tooltip2
@@ -629,10 +658,8 @@ class Main extends React.Component<{}, IState> {
                   align="right"
                   layout="vertical"
                   verticalAlign="middle"
-                  formatter={(label) => {
-                    // Capitalize label
-                    return label[0].toUpperCase() + label.slice(1);
-                  }}
+                  // capitalize the label
+                  formatter={(label) => label[0].toUpperCase() + label.slice(1)}
                 />
                 <Tooltip formatter={this.formatTooltipValue("PIE")} />
                 <Pie
@@ -653,32 +680,7 @@ class Main extends React.Component<{}, IState> {
           <Subtitle>
             The total portfolio breakdown of all Celsius users.
           </Subtitle>
-          <PortfolioSelect
-            items={["all", "top", "bottom"]}
-            filterable={false}
-            activeItem={this.state.portfolioView}
-            onItemSelect={(item) =>
-              this.setState(
-                { portfolioView: item },
-                this.setCurrentPortfolioAllocations,
-              )
-            }
-            itemRenderer={(item, { handleClick }) => {
-              const isActive = item === this.state.portfolioView;
-              return (
-                <MenuItem
-                  disabled={isActive}
-                  text={getPortfolioSelectText(item)}
-                  onClick={(e: any) => handleClick(e)}
-                />
-              );
-            }}
-          >
-            <Button
-              rightIcon="double-caret-vertical"
-              text={getPortfolioSelectText(this.state.portfolioView)}
-            />
-          </PortfolioSelect>
+          {PortfolioSelectMenu}
           <PortfolioContainer>
             <ResponsiveContainer
               width="100%"
@@ -695,12 +697,12 @@ class Main extends React.Component<{}, IState> {
                   cy="50%"
                   nameKey="coin"
                   dataKey="value"
-                  innerRadius={isMobile ? 60 : 80}
-                  outerRadius={isMobile ? 160 : 240}
                   labelLine={false}
                   isAnimationActive={false}
-                  label={this.renderCustomizedLabel}
+                  innerRadius={isMobile ? 60 : 80}
+                  outerRadius={isMobile ? 160 : 240}
                   data={currentPortfolioAllocation}
+                  label={this.renderCustomizedLabel}
                 >
                   {currentPortfolioAllocation.map((_entry, index) => (
                     <Cell
@@ -764,9 +766,7 @@ class Main extends React.Component<{}, IState> {
         </div>
         <div style={{ marginTop: 24, marginBottom: 48 }}>
           <PageTitle>Top Holders Overview by Coin</PageTitle>
-          <Subtitle>
-            An overview of the holders distribution for each coin.
-          </Subtitle>
+          <Subtitle>An overview of the top holders for each coin.</Subtitle>
           <CoinHoldingsControls>
             <Switch
               style={{
@@ -783,36 +783,7 @@ class Main extends React.Component<{}, IState> {
                   : "Viewing Total Coin Holdings"
               }
             />
-            <CoinDistributionSelect
-              filterable
-              popoverProps={{
-                popoverClassName: "coin-distribution-select",
-              }}
-              items={this.getSortedDistributionSelectMenuOptions()}
-              activeItem={this.state.coinDistributionChartSelection}
-              onItemSelect={(item) => {
-                this.setState({ coinDistributionChartSelection: item });
-              }}
-              itemPredicate={(query, item) => {
-                return item.toLowerCase().includes(query.toLowerCase());
-              }}
-              itemRenderer={(item, { handleClick }) => {
-                const isActive =
-                  item === this.state.coinDistributionChartSelection;
-                return (
-                  <MenuItem
-                    text={item}
-                    disabled={isActive}
-                    onClick={(e: any) => handleClick(e)}
-                  />
-                );
-              }}
-            >
-              <Button
-                rightIcon="caret-down"
-                text={this.state.coinDistributionChartSelection}
-              />
-            </CoinDistributionSelect>
+            {CoinDistributionSelectMenu}
             <Tooltip2
               position="top"
               content={
@@ -860,6 +831,67 @@ class Main extends React.Component<{}, IState> {
             </ResponsiveContainer>
           </ChartContainer>
         </div>
+        <SummaryRow style={{ marginBottom: 75 }}>
+          {this.state.loading ? (
+            <div style={{ height: 200 }}>
+              <span>Loading..</span>
+            </div>
+          ) : (
+            <Card
+              elevation={Elevation.TWO}
+              style={{
+                minHeight: 200,
+                textAlign: "left",
+                width: isMobile ? "95vw" : 400,
+              }}
+            >
+              <>
+                <Row style={{ marginBottom: 6 }}>
+                  <CardTitle>
+                    {this.state.coinDistributionChartSelection} Coin Rankings
+                  </CardTitle>
+                  {CoinDistributionSelectMenu}
+                </Row>
+                <Subtitle>
+                  {this.formatValue(
+                    data.portfolio[this.state.coinDistributionChartSelection]
+                      .numberOfUsersHolding,
+                  )}{" "}
+                  users hold {this.state.coinDistributionChartSelection}.
+                </Subtitle>
+                <Subtitle>Breakdown of top holders at various levels:</Subtitle>
+                {[
+                  ["Top 1", "topOne"],
+                  ["Top 10", "topTen"],
+                  ["Top 100", "topHundred"],
+                  ["Top 1,000", "topThousand"],
+                  ["Top 10,000", "topTenThousand"],
+                ].map((item) => {
+                  const [title, key] = item as [
+                    string,
+                    keyof CoinDistributionLevels,
+                  ];
+                  const { coinPriceMap, coinDistributionChartSelection } =
+                    this.state;
+
+                  const coin = coinDistributionChartSelection;
+                  const price = coinPriceMap[coin];
+                  const levels = data.coinDistributionsLevels;
+                  const amount = levels[coinDistributionChartSelection][key];
+                  const usdValue = price * parseFloat(amount);
+                  const formattedAmount = this.formatValue(amount);
+                  const formattedValue = this.formatValue(usdValue);
+                  const label = `${formattedAmount} tokens ($${formattedValue})`;
+                  return (
+                    <p>
+                      <b>{title}:</b> {`${label}`}
+                    </p>
+                  );
+                })}
+              </>
+            </Card>
+          )}
+        </SummaryRow>
       </Page>
     );
   }
@@ -1219,7 +1251,7 @@ const portfolioPieColors = [
   "#006BA6",
 ];
 
-const colors = [
+const CelsiusColors = [
   "rgb(15, 27, 100)",
   "rgb(112, 31, 191)",
   "rgb(112, 31, 185)",
@@ -1229,7 +1261,7 @@ const colors = [
 ];
 
 const getColor = () => {
-  return colors[Math.floor(Math.random() * colors.length)];
+  return CelsiusColors[Math.floor(Math.random() * CelsiusColors.length)];
 };
 
 const RANDOM_COLOR = getColor();
@@ -1365,6 +1397,53 @@ const CoinHoldingsControls = styled.div`
   justify-content: center;
   flex-direction: row;
 `;
+
+const DialogBodyContent = (
+  <>
+    <b>Observations:</b>
+    <p>
+      • There is a strong preference for users to earn in CEL. Over 75% of BTC
+      holders, which is the largest coin holding (CEL is 2nd), are earning in
+      CEL.
+    </p>
+    <p>
+      • All of the charts appear to follow a power law distribution, with most
+      of users concentrated around a few coins and a long tail of smaller coins
+      with few holders.{" "}
+    </p>
+    <p>
+      • The smallest coins have very few users, e.g. ZUSD only has 3 holders.
+    </p>
+    <p>• The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and USDC.</p>
+    <b>Loyalty Tiers:</b>
+    <p>
+      • I'm not sure if the loyalty tier breakdown is correct. I made a note
+      about this in the <Icon color="rgb(130, 130, 130)" icon="help" /> tooltip
+      next to that pie chart.
+    </p>
+    <b>Source Code:</b>
+    <p>
+      • This project is open source and relies on the public CSV Proof of
+      Community data published by Celsius. You can find the{" "}
+      <a
+        target="__blank"
+        href="https://github.com/bonham000/celsius-rewards-explorer"
+      >
+        project source code on GitHub
+      </a>
+      .
+    </p>
+    <b>By the Way:</b>
+    <p>
+      • If you happen to know anyone at Celsius, I am interested in working for
+      them,{" "}
+      <a target="__blank" href="mailto:sean.smith.2009@gmail.com">
+        this is my contact email
+      </a>{" "}
+      🙂
+    </p>
+  </>
+);
 
 /** ===========================================================================
  * Export

@@ -84,6 +84,7 @@ const customDebugMethod = (
 const metrics: CelsiusRewardsMetrics = {
   portfolio: {},
   coinDistributions: {},
+  coinDistributionsLevels: {},
   loyaltyTierSummary: {
     platinum: 0,
     gold: 0,
@@ -179,12 +180,40 @@ const processCSV = (): void => {
     metrics.stats.averageNumberOfCoinsPerUser =
       averageNumberOfCoinsPerUser.toString();
 
+    const levels = [
+      [0, "topOne"],
+      [10, "topTen"], // Off by 1... should by 9? ... erhm, umm...?
+      [100, "topHundred"],
+      [1000, "topThousand"],
+      [10000, "topTenThousand"],
+    ];
+
     // Sort the coin distributions in place to update them, and then take
     // the top holders only
     for (const [coin, values] of Object.entries(metrics.coinDistributions)) {
       const sortedValues = values.sort((a, b) =>
         new BigNumber(b[1]).minus(a[1]).toNumber(),
       );
+
+      const distributionLevels = {
+        topOne: "0",
+        topTen: "0",
+        topHundred: "0",
+        topThousand: "0",
+        topTenThousand: "0",
+      };
+
+      // Determine the balance held at each level for this coin
+      for (const level of levels) {
+        const [index, key] = level;
+        const value = sortedValues[index];
+        if (value !== undefined) {
+          distributionLevels[key] = value[1];
+        }
+      }
+
+      // Set the distribution levels on the metrics object
+      metrics.coinDistributionsLevels[coin] = distributionLevels;
 
       // Take only the top 100. There are too many holders and the top 1-3
       // whales skew the entire list anyway.
