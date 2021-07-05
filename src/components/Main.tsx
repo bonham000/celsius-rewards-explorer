@@ -296,8 +296,6 @@ class Main extends React.Component<{}, IState> {
     const data = this.getCurrentDataSet();
     const { currentPortfolioAllocation } = this.state;
 
-    console.log(this.state.portfolioAllocations);
-
     const DateRangeSelect = (
       <DateSelect
         items={dateRanges}
@@ -662,12 +660,19 @@ class Main extends React.Component<{}, IState> {
             />
           </PortfolioSelect>
           <PortfolioContainer>
-            <ResponsiveContainer width="100%" height={600} minWidth="0">
-              <PieChart width={isMobile ? 250 : 400} height={400}>
+            <ResponsiveContainer
+              width="100%"
+              height={isMobile ? 450 : 500}
+              minWidth="0"
+            >
+              <PieChart
+                width={isMobile ? 250 : 400}
+                height={isMobile ? 200 : 400}
+              >
                 <Tooltip formatter={this.formatTooltipValue("PORTFOLIO")} />
                 <Pie
-                  cx="55%"
-                  cy={isMobile ? "33%" : "50%"}
+                  cx={isMobile ? "50%" : "55%"}
+                  cy="50%"
                   nameKey="coin"
                   dataKey="value"
                   innerRadius={isMobile ? 60 : 80}
@@ -693,7 +698,7 @@ class Main extends React.Component<{}, IState> {
               style={{
                 minHeight: 300,
                 textAlign: "left",
-                marginRight: 50,
+                marginRight: isMobile ? 0 : 50,
                 width: isMobile ? "95vw" : 600,
               }}
             >
@@ -1161,9 +1166,10 @@ const PortfolioContainer = styled.div`
   align-items: center;
   flex-direction: row;
   width: 80vw;
+  padding-bottom: 50px;
 
   @media ${MOBILE} {
-    width: 100vw;
+    width: auto;
     flex-direction: column;
     justify-content: center;
   }
