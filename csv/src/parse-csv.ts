@@ -27,12 +27,13 @@ import {
  *  See the README for more instructions.
  */
 const DATE_IDENTIFIER = "01";
-const input = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
-const output = `./src/data/${DATE_IDENTIFIER}-rewards.json`;
+const inputFile = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
+const outputFile = `./src/data/${DATE_IDENTIFIER}-rewards.json`;
 const debugFile = "./csv/output/debug.json";
+const debugMeticsFile = "./csv/output/debug-metrics.json";
 
 const lineReaderInterface = readline.createInterface({
-  input: require("fs").createReadStream(input),
+  input: require("fs").createReadStream(inputFile),
 });
 
 const writeJSON = (data: any, filename: string) => {
@@ -82,6 +83,7 @@ const customDebugMethod = (
 // Define metrics object which tracks all of the CSV data
 const metrics: CelsiusRewardsMetrics = {
   portfolio: {},
+  coinDistributions: {},
   loyaltyTierSummary: {
     platinum: 0,
     gold: 0,
@@ -124,9 +126,37 @@ const processCSV = (): void => {
     let data: CoinDataMap;
 
     // Skip header row
-    if (uuid !== "id") {
+    if (uuid === "id") {
       return;
     }
+
+    json = text.slice(index + 1);
+    data = JSON.parse(json);
+
+    // Increment the total user count
+    metrics.stats.totalUsers = new BigNumber(metrics.stats.totalUsers)
+      .plus(1)
+      .toString();
+
+    // Increment the total portfolio coin positions by the number
+    // of coins in this row
+    metrics.stats.totalPortfolioCoinPositions = new BigNumber(
+      metrics.stats.totalPortfolioCoinPositions,
+    )
+      .plus(Object.keys(data).length)
+      .toString();
+
+    // Determine maximum portfolio size
+    const currentMax = new BigNumber(
+      metrics.stats.maximumPortfolioSize,
+    ).toNumber();
+
+    const currentSize = Object.keys(data).length;
+    const newMax = Math.max(currentMax, currentSize);
+    metrics.stats.maximumPortfolioSize = String(newMax);
+
+    // Process the rest of the row data
+    parseCelsiusRewardsData(uuid, data, metrics);
 
     // Exit early if debug is enabled
     if (debug) {
@@ -137,46 +167,10 @@ const processCSV = (): void => {
         writeJSON(debugOutput, debugFile);
         lineReaderInterface.close();
       }
-    } else {
-      json = text.slice(index + 1);
-      data = JSON.parse(json);
-
-      // Increment the total user count
-      metrics.stats.totalUsers = new BigNumber(metrics.stats.totalUsers)
-        .plus(1)
-        .toString();
-
-      // Increment the total portfolio coin positions by the number
-      // of coins in this row
-      metrics.stats.totalPortfolioCoinPositions = new BigNumber(
-        metrics.stats.totalPortfolioCoinPositions,
-      )
-        .plus(Object.keys(data).length)
-        .toString();
-
-      // Determine maximum portfolio size
-      const currentMax = new BigNumber(
-        metrics.stats.maximumPortfolioSize,
-      ).toNumber();
-
-      const currentSize = Object.keys(data).length;
-      const newMax = Math.max(currentMax, currentSize);
-      metrics.stats.maximumPortfolioSize = String(newMax);
-
-      // Process the rest of the row data
-      parseCelsiusRewardsData(data, metrics);
     }
   });
 
   lineReaderInterface.on("close", () => {
-    // Exit early if debug is enabled
-    if (debug) {
-      console.log(
-        `- Exiting early from DEBUG mode - will not update rewards output file: ${output}`,
-      );
-      return;
-    }
-
     // Calculate average coins held per user
     const averageNumberOfCoinsPerUser = new BigNumber(
       metrics.stats.totalPortfolioCoinPositions,
@@ -185,8 +179,28 @@ const processCSV = (): void => {
     metrics.stats.averageNumberOfCoinsPerUser =
       averageNumberOfCoinsPerUser.toString();
 
-    // Write resulting data to JSON
-    writeJSON(metrics, output);
+    // Sort the coin distributions in place to update them, and then take
+    // the top holders only
+    for (const [coin, values] of Object.entries(metrics.coinDistributions)) {
+      const sortedValues = values.sort((a, b) =>
+        new BigNumber(b[1]).minus(a[1]).toNumber(),
+      );
+
+      // Take only the top 100. There are too many holders and the top 1-3
+      // whales skew the entire list anyway.
+      const TOP_HOLDERS_LIMIT = 100;
+
+      metrics.coinDistributions[coin] = sortedValues.slice(
+        0,
+        TOP_HOLDERS_LIMIT,
+      );
+    }
+
+    if (debug) {
+      writeJSON(metrics, debugMeticsFile);
+    } else {
+      writeJSON(metrics, outputFile);
+    }
   });
 };
 

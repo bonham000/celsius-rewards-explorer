@@ -56,6 +56,9 @@ interface PortfolioEntry {
 
 type Portfolio = { [coin: string]: PortfolioEntry };
 
+type CoinDistribution = [string, string][];
+type CoinDistributions = { [coin: string]: CoinDistribution };
+
 interface LoyaltyTierSummary {
   platinum: number;
   gold: number;
@@ -75,6 +78,7 @@ interface Stats {
 export interface CelsiusRewardsMetrics {
   portfolio: Portfolio;
   loyaltyTierSummary: LoyaltyTierSummary;
+  coinDistributions: CoinDistributions;
   stats: Stats;
 }
 
@@ -84,6 +88,7 @@ export interface CelsiusRewardsMetrics {
  */
 
 export const parseCelsiusRewardsData = (
+  uuid: string,
   rewardsData: CoinDataMap,
   metrics: CelsiusRewardsMetrics,
 ) => {
@@ -124,6 +129,11 @@ export const parseCelsiusRewardsData = (
       numberOfUsersHolding: "0",
     };
 
+    // Initialize coin distribution if it does not exist yet
+    if (!(coin in metrics.coinDistributions)) {
+      metrics.coinDistributions[coin] = [];
+    }
+
     // Re-initialize to current value if coin already exists in metrics
     if (coin in metrics.portfolio) {
       const entry = metrics.portfolio[coin];
@@ -150,6 +160,9 @@ export const parseCelsiusRewardsData = (
     totalInterestInCoin = totalInterestInCoin.plus(data.totalInterestInCoin);
     totalInterestInUsd = totalInterestInUsd.plus(data.totalInterestInUsd);
     numberOfUsersHolding = numberOfUsersHolding.plus(1);
+
+    // Add balance to the corresponding coin distribution
+    metrics.coinDistributions[coin].push([uuid, currentBalance]);
 
     // Increment earningInterestInCel value
     if (data.earningInterestInCel) {

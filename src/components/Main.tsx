@@ -53,8 +53,12 @@ interface PortfolioCoinEntry {
 
 type Portfolio = { [coin: string]: PortfolioCoinEntry };
 
+type CoinDistribution = [string, string];
+type CoinDistributions = { [coin: string]: CoinDistribution[] };
+
 interface CelsiusRewardsDataType {
   portfolio: Portfolio;
+  coinDistributions: CoinDistributions;
   loyaltyTierSummary: {
     platinum: number;
     gold: number;
@@ -134,6 +138,7 @@ const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
  *
  * Add additional rewards data here in the future when needed.
  */
+// @ts-ignore
 rewardsDataMap.set(dateRanges[0], rewards_01);
 
 type PortfolioView = "all" | "top" | "bottom";
@@ -141,6 +146,7 @@ type PortfolioView = "all" | "top" | "bottom";
 const DateSelect = Select.ofType<DateRangesType>();
 const ChartSelect = Select.ofType<ChartType>();
 const PortfolioSelect = Select.ofType<PortfolioView>();
+const CoinDistributionSelect = Select.ofType<string>();
 
 interface IState {
   loading: boolean;
@@ -152,6 +158,8 @@ interface IState {
   drawerOpen: boolean;
   totalAssetValue: number | null;
   portfolioView: PortfolioView;
+  displayFiatInDistributionChart: boolean;
+  coinDistributionChartSelection: string;
   portfolioAllocations: PortfolioAllocations;
   currentPortfolioAllocation: PortfolioAllocations;
 }
@@ -177,6 +185,8 @@ class Main extends React.Component<{}, IState> {
       dateRange: dateRanges[0],
       portfolioAllocations: [],
       currentPortfolioAllocation: [],
+      displayFiatInDistributionChart: false,
+      coinDistributionChartSelection: "BTC",
     };
   }
 
@@ -303,6 +313,7 @@ class Main extends React.Component<{}, IState> {
 
   render() {
     const data = this.getCurrentDataSet();
+    const coinHoldersDistribution = this.getHoldersDistributionData();
     const { currentPortfolioAllocation } = this.state;
 
     const DateRangeSelect = (
@@ -640,7 +651,7 @@ class Main extends React.Component<{}, IState> {
         <div style={{ marginTop: 48 }}>
           <PageTitle>Celsian HODLers Portfolio</PageTitle>
           <Subtitle>
-            The total portfolio breakdown of all Celsius users
+            The total portfolio breakdown of all Celsius users.
           </Subtitle>
           <PortfolioSelect
             items={["all", "top", "bottom"]}
@@ -691,7 +702,7 @@ class Main extends React.Component<{}, IState> {
                   label={this.renderCustomizedLabel}
                   data={currentPortfolioAllocation}
                 >
-                  {currentPortfolioAllocation.map((entry, index) => (
+                  {currentPortfolioAllocation.map((_entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={
@@ -750,6 +761,100 @@ class Main extends React.Component<{}, IState> {
               )}
             </Card>
           </PortfolioContainer>
+        </div>
+        <div style={{ marginTop: 24, marginBottom: 48 }}>
+          <PageTitle>Top Holders Overview by Coin</PageTitle>
+          <Subtitle>
+            An overview of the holders distribution for each coin.
+          </Subtitle>
+          <CoinHoldingsControls>
+            <Switch
+              style={{
+                margin: 0,
+                marginRight: 4,
+                width: 225,
+                textAlign: "left",
+              }}
+              checked={this.state.displayFiatInDistributionChart}
+              onChange={this.handleToggleDisplayFiat}
+              label={
+                this.state.displayFiatInDistributionChart
+                  ? "Viewing USD Amount"
+                  : "Viewing Total Coin Holdings"
+              }
+            />
+            <CoinDistributionSelect
+              filterable
+              popoverProps={{
+                popoverClassName: "coin-distribution-select",
+              }}
+              items={this.getSortedDistributionSelectMenuOptions()}
+              activeItem={this.state.coinDistributionChartSelection}
+              onItemSelect={(item) => {
+                this.setState({ coinDistributionChartSelection: item });
+              }}
+              itemPredicate={(query, item) => {
+                return item.toLowerCase().includes(query.toLowerCase());
+              }}
+              itemRenderer={(item, { handleClick }) => {
+                const isActive =
+                  item === this.state.coinDistributionChartSelection;
+                return (
+                  <MenuItem
+                    text={item}
+                    disabled={isActive}
+                    onClick={(e: any) => handleClick(e)}
+                  />
+                );
+              }}
+            >
+              <Button
+                rightIcon="caret-down"
+                text={this.state.coinDistributionChartSelection}
+              />
+            </CoinDistributionSelect>
+            <Tooltip2
+              position="top"
+              content={
+                <div style={{ maxWidth: isMobile ? 300 : 500 }}>
+                  <p>
+                    Only the top 100 holders are displayed. This is because the
+                    distribution is dramatically skewed by the top 1-3 whales
+                    and a long tail of very small holders. The overall number of
+                    holders is also huge, which can be unwieldy to work with and
+                    visualize. Limiting to the top 100 is more practical and
+                    still provides useful insights.
+                  </p>
+                </div>
+              }
+            >
+              <Button style={{ marginLeft: 8 }} icon="help" />
+            </Tooltip2>
+          </CoinHoldingsControls>
+          <ChartContainer style={{ marginTop: 6 }}>
+            <ResponsiveContainer width="100%" height={600} minWidth="0">
+              <BarChart data={coinHoldersDistribution}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  tick={false}
+                  fontSize={10}
+                  dataKey="coin"
+                  label={`Top 100 ${this.state.coinDistributionChartSelection} holders`}
+                />
+                <YAxis
+                  tickCount={10}
+                  domain={[
+                    0,
+                    Math.ceil(parseFloat(coinHoldersDistribution[0].value)),
+                  ]}
+                  tickFormatter={(tick) => tick.toLocaleString()}
+                  fontSize={10}
+                />
+                <Tooltip formatter={this.formatTooltipValue("DISTRIBUTION")} />
+                <Bar dataKey="value" fill={RANDOM_COLOR} />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartContainer>
         </div>
       </Page>
     );
@@ -810,13 +915,34 @@ class Main extends React.Component<{}, IState> {
   };
 
   formatTooltipValue =
-    (chart: "BAR" | "PIE" | "PORTFOLIO") => (value: string) => {
+    (chart: "BAR" | "PIE" | "PORTFOLIO" | "DISTRIBUTION") =>
+    (value: string, _: any, item: any) => {
+      const { displayFiatInDistributionChart } = this.state;
       const formattedValue = this.formatValue(value);
 
       if (chart === "PIE") {
         return `${formattedValue} users`;
       } else if (chart === "PORTFOLIO") {
         return `$${formattedValue}`;
+      } else if (chart === "DISTRIBUTION") {
+        const { uuid } = item.payload;
+        if (displayFiatInDistributionChart) {
+          return (
+            <span>
+              ${formattedValue}
+              <br />
+              Anonymized User ID: {uuid}
+            </span>
+          );
+        } else {
+          return (
+            <span>
+              {formattedValue} total tokens
+              <br />
+              Anonymized User ID: {uuid}
+            </span>
+          );
+        }
       }
 
       switch (this.state.chartType) {
@@ -881,6 +1007,28 @@ class Main extends React.Component<{}, IState> {
     );
   };
 
+  getHoldersDistributionData = () => {
+    const {
+      coinPriceMap,
+      coinDistributionChartSelection,
+      displayFiatInDistributionChart,
+    } = this.state;
+
+    const coin = coinDistributionChartSelection;
+    const price = coinPriceMap[coin];
+    const data = this.getCurrentDataSet();
+    const { coinDistributions } = data;
+    const distributions = coinDistributions[coinDistributionChartSelection];
+
+    return distributions.map(([uuid, amount]) => ({
+      coin,
+      uuid,
+      value: displayFiatInDistributionChart
+        ? String(parseFloat(amount) * price)
+        : amount,
+    }));
+  };
+
   getChartData = () => {
     const { chartType, portfolioAllocations } = this.state;
     let chart = [];
@@ -924,6 +1072,13 @@ class Main extends React.Component<{}, IState> {
     }
   };
 
+  getSortedDistributionSelectMenuOptions = () => {
+    // Just sort the portfolio allocations and return the list of coin keys
+    return this.state.portfolioAllocations
+      .sort((a, b) => b.value - a.value)
+      .map((x) => x.coin);
+  };
+
   getLoyaltyTiersData = () => {
     const data = this.getCurrentDataSet();
     const tiers = Object.entries(data.loyaltyTierSummary).map(
@@ -954,6 +1109,12 @@ class Main extends React.Component<{}, IState> {
   toggleDrawer = () => {
     this.setState((prevState) => ({
       drawerOpen: !prevState.drawerOpen,
+    }));
+  };
+
+  handleToggleDisplayFiat = () => {
+    this.setState((prevState) => ({
+      displayFiatInDistributionChart: !prevState.displayFiatInDistributionChart,
     }));
   };
 
@@ -1192,6 +1353,13 @@ const RightSide = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+`;
+
+const CoinHoldingsControls = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
 `;
 
 /** ===========================================================================

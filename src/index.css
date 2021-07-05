@@ -64,3 +64,8 @@ code {
   color: rgb(244, 65, 171);
   background-color: rgb(225, 225, 225);
 }
+
+.coin-distribution-select ul {
+  max-height: 375px;
+  overflow-y: scroll;
+}
