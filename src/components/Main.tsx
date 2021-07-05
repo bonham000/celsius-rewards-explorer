@@ -809,9 +809,11 @@ class Main extends React.Component<{}, IState> {
           <ChartContainer style={{ marginTop: 6 }}>
             <ResponsiveContainer width="100%" height={600} minWidth="0">
               <BarChart data={coinHoldersDistribution}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 1" />
                 <XAxis
-                  tick={false}
+                  interval={8}
+                  tickLine={false}
+                  tickFormatter={() => ""}
                   fontSize={10}
                   dataKey="coin"
                   label={`Top 100 ${this.state.coinDistributionChartSelection} holders`}
