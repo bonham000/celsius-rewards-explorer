@@ -26,6 +26,7 @@ import {
   Legend,
   Bar,
   Pie,
+  Cell,
   PieChart,
   ResponsiveContainer,
 } from "recharts";
@@ -93,6 +94,8 @@ const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
 
 const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
+type PortfolioAllocations = Array<{ coin: string; value: number }>;
+
 const chartKeyMap = {
   total: {
     title: "Total Value",
@@ -133,8 +136,11 @@ const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
  */
 rewardsDataMap.set(dateRanges[0], rewards_01);
 
+type PortfolioView = "all" | "top" | "bottom";
+
 const DateSelect = Select.ofType<DateRangesType>();
 const ChartSelect = Select.ofType<ChartType>();
+const PortfolioSelect = Select.ofType<PortfolioView>();
 
 interface IState {
   loading: boolean;
@@ -145,6 +151,9 @@ interface IState {
   dateRange: DateRangesType;
   drawerOpen: boolean;
   totalAssetValue: number | null;
+  portfolioView: PortfolioView;
+  portfolioAllocations: PortfolioAllocations;
+  currentPortfolioAllocation: PortfolioAllocations;
 }
 
 /** ===========================================================================
@@ -164,7 +173,10 @@ class Main extends React.Component<{}, IState> {
       coinPriceMap: {},
       chartType: "total",
       totalAssetValue: null,
+      portfolioView: "top",
       dateRange: dateRanges[0],
+      portfolioAllocations: [],
+      currentPortfolioAllocation: [],
     };
   }
 
@@ -212,7 +224,7 @@ class Main extends React.Component<{}, IState> {
           console.log("Using cached price data.");
           this.setState(
             { loading: false, coinPriceMap },
-            this.calculateTotalAssetValue,
+            this.calculateTotalAssetsAndPortfolio,
           );
           return "success";
         }
@@ -249,7 +261,7 @@ class Main extends React.Component<{}, IState> {
     // Update state and calculate total asset value using the new prices
     this.setState({ loading: false, coinPriceMap }, () => {
       this.cacheCoinPriceMap();
-      this.calculateTotalAssetValue();
+      this.calculateTotalAssetsAndPortfolio();
     });
   };
 
@@ -282,6 +294,7 @@ class Main extends React.Component<{}, IState> {
 
   render() {
     const data = this.getCurrentDataSet();
+    const { currentPortfolioAllocation } = this.state;
 
     const DateRangeSelect = (
       <DateSelect
@@ -628,28 +641,143 @@ class Main extends React.Component<{}, IState> {
             </Card>
           </div>
         </SummaryRow>
+        <div style={{ marginTop: 48 }}>
+          <PageTitle>Celsian HODLers Portfolio</PageTitle>
+          <Subtitle>
+            The total portfolio breakdown of all Celsius users
+          </Subtitle>
+          <PortfolioSelect
+            items={["all", "top", "bottom"]}
+            filterable={false}
+            activeItem={this.state.portfolioView}
+            onItemSelect={(item) =>
+              this.setState(
+                { portfolioView: item },
+                this.setCurrentPortfolioAllocations,
+              )
+            }
+            itemRenderer={(item, { handleClick }) => {
+              const isActive = item === this.state.portfolioView;
+              return (
+                <MenuItem
+                  disabled={isActive}
+                  text={getPortfolioSelectText(item)}
+                  onClick={(e: any) => handleClick(e)}
+                />
+              );
+            }}
+          >
+            <Button
+              rightIcon="double-caret-vertical"
+              text={getPortfolioSelectText(this.state.portfolioView)}
+            />
+          </PortfolioSelect>
+          <ChartContainer>
+            <ResponsiveContainer width="100%" height={600} minWidth="0">
+              <PieChart width={isMobile ? 250 : 600} height={600}>
+                <Tooltip formatter={this.formatTooltipValue("PORTFOLIO")} />
+                <Pie
+                  cx="50%"
+                  cy={isMobile ? "33%" : "43%"}
+                  nameKey="coin"
+                  dataKey="value"
+                  innerRadius={isMobile ? 60 : 80}
+                  outerRadius={isMobile ? 160 : 240}
+                  labelLine={false}
+                  isAnimationActive={false}
+                  label={this.renderCustomizedLabel}
+                  data={currentPortfolioAllocation}
+                >
+                  {currentPortfolioAllocation.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={
+                        portfolioPieColors[index % portfolioPieColors.length]
+                      }
+                    />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
       </Page>
     );
   }
 
-  formatTooltipValue = (chart: "BAR" | "PIE") => (value: string) => {
-    const formattedValue = this.formatValue(value);
-
-    if (chart === "PIE") {
-      return `${formattedValue} users`;
+  setCurrentPortfolioAllocations = () => {
+    const { portfolioView, portfolioAllocations } = this.state;
+    let result;
+    switch (portfolioView) {
+      case "all":
+        result = portfolioAllocations;
+        break;
+      case "top":
+        result = portfolioAllocations.slice(0, 15);
+        break;
+      case "bottom":
+        result = portfolioAllocations.slice(20);
+        break;
     }
 
-    switch (this.state.chartType) {
-      case "interest_paid":
-      case "total": {
+    this.setState({ currentPortfolioAllocation: result });
+  };
+
+  renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+  }: any) => {
+    const { currentPortfolioAllocation } = this.state;
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.3;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    const allocation = currentPortfolioAllocation[index];
+
+    if (percent <= 0.01) {
+      return null;
+    }
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        dominantBaseline="central"
+        textAnchor={x > cx ? "start" : "end"}
+      >
+        {`${allocation.coin} ${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
+  formatTooltipValue =
+    (chart: "BAR" | "PIE" | "PORTFOLIO") => (value: string) => {
+      const formattedValue = this.formatValue(value);
+
+      if (chart === "PIE") {
+        return `${formattedValue} users`;
+      } else if (chart === "PORTFOLIO") {
         return `$${formattedValue}`;
       }
-      case "number_of_users":
-      case "earning_in_cel": {
-        return `${formattedValue} users`;
+
+      switch (this.state.chartType) {
+        case "interest_paid":
+        case "total": {
+          return `$${formattedValue}`;
+        }
+        case "number_of_users":
+        case "earning_in_cel": {
+          return `${formattedValue} users`;
+        }
       }
-    }
-  };
+    };
 
   getCurrentDataSet = (): CelsiusRewardsDataType => {
     // Return the data set at the currently selected date range.
@@ -674,11 +802,12 @@ class Main extends React.Component<{}, IState> {
     return portfolio;
   };
 
-  calculateTotalAssetValue = () => {
+  calculateTotalAssetsAndPortfolio = () => {
     const { coinPriceMap } = this.state;
     const dataset = this.getCoinPortfolioEntries();
 
     let sum = 0;
+    const allocations: PortfolioAllocations = [];
 
     for (const [coin, values] of dataset) {
       // Calculate actual USD value using price data
@@ -686,27 +815,29 @@ class Main extends React.Component<{}, IState> {
       const price = coinPriceMap[coin];
       const value = total * price;
 
+      allocations.push({ coin, value });
+
       sum += value;
     }
 
-    this.setState({ totalAssetValue: sum });
+    this.setState(
+      {
+        totalAssetValue: sum,
+        portfolioAllocations: allocations,
+      },
+      this.setCurrentPortfolioAllocations,
+    );
   };
 
   getChartData = () => {
-    const { chartType, coinPriceMap } = this.state;
+    const { chartType, portfolioAllocations } = this.state;
     let chart = [];
 
     const portfolio = this.getCoinPortfolioEntries();
 
     switch (chartType) {
       case "total": {
-        for (const [coin, values] of portfolio) {
-          // Calculate actual USD value using price data
-          const total = parseFloat(values.total);
-          const price = coinPriceMap[coin];
-          const value = total * price;
-          chart.push({ coin, value });
-        }
+        chart = portfolioAllocations;
         break;
       }
       case "interest_paid": {
@@ -819,6 +950,55 @@ const loyaltyTierColors = {
   none: "rgb(50, 50, 50)",
 };
 
+const portfolioPieColors = [
+  "rgb(112, 31, 191)",
+  "rgb(188, 62, 179)",
+  "rgb(244, 65, 171)",
+  "rgb(215, 64, 176)",
+  "rgb(15, 27, 100)",
+  "#027ed1",
+  "#4C66F5",
+  "#4F99FF",
+  "#54B9E8",
+  "#ff5f97",
+  "#f95d6a",
+  "#eb4034",
+  "#ff5b39",
+  "#ff7c43",
+  "#ffa600",
+  "#0A2239",
+  "#003f5c",
+  "#2f4b7c",
+  "#665191",
+  "#8902d1",
+  "#b76fd2",
+  "#a05195",
+  "#d45087",
+  "#11d47c",
+  "#56d162",
+  "#7ace49",
+  "#99c930",
+  "#2a262b",
+  "#4a3243",
+  "#713c54",
+  "#9a465a",
+  "#c15356",
+  "#ffb23e",
+  "#ffbf61",
+  "#ffcb81",
+  "#ffd8a0",
+  "#ffe5c0",
+  "#ff1f55",
+  "#ff0073",
+  "#e6194b",
+  "#2F243A",
+  "#ec4e20",
+  "#FFBC42",
+  "#D81159",
+  "#0496FF",
+  "#006BA6",
+];
+
 const colors = [
   "rgb(15, 27, 100)",
   "rgb(112, 31, 191)",
@@ -833,6 +1013,18 @@ const getColor = () => {
 };
 
 const RANDOM_COLOR = getColor();
+
+const getPortfolioSelectText = (view: PortfolioView) => {
+  let text = "";
+  if (view === "all") {
+    text = "View all coins";
+  } else if (view === "top") {
+    text = "View most held 15 coins only";
+  } else {
+    text = "View least held 20 coins only";
+  }
+  return text;
+};
 
 const MOBILE = `(max-width: 768px)`;
 
