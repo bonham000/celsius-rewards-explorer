@@ -35,6 +35,7 @@
   },
   "DOT": { "id": "polkadot", "symbol": "dot", "name": "Polkadot" },
   "MANA": { "id": "decentraland", "symbol": "mana", "name": "Decentraland" },
+  "BNB": { "id": "binancecoin", "symbol": "bnb", "name": "Binance Coin" },
   "PAXG": { "id": "pax-gold", "symbol": "paxg", "name": "PAX Gold" },
   "SNX": { "id": "havven", "symbol": "snx", "name": "Synthetix Network Token" },
   "UNI": { "id": "uniswap", "symbol": "uni", "name": "Uniswap Token" },

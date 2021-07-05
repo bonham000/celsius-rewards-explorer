@@ -26,7 +26,7 @@ import {
  *
  *  See the README for more instructions.
  */
-const DATE_IDENTIFIER = "01";
+const DATE_IDENTIFIER = "02";
 const inputFile = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
 const outputFile = `./src/data/${DATE_IDENTIFIER}-rewards.json`;
 const debugFile = "./csv/output/debug.json";
@@ -109,7 +109,7 @@ const processCSV = (): void => {
     console.log("- [NOTE]: Running in debug mode.");
   }
 
-  console.log("- Processing CSV file... Please wait a moment.");
+  console.log(`- Processing CSV file: ${inputFile} ... Please wait a moment.`);
 
   // Process CSV line by line
   lineReaderInterface.on("line", (line) => {

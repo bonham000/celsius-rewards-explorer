@@ -42,6 +42,7 @@ The `DATE_IDENTIFIER` is used to identify which rewards dataset is being used cu
 3. Run `yarn csv`.
 4. Add the new date range to `DateRangesType` and `dateRanges` in `Main.tsx`.
 5. Add the dataset to the `rewardsDataMap` map in `Main.tsx`.
+6. You may need to add additional coin data, if the new week's dataset includes new coins. Find the appropriate coin id for the CoinGecko API (https://api.coingecko.com/api/v3/coins/list) and add it to the `coins.json` file.
 
 That's it, the app should then allow users to select that week's date range.
 

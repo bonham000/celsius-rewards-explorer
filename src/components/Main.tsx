@@ -30,6 +30,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import rewards_01 from "../data/01-rewards.json";
+import rewards_02 from "../data/02-rewards.json";
 import coinSymbolMapJSON from "../data/coins.json";
 import originalCSV from "../data/csv-row-sample.json";
 import axios from "axios";
@@ -60,8 +61,8 @@ interface CoinDistributionLevels {
   topTenThousand: string;
 }
 
-type CoinDistribution = [string, string];
-type CoinDistributions = { [coin: string]: CoinDistribution[] };
+type CoinDistribution = Array<string[]>;
+type CoinDistributions = { [coin: string]: CoinDistribution };
 type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
 
 interface CelsiusRewardsDataType {
@@ -142,8 +143,14 @@ const chartKeys = Object.keys(chartKeyMap) as ChartType[];
 /**
  * Add more date ranges here for future weekly datasets.
  */
-type DateRangesType = "June 18, 2021 - June 25, 2021";
-const dateRanges: DateRangesType[] = ["June 18, 2021 - June 25, 2021"];
+type DateRangesType =
+  | "June 18, 2021 - June 25, 2021"
+  | "June 25, 2021 - July 2, 2021";
+
+const dateRanges: DateRangesType[] = [
+  "June 18, 2021 - June 25, 2021",
+  "June 25, 2021 - July 2, 2021",
+];
 
 const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
 
@@ -154,8 +161,8 @@ const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
  *
  * Add additional rewards data here in the future when needed.
  */
-// @ts-ignore
 rewardsDataMap.set(dateRanges[0], rewards_01);
+rewardsDataMap.set(dateRanges[1], rewards_02);
 
 type PortfolioView = "all" | "top" | "bottom";
 
@@ -210,26 +217,35 @@ class Main extends React.Component<{}, IState> {
   }
 
   async componentDidMount() {
-    // First try to restore price data from local cache
-    const didRestorePriceDataFromCache = this.restorePriceDataFromCache();
-
-    // If restoring from the cache, fetch the data.
-    if (didRestorePriceDataFromCache === "failure") {
-      console.log(
-        "Price cache expired or doesn't exist, fetching new prices...",
-      );
-      this.fetchCoinPriceData();
-    }
+    this.initializePriceData();
   }
 
   /**
-   * The prices are cached locally in browser localStorage because the price
-   * data comes from the free CoinGecko API, which is quickly rate-limited.
+   * Handle initalizing the price data. This relies on the CoinGecko API,
+   * so the data is cached locally for UX and to avoid getting rate limited.
    *
-   * In addition, this app doesn't need real-time prices.
+   * This method is called again if the user switches the date range to view
+   * another dataset, because the new dataset may include new coins which
+   * have no previous price data.
    *
-   * The cache is invalidated after 6 hours.
+   * It would be better to have a standardized list of coins which Celsius
+   * supports and allows fetch prices for only these coins.
    */
+  initializePriceData = () => {
+    this.setState({ loading: true }, () => {
+      // First try to restore price data from local cache
+      const didRestorePriceDataFromCache = this.restorePriceDataFromCache();
+
+      // If restoring from the cache, fetch the data.
+      if (didRestorePriceDataFromCache === "failure") {
+        console.log(
+          "Price cache expired or doesn't exist, fetching new prices...",
+        );
+        this.fetchCoinPriceData();
+      }
+    });
+  };
+
   restorePriceDataFromCache = (): "success" | "failure" => {
     const cachedPriceMap = localStorage.getItem(PRICE_MAP_KEY);
     if (cachedPriceMap) {
@@ -346,10 +362,10 @@ class Main extends React.Component<{}, IState> {
            *
            * NOTE: It's possible the new dataset has coins which
            * don't have price data yet (i.e.) did not exist in the
-           * previous dataset. If that happens we would want to re-fetch
+           * previous dataset. If that happens we want to re-fetch
            * coin prices here.
            */
-          this.setState({ dateRange: item });
+          this.setState({ dateRange: item }, this.initializePriceData);
         }}
         itemRenderer={(item, { handleClick }) => {
           const isActive = item === this.state.dateRange;
@@ -366,9 +382,6 @@ class Main extends React.Component<{}, IState> {
           rightIcon="calendar"
           style={{ marginLeft: 4 }}
           text={this.state.dateRange}
-          onClick={() =>
-            this.toast("Only one date range exists currently.", "warning")
-          }
         />
       </DateSelect>
     );
