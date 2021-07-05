@@ -779,8 +779,10 @@ class Main extends React.Component<{}, IState> {
     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
+    // Find the corresponding coin allocation this slice represents
     const allocation = currentPortfolioAllocation[index];
 
+    // Exclude small percentages from having a label (there are too many)
     if (percent <= 0.01) {
       return null;
     }
