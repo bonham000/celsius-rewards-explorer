@@ -850,7 +850,11 @@ class Main extends React.Component<{}, IState> {
                   tickFormatter={(tick) => tick.toLocaleString()}
                   fontSize={10}
                 />
-                <Tooltip formatter={this.formatTooltipValue("DISTRIBUTION")} />
+                {!isMobile && (
+                  <Tooltip
+                    formatter={this.formatTooltipValue("DISTRIBUTION")}
+                  />
+                )}
                 <Bar dataKey="value" fill={RANDOM_COLOR} />
               </BarChart>
             </ResponsiveContainer>
