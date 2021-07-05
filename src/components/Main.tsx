@@ -892,6 +892,27 @@ class Main extends React.Component<{}, IState> {
             </Card>
           )}
         </SummaryRow>
+        <Footer>
+          <p>
+            All of the data displayed here comes from the Celsius Proof of
+            Community CSV. If you find any issues or problems, feel free to
+            bring them up in The Celsians Club Discord or{" "}
+            <a
+              target="__blank"
+              href="https://github.com/bonham000/celsius-rewards-explorer/issues/new"
+            >
+              open an issue on GitHub
+            </a>
+            .
+          </p>
+          <p>
+            This tool is powered by the Celsians Community.{" "}
+            <a target="__blank" href="https://celsius.network/">
+              Visit Celsius
+            </a>{" "}
+            to learn more about how you can unbank yourself.
+          </p>
+        </Footer>
       </Page>
     );
   }
@@ -1396,6 +1417,19 @@ const CoinHoldingsControls = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: row;
+`;
+
+const Footer = styled.div`
+  padding-top: 24px;
+  padding-bottom: 48px;
+  text-align: center;
+  width: 500px;
+  margin: auto;
+  border-top: 1px solid rgba(5, 5, 5, 0.5);
+
+  @media ${MOBILE} {
+    width: 300px;
+  }
 `;
 
 const DialogBodyContent = (
