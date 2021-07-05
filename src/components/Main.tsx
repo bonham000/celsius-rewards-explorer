@@ -108,7 +108,11 @@ const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
 
 const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
-type PortfolioAllocations = Array<{ coin: string; value: number }>;
+type PortfolioAllocations = Array<{
+  coin: string;
+  value: number;
+  numberOfCoins: number;
+}>;
 
 const chartKeyMap = {
   total: {
@@ -546,9 +550,7 @@ class Main extends React.Component<{}, IState> {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis fontSize={10} dataKey="coin" />
                 <YAxis
-                  tickFormatter={(tick) => {
-                    return tick.toLocaleString();
-                  }}
+                  tickFormatter={(tick) => tick.toLocaleString()}
                   fontSize={10}
                 />
                 <Tooltip formatter={this.formatTooltipValue("BAR")} />
@@ -988,8 +990,17 @@ class Main extends React.Component<{}, IState> {
       }
 
       switch (this.state.chartType) {
-        case "interest_paid":
         case "total": {
+          const { coin, numberOfCoins } = item.payload;
+          return (
+            <span>
+              ${formattedValue}
+              <br />
+              {this.formatValue(numberOfCoins)} total {coin}
+            </span>
+          );
+        }
+        case "interest_paid": {
           return `$${formattedValue}`;
         }
         case "number_of_users":
@@ -1035,7 +1046,7 @@ class Main extends React.Component<{}, IState> {
       const price = coinPriceMap[coin];
       const value = total * price;
 
-      allocations.push({ coin, value });
+      allocations.push({ coin, value, numberOfCoins: total });
 
       sum += value;
     }
