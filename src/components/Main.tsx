@@ -173,7 +173,7 @@ class Main extends React.Component<{}, IState> {
       coinPriceMap: {},
       chartType: "total",
       totalAssetValue: null,
-      portfolioView: "top",
+      portfolioView: "all",
       dateRange: dateRanges[0],
       portfolioAllocations: [],
       currentPortfolioAllocation: [],
@@ -296,6 +296,8 @@ class Main extends React.Component<{}, IState> {
     const data = this.getCurrentDataSet();
     const { currentPortfolioAllocation } = this.state;
 
+    console.log(this.state.portfolioAllocations);
+
     const DateRangeSelect = (
       <DateSelect
         items={dateRanges}
@@ -343,25 +345,6 @@ class Main extends React.Component<{}, IState> {
           onClose={() => this.setState({ dialogOpen: false })}
         >
           <div className={Classes.DIALOG_BODY}>
-            <b>Proof of Community:</b>
-            <p>
-              The data on this page is compiled from the recently launched{" "}
-              <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
-                Celsius Proof of Community
-              </a>{" "}
-              feature, which summarizes the Celsius rewards distributions from
-              the week of June 18 to June 25.
-            </p>
-            <p>
-              Link to the{" "}
-              <a
-                target="__blank"
-                href="https://etherscan.io/tx/0xef41ef12b1d1378af48e8f3461efeb98be550cdfd13eca8a49c348fe94d86b79"
-              >
-                Etherscan Proof
-              </a>{" "}
-              of the CSV rewards data.
-            </p>
             <b>Observations:</b>
             <p>
               • There is a strong preference for users to earn in CEL. Over 75%
@@ -569,16 +552,22 @@ class Main extends React.Component<{}, IState> {
                     )}
               </p>
               <p>
-                <b>Average Number of Coins Held Per User:</b>{" "}
-                {this.formatValue(data.stats.averageNumberOfCoinsPerUser)}
+                The data on this page is compiled from the recently launched{" "}
+                <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
+                  Celsius Proof of Community
+                </a>{" "}
+                feature, which summarizes the Celsius rewards distributions from
+                the week of June 18 to June 25.
               </p>
               <p>
-                <b>Maximum Single User Portfolio Holdings:</b>{" "}
-                {this.formatValue(data.stats.maximumPortfolioSize)}
-              </p>
-              <p>
-                This data represents the Celsius Proof of Community dataset and
-                is currently displaying the week of {this.state.dateRange}.
+                Link to the{" "}
+                <a
+                  target="__blank"
+                  href="https://etherscan.io/tx/0xef41ef12b1d1378af48e8f3461efeb98be550cdfd13eca8a49c348fe94d86b79"
+                >
+                  Etherscan Proof
+                </a>{" "}
+                of the CSV rewards data.
               </p>
             </Card>
           </div>
@@ -672,13 +661,13 @@ class Main extends React.Component<{}, IState> {
               text={getPortfolioSelectText(this.state.portfolioView)}
             />
           </PortfolioSelect>
-          <ChartContainer>
+          <PortfolioContainer>
             <ResponsiveContainer width="100%" height={600} minWidth="0">
-              <PieChart width={isMobile ? 250 : 600} height={600}>
+              <PieChart width={isMobile ? 250 : 400} height={400}>
                 <Tooltip formatter={this.formatTooltipValue("PORTFOLIO")} />
                 <Pie
-                  cx="50%"
-                  cy={isMobile ? "33%" : "43%"}
+                  cx="55%"
+                  cy={isMobile ? "33%" : "50%"}
                   nameKey="coin"
                   dataKey="value"
                   innerRadius={isMobile ? 60 : 80}
@@ -699,7 +688,54 @@ class Main extends React.Component<{}, IState> {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-          </ChartContainer>
+            <Card
+              elevation={Elevation.TWO}
+              style={{
+                minHeight: 300,
+                textAlign: "left",
+                marginRight: 50,
+                width: isMobile ? "95vw" : 600,
+              }}
+            >
+              <Row style={{ marginBottom: 6 }}>
+                <CardTitle>Portfolio Stats</CardTitle>
+              </Row>
+              {this.state.portfolioAllocations.length === 0 ? (
+                "Loading..."
+              ) : (
+                <>
+                  <p>
+                    <b>Total Portfolio Value:</b>{" "}
+                    {`$${this.formatValue(String(this.state.totalAssetValue))}`}
+                  </p>
+                  <p>
+                    <b>Total Coins Held:</b>{" "}
+                    {this.formatValue(this.state.portfolioAllocations.length)}
+                  </p>
+                  <p>
+                    <b>Most Held Coin:</b>{" "}
+                    {this.state.portfolioAllocations[0].coin}
+                  </p>
+                  <p>
+                    <b>Least Held Coin:</b>{" "}
+                    {
+                      this.state.portfolioAllocations[
+                        this.state.portfolioAllocations.length - 1
+                      ].coin
+                    }
+                  </p>
+                  <p>
+                    <b>Average Number of Coins Held Per User:</b>{" "}
+                    {this.formatValue(data.stats.averageNumberOfCoinsPerUser)}
+                  </p>
+                  <p>
+                    <b>Maximum Single User Portfolio Holdings:</b>{" "}
+                    {this.formatValue(data.stats.maximumPortfolioSize)}
+                  </p>
+                </>
+              )}
+            </Card>
+          </PortfolioContainer>
         </div>
       </Page>
     );
@@ -916,13 +952,16 @@ class Main extends React.Component<{}, IState> {
     AppToaster.show({ message, className });
   };
 
-  formatValue = (value: string) => {
+  formatValue = (value: string | number) => {
+    const stringValue: string =
+      typeof value === "number" ? String(value) : value;
+
     const options = {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     };
 
-    return parseFloat(value).toLocaleString("en", options);
+    return parseFloat(stringValue).toLocaleString("en", options);
   };
 
   getProjectedAnnualYield = (
@@ -1097,10 +1136,10 @@ const ChartTitleRow = styled.div`
 `;
 
 const SummaryRow = styled.div`
-  padding-left: 60px;
   margin-top: 25px;
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-direction: row;
 
   @media ${MOBILE} {
@@ -1115,6 +1154,19 @@ const Row = styled.div`
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
+`;
+
+const PortfolioContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  width: 80vw;
+
+  @media ${MOBILE} {
+    width: 100vw;
+    flex-direction: column;
+    justify-content: center;
+  }
 `;
 
 const RightSide = styled.div`
