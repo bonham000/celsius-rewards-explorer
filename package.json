@@ -13,7 +13,8 @@
     "eslint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
     "format": "yarn prettier:fix && yarn eslint:fix",
     "lint": "yarn prettier && yarn eslint",
-    "csv": "ts-node csv/src/parse-csv.ts"
+    "csv": "ts-node csv/src/parse-csv.ts",
+    "csv:debug": "ts-node csv/src/parse-csv.ts debug"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.46.0",

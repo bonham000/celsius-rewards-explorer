@@ -47,4 +47,4 @@ That's it, the app should then allow users to select that week's date range.
 
 ### Debugging
 
-The CSV file is huge (over 1GB) and cumbersome to work with. To help with this, there is a `debug` flag in the `parse-csv` file which, if switched on, will only process a few rows of the CSV and also dump out custom data to the `debug.json` file. You can use this to debug and troubleshoot issues processing the rewards data.
+The CSV file is huge (over 1GB) and cumbersome to work with. To help with this, there is a `debug` flag in the `parse-csv` file which, if switched on, will only process a few rows of the CSV and also dump out custom data to the `debug.json` file. To run the CSV parser in debug mode run `yarn csv:debug`.

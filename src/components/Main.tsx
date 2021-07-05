@@ -193,6 +193,14 @@ class Main extends React.Component<{}, IState> {
     }
   }
 
+  /**
+   * The prices are cached locally in browser localStorage because the price
+   * data comes from the free CoinGecko API, which is quickly rate-limited.
+   *
+   * In addition, this app doesn't need real-time prices.
+   *
+   * The cache is invalidated after 6 hours.
+   */
   restorePriceDataFromCache = (): "success" | "failure" => {
     const cachedPriceMap = localStorage.getItem(PRICE_MAP_KEY);
     if (cachedPriceMap) {
@@ -220,6 +228,7 @@ class Main extends React.Component<{}, IState> {
           }
         }
 
+        // Ensure we are still within the 6 hour window
         if (elapsed <= sixHoursInMilliseconds) {
           console.log("Using cached price data.");
           this.setState(

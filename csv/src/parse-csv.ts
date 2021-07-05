@@ -44,16 +44,35 @@ const writeJSON = (data: any, filename: string) => {
 /**
  * Toggle debug mode on/off.
  *
- * Debug mode reads a limited number of lines from the input CSV file,
- * to make debugging the output easier (the CSV file is very large). Debug
- * mode will read up to the max number of lines, as set by the max value
- * below:
+ * Run with the debug flag to run in debug mode, i.e. yarn csv:debug
  */
 let debug = false;
-// debug = true;
+
+// Override with command line flag
+const debugFlag = process.argv[2] === "debug";
+debug = debugFlag;
+
 let count = 0;
 const max = 50;
 const debugOutput = {};
+
+/**
+ * Modify this function to apply custom logic when processing the CSV
+ * records which will be dumped to the debug output JSON file upon
+ * completion.
+ *
+ * This method is give the uuid of a row, the corresponding row data,
+ * and the debugOutput object you can write data to. This object will
+ * later be written into the JSON file.
+ */
+const customDebugMethod = (
+  uuid: string,
+  data: CoinDataMap,
+  debugOutput: any,
+) => {
+  // Add any other custom transformations you want here
+  debugOutput[uuid] = data;
+};
 
 /** ===========================================================================
  * Process the CSV
@@ -80,6 +99,10 @@ const metrics: CelsiusRewardsMetrics = {
 };
 
 const processCSV = (): void => {
+  if (debug) {
+    console.log("- [NOTE]: Running in debug mode.");
+  }
+
   console.log("- Processing CSV file... Please wait a moment.");
 
   // Process CSV line by line
@@ -100,8 +123,21 @@ const processCSV = (): void => {
     let json;
     let data: CoinDataMap;
 
-    // Ignore header row
+    // Skip header row
     if (uuid !== "id") {
+      return;
+    }
+
+    // Exit early if debug is enabled
+    if (debug) {
+      count++;
+      customDebugMethod(uuid, data, debugOutput);
+      if (count === max) {
+        // Write debug file data to JSON
+        writeJSON(debugOutput, debugFile);
+        lineReaderInterface.close();
+      }
+    } else {
       json = text.slice(index + 1);
       data = JSON.parse(json);
 
@@ -130,24 +166,13 @@ const processCSV = (): void => {
       // Process the rest of the row data
       parseCelsiusRewardsData(data, metrics);
     }
-
-    // Exit early if debug is enabled
-    if (debug) {
-      count++;
-      debugOutput[uuid] = data;
-      if (count === max) {
-        // Write debug file data to JSON
-        writeJSON(debugOutput, debugFile);
-        lineReaderInterface.close();
-      }
-    }
   });
 
   lineReaderInterface.on("close", () => {
     // Exit early if debug is enabled
     if (debug) {
       console.log(
-        `Exiting early in DEBUG mode - will not update rewards output file: ${output}`,
+        `- Exiting early from DEBUG mode - will not update rewards output file: ${output}`,
       );
       return;
     }
