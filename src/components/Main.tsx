@@ -1432,6 +1432,12 @@ const DialogBodyContent = (
       </a>
       .
     </p>
+    <b>Original CSV Files:</b>
+    <p>
+      • The CSV files are very large (over 1GB) and are not included in this app
+      or associated codebase. If you want to inspect the data directly, please
+      download the files from Celsius.
+    </p>
     <b>Issues or Bugs:</b>
     <p>
       • All of the data displayed here comes from the Celsius Proof of Community
