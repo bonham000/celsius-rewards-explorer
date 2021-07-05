@@ -24,7 +24,7 @@ $ yarn build
 
 # Working with the CSV Data
 
-This application uses the CSV files provided by the Celsius Proof of Community feature. These CSV files are very large and exist in the `csv/original-csv-data/` folder, which is ignored from version control because the files are so large. To work with the raw data locally following the follow steps:
+This application uses the CSV files provided by the Celsius Proof of Community feature. These CSV files are very large (over 1GB) and exist in the `csv/original-csv-data/` folder, which is ignored from version control because the files are so large. To work with the raw data locally following the follow steps:
 
 1. Download a CSV file from the Celsius Proof of Community Feature.
 2. Open the `parse-csv.ts` file and check the `DATE_IDENTIFIER` value. If the CSV you have is for the most recent dataset, use this identifier. Otherwise, increment the identifier appropriately.

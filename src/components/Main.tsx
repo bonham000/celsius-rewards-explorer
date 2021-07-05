@@ -1450,7 +1450,7 @@ const DialogBodyContent = (
       • If you happen to know anyone at Celsius, I am interested in working for
       them,{" "}
       <a target="__blank" href="mailto:sean.smith.2009@gmail.com">
-        this is my contact email
+        you can reach me here
       </a>{" "}
       🙂
     </p>
