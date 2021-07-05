@@ -909,6 +909,7 @@ class Main extends React.Component<{}, IState> {
                 style={{
                   minHeight: 300,
                   textAlign: "left",
+                  marginTop: isMobile ? 24 : "auto",
                   width: isMobile ? "95vw" : 400,
                 }}
               >
