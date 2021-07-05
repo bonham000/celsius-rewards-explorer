@@ -16306,6 +16306,8 @@
     "maximumPortfolioSize": "35",
     "totalInterestPaidInUsd": "8654546.66680062501285434633952630677729",
     "averageNumberOfCoinsPerUser": "3.08925283327687462477",
-    "totalPortfolioCoinPositions": "921070"
+    "totalPortfolioCoinPositions": "921070",
+    "maxInterestEarned": "217646.30244717287",
+    "averageInterestPerUser": "29.02719968204453757921"
   }
 }

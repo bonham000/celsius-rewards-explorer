@@ -83,6 +83,8 @@ interface Stats {
   averageNumberOfCoinsPerUser: string;
   totalPortfolioCoinPositions: string;
   totalInterestPaidInUsd: string;
+  maxInterestEarned: string;
+  averageInterestPerUser: string;
 }
 
 export interface CelsiusRewardsMetrics {
@@ -106,11 +108,18 @@ export const parseCelsiusRewardsData = (
   let tier = "";
   let isEarningInCel = false;
 
+  let interestPerUser = "0";
+
   // Process the row data and update all the values we want to track
   for (let [coin, data] of Object.entries(rewardsData)) {
     // Get loyalty tier
     tier = data.loyaltyTier.title;
     let interestCoin = data.interestCoin;
+
+    // Add to the interest this user has earned
+    interestPerUser = new BigNumber(data.totalInterestInUsd)
+      .plus(interestPerUser)
+      .toString();
 
     // Convert troublesome coin symbols
     if (coin === "USDT ERC20") {
@@ -216,6 +225,14 @@ export const parseCelsiusRewardsData = (
       .toString();
     metrics.stats.totalInterestPaidInUsd = totalInterest;
   }
+
+  // Increment the total user count
+  const currentMaxInterest = metrics.stats.maxInterestEarned;
+  const maxInterest = Math.max(
+    parseFloat(interestPerUser),
+    parseFloat(currentMaxInterest),
+  );
+  metrics.stats.maxInterestEarned = String(maxInterest);
 
   // Increment the total user count
   metrics.stats.totalUsers = new BigNumber(metrics.stats.totalUsers)

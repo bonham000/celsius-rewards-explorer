@@ -82,6 +82,8 @@ interface CelsiusRewardsDataType {
     totalUsersEarningInCel: string;
     averageNumberOfCoinsPerUser: string;
     totalPortfolioCoinPositions: string;
+    maxInterestEarned: string;
+    averageInterestPerUser: string;
   };
 }
 
@@ -845,59 +847,103 @@ class Main extends React.Component<{}, IState> {
               <span>Loading...</span>
             </div>
           ) : (
-            <Card
-              elevation={Elevation.TWO}
-              style={{
-                minHeight: 200,
-                textAlign: "left",
-                width: isMobile ? "95vw" : 400,
-              }}
-            >
-              <>
-                <Row style={{ marginBottom: 6 }}>
-                  <CardTitle>
-                    {this.state.coinDistributionChartSelection} Coin Rankings
-                  </CardTitle>
-                  {CoinDistributionSelectMenu}
-                </Row>
-                <Subtitle>
-                  {this.formatValue(
-                    data.portfolio[this.state.coinDistributionChartSelection]
-                      .numberOfUsersHolding,
-                  )}{" "}
-                  users hold {this.state.coinDistributionChartSelection}.
-                </Subtitle>
-                <Subtitle>Breakdown of top holders at various levels:</Subtitle>
-                {[
-                  ["Top 1", "topOne"],
-                  ["Top 10", "topTen"],
-                  ["Top 100", "topHundred"],
-                  ["Top 1,000", "topThousand"],
-                  ["Top 10,000", "topTenThousand"],
-                ].map((item) => {
-                  const [title, key] = item as [
-                    string,
-                    keyof CoinDistributionLevels,
-                  ];
-                  const { coinPriceMap, coinDistributionChartSelection } =
-                    this.state;
+            <>
+              <Card
+                elevation={Elevation.TWO}
+                style={{
+                  minHeight: 300,
+                  textAlign: "left",
+                  marginRight: isMobile ? 0 : 24,
+                  width: isMobile ? "95vw" : 400,
+                }}
+              >
+                <>
+                  <Row style={{ marginBottom: 6 }}>
+                    <CardTitle>
+                      {this.state.coinDistributionChartSelection} Coin Rankings
+                    </CardTitle>
+                    {CoinDistributionSelectMenu}
+                  </Row>
+                  <Subtitle>
+                    {this.formatValue(
+                      data.portfolio[this.state.coinDistributionChartSelection]
+                        .numberOfUsersHolding,
+                    )}{" "}
+                    users hold {this.state.coinDistributionChartSelection}.
+                  </Subtitle>
+                  <Subtitle>
+                    Breakdown of top holders at various levels:
+                  </Subtitle>
+                  {[
+                    ["Top 1", "topOne"],
+                    ["Top 10", "topTen"],
+                    ["Top 100", "topHundred"],
+                    ["Top 1,000", "topThousand"],
+                    ["Top 10,000", "topTenThousand"],
+                  ].map((item) => {
+                    const [title, key] = item as [
+                      string,
+                      keyof CoinDistributionLevels,
+                    ];
+                    const { coinPriceMap, coinDistributionChartSelection } =
+                      this.state;
 
-                  const coin = coinDistributionChartSelection;
-                  const price = coinPriceMap[coin];
-                  const levels = data.coinDistributionsLevels;
-                  const amount = levels[coinDistributionChartSelection][key];
-                  const usdValue = price * parseFloat(amount);
-                  const formattedAmount = this.formatValue(amount);
-                  const formattedValue = this.formatValue(usdValue);
-                  const label = `${formattedAmount} tokens ($${formattedValue})`;
-                  return (
-                    <p>
-                      <b>{title}:</b> {`${label}`}
-                    </p>
-                  );
-                })}
-              </>
-            </Card>
+                    const coin = coinDistributionChartSelection;
+                    const price = coinPriceMap[coin];
+                    const levels = data.coinDistributionsLevels;
+                    const amount = levels[coinDistributionChartSelection][key];
+                    const usdValue = price * parseFloat(amount);
+                    const formattedAmount = this.formatValue(amount, 2);
+                    const formattedValue = this.formatValue(usdValue);
+                    const label = `${formattedAmount} tokens ($${formattedValue})`;
+                    return (
+                      <p>
+                        <b>{title}:</b> {`${label}`}
+                      </p>
+                    );
+                  })}
+                </>
+              </Card>
+              <Card
+                elevation={Elevation.TWO}
+                style={{
+                  minHeight: 300,
+                  textAlign: "left",
+                  width: isMobile ? "95vw" : 400,
+                }}
+              >
+                <>
+                  <Row style={{ marginBottom: 6 }}>
+                    <CardTitle>Yield Stats</CardTitle>
+                  </Row>
+                  <Subtitle>Yield is the second killer app of crypto.</Subtitle>
+                  <p>
+                    <b>Total Interest Paid:</b> $
+                    {this.formatValue(data.stats.totalInterestPaidInUsd, 2)}
+                  </p>
+                  <p>
+                    <b>Average Interest Per User:</b> $
+                    {this.formatValue(data.stats.averageInterestPerUser, 2)}
+                  </p>
+                  <p>
+                    <b>Annualized Average Interest Per User:</b> $
+                    {this.formatValue(
+                      parseFloat(data.stats.averageInterestPerUser) * 52,
+                      2,
+                    )}
+                  </p>
+                  <p>
+                    <b>Annualized 52 Week Interest Yield:</b>
+                    {this.state.totalAssetValue === null
+                      ? " Loading..."
+                      : this.getProjectedAnnualYield(
+                          data.stats.totalInterestPaidInUsd,
+                          this.state.totalAssetValue,
+                        )}
+                  </p>
+                </>
+              </Card>
+            </>
           )}
         </SummaryRow>
       </Page>
@@ -1181,13 +1227,13 @@ class Main extends React.Component<{}, IState> {
     AppToaster.show({ message, className });
   };
 
-  formatValue = (value: string | number) => {
+  formatValue = (value: string | number, decimals?: number) => {
     const stringValue: string =
       typeof value === "number" ? String(value) : value;
 
     const options = {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: decimals || 0,
+      maximumFractionDigits: decimals || 0,
     };
 
     return parseFloat(stringValue).toLocaleString("en", options);

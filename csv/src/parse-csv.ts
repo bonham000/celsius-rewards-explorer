@@ -99,6 +99,8 @@ const metrics: CelsiusRewardsMetrics = {
     totalInterestPaidInUsd: "0",
     averageNumberOfCoinsPerUser: "0",
     totalPortfolioCoinPositions: "0",
+    maxInterestEarned: "0",
+    averageInterestPerUser: "0",
   },
 };
 
@@ -170,6 +172,9 @@ const processCSV = (): void => {
     // Sort the coin distributions in place to update them, and then take
     // the top holders only
     for (const [coin, values] of Object.entries(metrics.coinDistributions)) {
+      // NOTE: This sort probably accounts for a lot of the slowness of the
+      // script running. To improve this, the coinDistribution values could
+      // be inserted in order so they don't have to be inserted later.
       const sortedValues = values.sort((a, b) =>
         new BigNumber(b[1]).minus(a[1]).toNumber(),
       );
@@ -190,6 +195,14 @@ const processCSV = (): void => {
           distributionLevels[key] = value[1];
         }
       }
+
+      const { totalUsers, totalInterestPaidInUsd } = metrics.stats;
+
+      // Compute average interest paid per user
+      const averageInterest = new BigNumber(totalInterestPaidInUsd)
+        .dividedBy(totalUsers)
+        .toString();
+      metrics.stats.averageInterestPerUser = averageInterest;
 
       // Set the distribution levels on the metrics object
       metrics.coinDistributionsLevels[coin] = distributionLevels;
