@@ -53,3 +53,7 @@ If you make an update to the logic which transforms the CSV data, all of the CSV
 ### Debugging
 
 The CSV file is huge (over 1GB) and cumbersome to work with. To help with this, there is a `debug` flag in the `parse-csv` file which, if switched on, will only process a few rows of the CSV and also dump out custom data to the `csv/debug` directory. To run the CSV transformation in debug mode run `yarn csv:debug`.
+
+# Contributing
+
+Feel free to make pull requests to this repo. Pull requests can be merged after a review and passing status checks. Any commits to the `main` branch will re-deploy the site.
