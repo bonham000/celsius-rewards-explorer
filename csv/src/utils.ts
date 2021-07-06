@@ -1,114 +1,87 @@
 import BigNumber from "bignumber.js";
-
-/** ===========================================================================
- * Types & Config
- * ============================================================================
- */
-
-interface DistributionData {
-  type: string;
-  dateCoefficient: string;
-  date: string;
-  value: string;
-  newBalance: string;
-  originalInterestCoin: null;
-  regInterestRateBasis: string;
-  regInterestRateAmount: string;
-  specInterestRateBasis: string;
-  specInterestRateAmount: string;
-  totalInterest: string;
-  threshold: string;
-}
-
-type LOYALTY_TIERS = "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | "NONE";
-
-interface LoyaltyTier {
-  title: LOYALTY_TIERS;
-  level: number;
-  minimum_cel_percentage: string;
-  maximum_cel_percentage: string;
-  interest_bonus: string;
-  loan_interest_bonus: string;
-}
-
-export interface CoinData {
-  interestCoin: string;
-  totalInterestInCoin: string;
-  totalInterestInUsd: string;
-  distributionRuleUsed: string;
-  interest_on_first_n_coins: string;
-  earningInterestInCel: boolean;
-  loyaltyTier: LoyaltyTier;
-  distributionData: DistributionData[];
-  originalInterestCoin: string;
-  totalInterestInOriginalInterestCoin: string;
-}
-
-export type CoinDataMap = { [coin: string]: CoinData };
-
-interface PortfolioEntry {
-  total: string;
-  totalEarnInCEL: string;
-  totalInterestInCoin: string;
-  totalInterestInUsd: string;
-  numberOfUsersHolding: string;
-}
-
-interface CoinDistributionLevels {
-  topOne: string;
-  topTen: string;
-  topHundred: string;
-  topThousand: string;
-  topTenThousand: string;
-}
-
-interface InterestEarnedRankings {
-  topOne: string;
-  topTen: string;
-  topHundred: string;
-  topThousand: string;
-  topTenThousand: string;
-}
-
-type Portfolio = { [coin: string]: PortfolioEntry };
-
-type CoinDistribution = [string, string][];
-type CoinDistributions = { [coin: string]: CoinDistribution };
-type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
-
-interface LoyaltyTierSummary {
-  platinum: string;
-  gold: string;
-  silver: string;
-  bronze: string;
-  none: string;
-}
-
-interface Stats {
-  totalUsers: string;
-  totalUsersEarningInCel: string;
-  maximumPortfolioSize: string;
-  averageNumberOfCoinsPerUser: string;
-  totalPortfolioCoinPositions: string;
-  totalInterestPaidInUsd: string;
-  maxInterestEarned: string;
-  averageInterestPerUser: string;
-}
-
-export interface CelsiusRewardsMetrics {
-  portfolio: Portfolio;
-  loyaltyTierSummary: LoyaltyTierSummary;
-  coinDistributions: CoinDistributions;
-  coinDistributionsLevels: CoinDistributionLevelsMap;
-  interestEarnedRankings: InterestEarnedRankings;
-  stats: Stats;
-}
+import { CoinDataMap, CelsiusRewardsMetrics, PortfolioEntry } from "./types";
 
 /** ===========================================================================
  * Parse CSV Row Logic
  * ============================================================================
  */
 
+/**
+ * Define metrics object which tracks all of the CSV data.
+ */
+export const getInitialDefaultGlobalStateValues = () => {
+  const metrics: CelsiusRewardsMetrics = {
+    portfolio: {},
+    coinDistributions: {},
+    coinDistributionsLevels: {},
+    interestEarnedRankings: {
+      topOne: "0",
+      topTen: "0",
+      topHundred: "0",
+      topThousand: "0",
+      topTenThousand: "0",
+    },
+    loyaltyTierSummary: {
+      platinum: "0",
+      gold: "0",
+      silver: "0",
+      bronze: "0",
+      none: "0",
+    },
+    stats: {
+      totalUsers: "0",
+      totalUsersEarningInCel: "0",
+      maximumPortfolioSize: "0",
+      totalInterestPaidInUsd: "0",
+      averageNumberOfCoinsPerUser: "0",
+      totalPortfolioCoinPositions: "0",
+      maxInterestEarned: "0",
+      averageInterestPerUser: "0",
+    },
+  };
+
+  const interestEarnedPerUserList: string[] = [];
+
+  return { metrics, interestEarnedPerUserList };
+};
+
+/**
+ * Preprocess the CSV row and extract the uuid and the JSON string
+ * of rewards data.
+ */
+export const preprocessCsvRow = (
+  line: string,
+): { uuid: string; data: CoinDataMap } | null => {
+  const text = line;
+  let index = 0;
+
+  // Find the first comma to extract the uuid
+  // Although they are all probably the same length...
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === ",") {
+      index = i;
+      break;
+    }
+  }
+
+  const uuid = text.slice(0, index);
+  let json;
+  let data: CoinDataMap;
+
+  // Skip header row
+  if (uuid === "id") {
+    return null;
+  }
+
+  json = text.slice(index + 1);
+  data = JSON.parse(json);
+
+  return { uuid, data };
+};
+
+/**
+ * Handle processing an individual CSV row of data.
+ */
 export const processIndividualUserRewardsRecord = (
   uuid: string,
   rewardsData: CoinDataMap,
@@ -293,5 +266,87 @@ export const processIndividualUserRewardsRecord = (
       .toString();
   } else {
     console.warn(`Unexpected loyalty tier title found: ${tier}`);
+  }
+};
+
+/**
+ * Perform summary logic once all the CSV rows have been processed.
+ */
+export const onLineReaderClose = (
+  metrics: CelsiusRewardsMetrics,
+  interestEarnedPerUserList: string[],
+) => {
+  // Calculate average coins held per user
+  const averageNumberOfCoinsPerUser = new BigNumber(
+    metrics.stats.totalPortfolioCoinPositions,
+  ).dividedBy(metrics.stats.totalUsers);
+
+  metrics.stats.averageNumberOfCoinsPerUser =
+    averageNumberOfCoinsPerUser.toString();
+
+  const levels = [
+    [0, "topOne"],
+    [10, "topTen"], // Off by 1... should by 9? ... erhm, umm...?
+    [100, "topHundred"],
+    [1000, "topThousand"],
+    [10000, "topTenThousand"],
+  ];
+
+  // Sort the coin distributions in place to update them, and then take
+  // the top holders only
+  for (const [coin, values] of Object.entries(metrics.coinDistributions)) {
+    // NOTE: Use parseFloat for these sort comparisons is much faster than
+    // converted the values back using BigNumber and comparing them that way.
+    const sortedValues = values.sort(
+      (a, b) => parseFloat(b[1]) - parseFloat(a[1]),
+    );
+
+    const distributionLevels = {
+      topOne: "0",
+      topTen: "0",
+      topHundred: "0",
+      topThousand: "0",
+      topTenThousand: "0",
+    };
+
+    // Determine the balance held at each level for this coin
+    for (const level of levels) {
+      const [index, key] = level;
+      const value = sortedValues[index];
+      if (value !== undefined) {
+        distributionLevels[key] = value[1];
+      }
+    }
+
+    // Sort the interest earned list
+    const sortedInterestList = interestEarnedPerUserList.sort(
+      (a, b) => parseFloat(b) - parseFloat(a),
+    );
+
+    // Fill in the interest earned rankings
+    for (const level of levels) {
+      const [index, key] = level;
+      const value = sortedInterestList[index];
+      if (value !== undefined) {
+        metrics.interestEarnedRankings[key] = value;
+      }
+    }
+
+    const { totalUsers, totalInterestPaidInUsd } = metrics.stats;
+
+    // Compute average interest paid per user
+    const averageInterest = new BigNumber(totalInterestPaidInUsd)
+      .dividedBy(totalUsers)
+      .toString();
+    metrics.stats.averageInterestPerUser = averageInterest;
+
+    // Set the distribution levels on the metrics object
+    metrics.coinDistributionsLevels[coin] = distributionLevels;
+
+    // Take only the top 100. There are too many holders and the top 1-3
+    // whales skew the entire list anyway.
+    const TOP_HOLDERS_LIMIT = 100;
+
+    metrics.coinDistributions[coin] = sortedValues.slice(0, TOP_HOLDERS_LIMIT);
   }
 };

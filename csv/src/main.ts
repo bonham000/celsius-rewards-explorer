@@ -1,9 +1,10 @@
-import BigNumber from "bignumber.js";
 import fs from "fs";
 import readline from "readline";
+import { CoinDataMap } from "./types";
 import {
-  CelsiusRewardsMetrics,
-  CoinDataMap,
+  getInitialDefaultGlobalStateValues,
+  onLineReaderClose,
+  preprocessCsvRow,
   processIndividualUserRewardsRecord,
 } from "./utils";
 
@@ -123,48 +124,10 @@ const customDebugMethod = (
  * ============================================================================
  */
 
-// Define metrics object which tracks all of the CSV data
-const getInitialDefaultGlobalStateValues = () => {
-  const metrics: CelsiusRewardsMetrics = {
-    portfolio: {},
-    coinDistributions: {},
-    coinDistributionsLevels: {},
-    interestEarnedRankings: {
-      topOne: "0",
-      topTen: "0",
-      topHundred: "0",
-      topThousand: "0",
-      topTenThousand: "0",
-    },
-    loyaltyTierSummary: {
-      platinum: "0",
-      gold: "0",
-      silver: "0",
-      bronze: "0",
-      none: "0",
-    },
-    stats: {
-      totalUsers: "0",
-      totalUsersEarningInCel: "0",
-      maximumPortfolioSize: "0",
-      totalInterestPaidInUsd: "0",
-      averageNumberOfCoinsPerUser: "0",
-      totalPortfolioCoinPositions: "0",
-      maxInterestEarned: "0",
-      averageInterestPerUser: "0",
-    },
-  };
-
-  const interestEarnedPerUserList: string[] = [];
-
-  return { metrics, interestEarnedPerUserList };
-};
-
-const processCSV = (csvFileKey: string): void => {
+const main = (csvFileKey: string): void => {
   // Initialize a new metrics object for tallying up the results
   const state = getInitialDefaultGlobalStateValues();
   const { metrics, interestEarnedPerUserList } = state;
-
   const { inputFile, outputFile } = getFileNames(csvFileKey);
 
   // Read the CSV data using the NodeJS stream interface
@@ -176,29 +139,13 @@ const processCSV = (csvFileKey: string): void => {
 
   // Process CSV line by line
   lineReaderInterface.on("line", (line) => {
-    const text = line;
-    let index = 0;
+    const result = preprocessCsvRow(line);
 
-    // Find the first comma to extract the uuid
-    // Although they are all probably the same length...
-    for (let i = 0; i < text.length; i++) {
-      if (text[i] === ",") {
-        index = i;
-        break;
-      }
-    }
-
-    const uuid = text.slice(0, index);
-    let json;
-    let data: CoinDataMap;
-
-    // Skip header row
-    if (uuid === "id") {
+    if (result === null) {
       return;
     }
 
-    json = text.slice(index + 1);
-    data = JSON.parse(json);
+    const { uuid, data } = result;
 
     // Process the rest of the row data
     processIndividualUserRewardsRecord(
@@ -229,82 +176,8 @@ const processCSV = (csvFileKey: string): void => {
       "- Finished processing row data. Now working on some summary stats.",
     );
 
-    // Calculate average coins held per user
-    const averageNumberOfCoinsPerUser = new BigNumber(
-      metrics.stats.totalPortfolioCoinPositions,
-    ).dividedBy(metrics.stats.totalUsers);
-
-    metrics.stats.averageNumberOfCoinsPerUser =
-      averageNumberOfCoinsPerUser.toString();
-
-    const levels = [
-      [0, "topOne"],
-      [10, "topTen"], // Off by 1... should by 9? ... erhm, umm...?
-      [100, "topHundred"],
-      [1000, "topThousand"],
-      [10000, "topTenThousand"],
-    ];
-
-    // Sort the coin distributions in place to update them, and then take
-    // the top holders only
-    for (const [coin, values] of Object.entries(metrics.coinDistributions)) {
-      // NOTE: Use parseFloat for these sort comparisons is much faster than
-      // converted the values back using BigNumber and comparing them that way.
-      const sortedValues = values.sort(
-        (a, b) => parseFloat(b[1]) - parseFloat(a[1]),
-      );
-
-      const distributionLevels = {
-        topOne: "0",
-        topTen: "0",
-        topHundred: "0",
-        topThousand: "0",
-        topTenThousand: "0",
-      };
-
-      // Determine the balance held at each level for this coin
-      for (const level of levels) {
-        const [index, key] = level;
-        const value = sortedValues[index];
-        if (value !== undefined) {
-          distributionLevels[key] = value[1];
-        }
-      }
-
-      // Sort the interest earned list
-      const sortedInterestList = interestEarnedPerUserList.sort(
-        (a, b) => parseFloat(b) - parseFloat(a),
-      );
-
-      // Fill in the interest earned rankings
-      for (const level of levels) {
-        const [index, key] = level;
-        const value = sortedInterestList[index];
-        if (value !== undefined) {
-          metrics.interestEarnedRankings[key] = value;
-        }
-      }
-
-      const { totalUsers, totalInterestPaidInUsd } = metrics.stats;
-
-      // Compute average interest paid per user
-      const averageInterest = new BigNumber(totalInterestPaidInUsd)
-        .dividedBy(totalUsers)
-        .toString();
-      metrics.stats.averageInterestPerUser = averageInterest;
-
-      // Set the distribution levels on the metrics object
-      metrics.coinDistributionsLevels[coin] = distributionLevels;
-
-      // Take only the top 100. There are too many holders and the top 1-3
-      // whales skew the entire list anyway.
-      const TOP_HOLDERS_LIMIT = 100;
-
-      metrics.coinDistributions[coin] = sortedValues.slice(
-        0,
-        TOP_HOLDERS_LIMIT,
-      );
-    }
+    // Running summary logic on reader close
+    onLineReaderClose(metrics, interestEarnedPerUserList);
 
     console.log("- Data processed. Ready to save the results.");
 
@@ -323,7 +196,7 @@ const processCSV = (csvFileKey: string): void => {
         console.log(
           `\n- Completed processing ${inputFile}, moving on to next file key: ${next}.`,
         );
-        processCSV(next);
+        main(next);
       } else {
         console.log("\n- All files processed. Exiting.\n");
       }
@@ -331,4 +204,5 @@ const processCSV = (csvFileKey: string): void => {
   });
 };
 
-processCSV(DATE_IDENTIFIER);
+// Run the script
+main(DATE_IDENTIFIER);
