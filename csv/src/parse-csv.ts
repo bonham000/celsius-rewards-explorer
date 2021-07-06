@@ -124,7 +124,7 @@ const customDebugMethod = (
  */
 
 // Define metrics object which tracks all of the CSV data
-const getInitialMetrics = () => {
+const getInitialDefaultGlobalStateValues = () => {
   const metrics: CelsiusRewardsMetrics = {
     portfolio: {},
     coinDistributions: {},
@@ -155,14 +155,15 @@ const getInitialMetrics = () => {
     },
   };
 
-  return metrics;
-};
+  const interestEarnedPerUserList: string[] = [];
 
-const interestEarnedPerUserList: string[] = [];
+  return { metrics, interestEarnedPerUserList };
+};
 
 const processCSV = (csvFileKey: string): void => {
   // Initialize a new metrics object for tallying up the results
-  const metrics = getInitialMetrics();
+  const state = getInitialDefaultGlobalStateValues();
+  const { metrics, interestEarnedPerUserList } = state;
 
   const { inputFile, outputFile } = getFileNames(csvFileKey);
 
