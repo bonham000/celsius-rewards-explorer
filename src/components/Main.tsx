@@ -13,6 +13,7 @@ import {
   Switch,
   Toaster,
   FocusStyleManager,
+  Toast,
 } from "@blueprintjs/core";
 import styled from "styled-components";
 import { Select } from "@blueprintjs/select";
@@ -35,8 +36,6 @@ import coinSymbolMapJSON from "../data/coins.json";
 import originalCSV from "../data/csv-row-sample.json";
 import axios from "axios";
 import JSONPretty from "react-json-pretty";
-
-FocusStyleManager.onlyShowFocusOnTabs();
 
 /** ===========================================================================
  * JSON rewards data type
@@ -102,10 +101,8 @@ interface CelsiusRewardsDataType {
  * ============================================================================
  */
 
-const AppToaster = Toaster.create({
-  className: "app-toaster",
-  position: Position.TOP,
-});
+// Disable focus styles when clicking Blueprint elements
+FocusStyleManager.onlyShowFocusOnTabs();
 
 interface CoinGeckoCoin {
   id: string;
@@ -181,6 +178,7 @@ const PortfolioSelect = Select.ofType<PortfolioView>();
 const CoinDistributionSelect = Select.ofType<string>();
 
 interface IState {
+  toasts: any[];
   loading: boolean;
   dialogOpen: boolean;
   viewTopCoins: boolean;
@@ -205,10 +203,17 @@ interface IState {
  */
 
 class Main extends React.Component<{}, IState> {
+  // @ts-ignore
+  private toaster: Toaster;
+  private refHandlers = {
+    toaster: (ref: Toaster) => (this.toaster = ref),
+  };
+
   constructor(props: {}) {
     super(props);
 
     this.state = {
+      toasts: [],
       loading: true,
       drawerOpen: false,
       viewTopCoins: true,
@@ -482,6 +487,11 @@ class Main extends React.Component<{}, IState> {
 
     return (
       <Page>
+        <Toaster position={Position.TOP_RIGHT} ref={this.refHandlers.toaster}>
+          {this.state.toasts.map((toast) => (
+            <Toast {...toast} />
+          ))}
+        </Toaster>
         <Dialog
           canEscapeKeyClose
           canOutsideClickClose
@@ -851,7 +861,11 @@ class Main extends React.Component<{}, IState> {
                     formatter={this.formatTooltipValue("DISTRIBUTION")}
                   />
                 )}
-                <Bar dataKey="value" fill={RANDOM_COLOR} />
+                <Bar
+                  onClick={this.handleClickDistributionBar}
+                  dataKey="value"
+                  fill={RANDOM_COLOR}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -1026,6 +1040,12 @@ class Main extends React.Component<{}, IState> {
         {`${allocation.coin} ${(percent * 100).toFixed(0)}%`}
       </text>
     );
+  };
+
+  handleClickDistributionBar = (data: any) => {
+    const { uuid } = data.payload;
+    copyToClipboard(uuid);
+    this.toast(`"${uuid}" copied to clipboard.`);
   };
 
   formatTooltipValue =
@@ -1248,7 +1268,9 @@ class Main extends React.Component<{}, IState> {
         ? Classes.INTENT_DANGER
         : "";
 
-    AppToaster.show({ message, className });
+    if (this.toaster) {
+      this.toaster.show({ message, className });
+    }
   };
 
   formatValue = (value: string | number, decimals?: number) => {
@@ -1543,6 +1565,16 @@ const DialogBodyContent = (
     </p>
   </>
 );
+
+// Copy some text to the clipboard
+const copyToClipboard = (text: string) => {
+  const el = document.createElement("textarea");
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+};
 
 /** ===========================================================================
  * Export

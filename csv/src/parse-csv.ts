@@ -72,13 +72,21 @@ const debugOutput = {};
  * This method is give the uuid of a row, the corresponding row data,
  * and the debugOutput object you can write data to. This object will
  * later be written into the JSON file.
+ *
+ * Some examples of what you can do are in the method body.
  */
 const customDebugMethod = (
   uuid: string,
   data: CoinDataMap,
   debugOutput: any,
 ) => {
-  // Add any other custom transformations you want here
+  // e.g. record a user with a specific uuid
+  if (uuid === "<the uuid of interest here>") {
+    // Add any other custom transformations you want here
+    debugOutput[uuid] = data;
+  }
+
+  // or just record all uuids
   debugOutput[uuid] = data;
 };
 
@@ -262,6 +270,9 @@ const processCSV = (): void => {
     console.log("- Data processed. Ready to save the results.");
 
     if (debug) {
+      // Save custom debug output
+      writeJSON(debugOutput, debugFile);
+      // Save metrics to debug metrics file
       writeJSON(metrics, debugMeticsFile);
     } else {
       writeJSON(metrics, outputFile);
