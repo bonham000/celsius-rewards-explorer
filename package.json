@@ -14,6 +14,7 @@
     "format": "yarn prettier:fix && yarn eslint:fix",
     "lint": "yarn prettier && yarn eslint",
     "csv": "ts-node csv/src/parse-csv.ts",
+    "csv:all": "ts-node csv/src/parse-csv.ts all",
     "csv:debug": "ts-node csv/src/parse-csv.ts debug"
   },
   "dependencies": {

@@ -7,10 +7,19 @@ import {
   processIndividualUserRewardsRecord,
 } from "./utils";
 
+// Read command argument
+const commandArgument = process.argv[2];
+
+const runAll = commandArgument === "all";
+
+if (runAll) {
+  console.log("- NOTE: Processing all CSV files.\n");
+}
+
 /**
  * Increment the identifier when adding a future CSV file.
  *
- * NOTE: This DATE_IDENTIFIER is used to identify the CSV which is currently
+ * NOTE: This CSV_KEYS array is used to identify the CSV which is currently
  * being processed. The CSV files each represent a week's worth of rewards
  * and the idea here is to just increment them as the move into the future,
  * e.g. the next week would have an identifier of "02". This identifier
@@ -20,15 +29,26 @@ import {
  *
  * "01" corresponds to the first week's data set, which is from June 18 -15.
  * This value simply increments for future weeks, e.g. the next (2nd) week
- * would correspond to "02". After updating the DATE_IDENTIFIER here and
- * building the output dataset, you would need to add the new data range
- * to the Main.tsx app file and import the new dataset there.
+ * would correspond to "02". To add a new dataset, add the next identifier
+ * key in the CSV_KEYS array.
  *
  * See the README for more instructions.
  */
-const DATE_IDENTIFIER = "02";
-const inputFile = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
-const outputFile = `./src/data/${DATE_IDENTIFIER}-rewards.json`;
+const CSV_KEYS = ["01", "02"];
+
+// Current date identifier is the last entry in the list
+const DATE_IDENTIFIER = CSV_KEYS.pop();
+
+const getFileNames = (identifier: string) => {
+  const inputFile = `csv/original-csv-data/${identifier}-rewards.csv`;
+  const outputFile = `./src/data/${identifier}-rewards.json`;
+
+  return {
+    inputFile,
+    outputFile,
+  };
+};
+
 const debugFile = "./csv/debug/debug-output.json";
 const debugMeticsFile = "./csv/debug/rewards-metrics.json";
 
@@ -36,11 +56,6 @@ const debugMeticsFile = "./csv/debug/rewards-metrics.json";
 if (!fs.existsSync("csv/debug")) {
   fs.mkdirSync("csv/debug");
 }
-
-// Read the CSV data using the NodeJS stream interface
-const lineReaderInterface = readline.createInterface({
-  input: require("fs").createReadStream(inputFile),
-});
 
 // Write resulting data to JSON files
 const writeJSON = (data: any, filename: string) => {
@@ -57,8 +72,11 @@ const writeJSON = (data: any, filename: string) => {
 let debug = false;
 
 // Override with command line flag
-const debugFlag = process.argv[2] === "debug";
-debug = debugFlag;
+debug = commandArgument === "debug";
+
+if (debug) {
+  console.log("- [NOTE]: Running in debug mode.\n");
+}
 
 let count = 0;
 const max = 100;
@@ -128,10 +146,13 @@ const metrics: CelsiusRewardsMetrics = {
 
 const interestEarnedPerUserList: string[] = [];
 
-const processCSV = (): void => {
-  if (debug) {
-    console.log("- [NOTE]: Running in debug mode.");
-  }
+const processCSV = (csvFileKey: string): void => {
+  const { inputFile, outputFile } = getFileNames(csvFileKey);
+
+  // Read the CSV data using the NodeJS stream interface
+  const lineReaderInterface = readline.createInterface({
+    input: require("fs").createReadStream(inputFile),
+  });
 
   console.log(`- Processing CSV file: ${inputFile} ... Please wait a moment.`);
 
@@ -277,7 +298,19 @@ const processCSV = (): void => {
     } else {
       writeJSON(metrics, outputFile);
     }
+
+    if (runAll) {
+      if (CSV_KEYS.length > 0) {
+        const next = CSV_KEYS.pop();
+        console.log(
+          `\n- Completed processing ${inputFile}, moving on to next file key: ${next}.`,
+        );
+        processCSV(next);
+      } else {
+        console.log("\n- All files processed. Exiting.\n");
+      }
+    }
   });
 };
 
-processCSV();
+processCSV(DATE_IDENTIFIER);
