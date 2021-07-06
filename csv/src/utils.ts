@@ -49,7 +49,9 @@ export const getInitialDefaultGlobalStateValues = () => {
  * Preprocess the CSV row and extract the uuid and the JSON string
  * of rewards data.
  */
-export const preprocessCsvRow = (line: string) => {
+export const preprocessCsvRow = (
+  line: string,
+): { uuid: string; data: CoinDataMap } | null => {
   const text = line;
   let index = 0;
 
@@ -68,7 +70,7 @@ export const preprocessCsvRow = (line: string) => {
 
   // Skip header row
   if (uuid === "id") {
-    return;
+    return null;
   }
 
   json = text.slice(index + 1);

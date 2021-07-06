@@ -139,7 +139,13 @@ const main = (csvFileKey: string): void => {
 
   // Process CSV line by line
   lineReaderInterface.on("line", (line) => {
-    const { uuid, data } = preprocessCsvRow(line);
+    const result = preprocessCsvRow(line);
+
+    if (result === null) {
+      return;
+    }
+
+    const { uuid, data } = result;
 
     // Process the rest of the row data
     processIndividualUserRewardsRecord(
