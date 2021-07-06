@@ -24,4 +24,4 @@ yarn-error.log*
 
 # CSV files
 csv/original-csv-data
-csv/output
+csv/debug

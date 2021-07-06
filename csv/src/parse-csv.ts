@@ -4,7 +4,7 @@ import readline from "readline";
 import {
   CelsiusRewardsMetrics,
   CoinDataMap,
-  parseCelsiusRewardsData,
+  processIndividualUserRewardsRecord,
 } from "./utils";
 
 /**
@@ -29,13 +29,20 @@ import {
 const DATE_IDENTIFIER = "02";
 const inputFile = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
 const outputFile = `./src/data/${DATE_IDENTIFIER}-rewards.json`;
-const debugFile = "./csv/output/debug.json";
-const debugMeticsFile = "./csv/output/debug-metrics.json";
+const debugFile = "./csv/debug/debug-output.json";
+const debugMeticsFile = "./csv/debug/rewards-metrics.json";
 
+// Create the debug output directory if it doesn't exist yet
+if (!fs.existsSync("csv/debug")) {
+  fs.mkdirSync("csv/debug");
+}
+
+// Read the CSV data using the NodeJS stream interface
 const lineReaderInterface = readline.createInterface({
   input: require("fs").createReadStream(inputFile),
 });
 
+// Write resulting data to JSON files
 const writeJSON = (data: any, filename: string) => {
   console.log(`- Done! Writing result to file: ${filename}`);
   const jsonString = JSON.stringify(data, null, 2);
@@ -54,7 +61,7 @@ const debugFlag = process.argv[2] === "debug";
 debug = debugFlag;
 
 let count = 0;
-const max = 500;
+const max = 50;
 const debugOutput = {};
 
 /**
@@ -138,7 +145,7 @@ const processCSV = (): void => {
     data = JSON.parse(json);
 
     // Process the rest of the row data
-    parseCelsiusRewardsData(uuid, data, metrics);
+    processIndividualUserRewardsRecord(uuid, data, metrics);
 
     // Exit early if debug is enabled
     if (debug) {
@@ -152,6 +159,10 @@ const processCSV = (): void => {
     }
   });
 
+  /**
+   * On close, some summary metrics are recorded and then the resulting
+   * data is written to files as JSON.
+   */
   lineReaderInterface.on("close", () => {
     // Calculate average coins held per user
     const averageNumberOfCoinsPerUser = new BigNumber(

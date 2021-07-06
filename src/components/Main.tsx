@@ -627,8 +627,8 @@ class Main extends React.Component<{}, IState> {
                 <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
                   Celsius Proof of Community
                 </a>{" "}
-                feature, which summarizes the Celsius rewards distributions from
-                the week of June 18 to June 25.
+                feature, which summarizes the weekly Celsius rewards
+                distributions.
               </p>
             </Card>
           </div>

@@ -100,7 +100,7 @@ export interface CelsiusRewardsMetrics {
  * ============================================================================
  */
 
-export const parseCelsiusRewardsData = (
+export const processIndividualUserRewardsRecord = (
   uuid: string,
   rewardsData: CoinDataMap,
   metrics: CelsiusRewardsMetrics,
