@@ -61,7 +61,7 @@ const debugFlag = process.argv[2] === "debug";
 debug = debugFlag;
 
 let count = 0;
-const max = 500;
+const max = 100;
 const debugOutput = {};
 
 /**
