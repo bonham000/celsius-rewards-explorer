@@ -30,6 +30,8 @@ import {
   Cell,
   PieChart,
   ResponsiveContainer,
+  Line,
+  LineChart,
 } from "recharts";
 import rewards_01 from "../data/01-rewards.json";
 import rewards_02 from "../data/02-rewards.json";
@@ -173,10 +175,13 @@ rewardsDataMap.set(dateRanges[1], rewards_02);
 
 type PortfolioView = "all" | "top" | "bottom";
 
+type TimeLapseChartView = "holders" | "tokens";
+
 const DateSelect = Select.ofType<DateRangesType>();
 const ChartSelect = Select.ofType<ChartType>();
 const PortfolioSelect = Select.ofType<PortfolioView>();
 const CoinDistributionSelect = Select.ofType<string>();
+const TimeLapseSelect = Select.ofType<string>();
 
 interface IState {
   toasts: any[];
@@ -189,8 +194,10 @@ interface IState {
   drawerOpen: boolean;
   totalAssetValue: number | null;
   portfolioView: PortfolioView;
+  timeLapseChartSelection: string;
   displayFiatInDistributionChart: boolean;
   coinDistributionChartSelection: string;
+  timeLapseChartView: TimeLapseChartView;
   portfolioAllocations: PortfolioAllocations;
   currentPortfolioAllocation: PortfolioAllocations;
 }
@@ -225,7 +232,9 @@ class Main extends React.Component<{}, IState> {
       portfolioView: "all",
       portfolioAllocations: [],
       currentPortfolioAllocation: [],
+      timeLapseChartView: "tokens",
       displayFiatInDistributionChart: false,
+      timeLapseChartSelection: "CEL",
       coinDistributionChartSelection: "CEL",
       dateRange: dateRanges[dateRanges.length - 1],
     };
@@ -1006,6 +1015,9 @@ class Main extends React.Component<{}, IState> {
             </>
           )}
         </SummaryRow>
+        {/* Enable this in the future to display the time lapse chart,
+            e.g. when we have more data series to view. */}
+        {2 > 3 && this.renderTimeLapsePortfolioChart()}
       </Page>
     );
   }
@@ -1071,7 +1083,7 @@ class Main extends React.Component<{}, IState> {
   };
 
   formatTooltipValue =
-    (chart: "BAR" | "PIE" | "PORTFOLIO" | "DISTRIBUTION") =>
+    (chart: "BAR" | "PIE" | "PORTFOLIO" | "DISTRIBUTION" | "TIMELAPSE") =>
     (value: string, _: any, item: any) => {
       const { displayFiatInDistributionChart } = this.state;
       const formattedValue = this.formatValue(value);
@@ -1099,6 +1111,8 @@ class Main extends React.Component<{}, IState> {
             </span>
           );
         }
+      } else if (chart === "TIMELAPSE") {
+        return formattedValue;
       }
 
       switch (this.state.chartType) {
@@ -1282,6 +1296,13 @@ class Main extends React.Component<{}, IState> {
     }));
   };
 
+  handleToggleTimeLapseChartView = () => {
+    this.setState((prevState) => ({
+      timeLapseChartView:
+        prevState.timeLapseChartView === "tokens" ? "holders" : "tokens",
+    }));
+  };
+
   toast = (message: string, type?: "warning" | "error") => {
     const className =
       type === "warning"
@@ -1316,6 +1337,120 @@ class Main extends React.Component<{}, IState> {
     const percent = annualized * 100;
     const label = ` ${percent.toFixed(2)}%`;
     return label;
+  };
+
+  getPortfolioTimeLapseData = () => {
+    const { timeLapseChartSelection, timeLapseChartView } = this.state;
+    let result = [];
+
+    for (const [dateRange, dataset] of Array.from(rewardsDataMap.entries())) {
+      const { portfolio } = dataset;
+      const coinTokenMap = Object.entries(portfolio)
+        // Filter only the selected coin
+        .filter(([coin]) => coin === timeLapseChartSelection)
+        // Reduce the coin data to a single map
+        .reduce((coinToTokenMap, entry) => {
+          const [coin, data] = entry;
+          const value =
+            timeLapseChartView === "holders"
+              ? data.numberOfUsersHolding
+              : data.total;
+          return {
+            ...coinToTokenMap,
+            [coin]: parseFloat(value),
+          };
+        }, {});
+
+      result.push({
+        date: dateRange,
+        ...coinTokenMap,
+      });
+    }
+
+    return result;
+  };
+
+  renderTimeLapsePortfolioChart = () => {
+    const timeLapseData = this.getPortfolioTimeLapseData();
+    return (
+      <div style={{ marginTop: 24, marginBottom: 48 }}>
+        <PageTitle>Coin Holding Time Lapse</PageTitle>
+        <Subtitle>View how asset holdings change over time.</Subtitle>
+        <CoinHoldingsControls>
+          <Switch
+            style={{
+              margin: 0,
+              marginRight: 4,
+              width: 225,
+              textAlign: "left",
+            }}
+            checked={this.state.timeLapseChartView === "tokens"}
+            onChange={this.handleToggleTimeLapseChartView}
+            label={
+              this.state.timeLapseChartView === "tokens"
+                ? "Viewing Token Holdings"
+                : "Viewing Number of Holders"
+            }
+          />
+          <TimeLapseSelect
+            filterable={!isMobile}
+            popoverProps={{
+              popoverClassName: "coin-distribution-select",
+            }}
+            items={this.getSortedDistributionSelectMenuOptions()}
+            activeItem={this.state.timeLapseChartSelection}
+            onItemSelect={(item) => {
+              this.setState({ timeLapseChartSelection: item });
+            }}
+            itemPredicate={(query, item) => {
+              return item.toLowerCase().includes(query.toLowerCase());
+            }}
+            itemRenderer={(item, { handleClick }) => {
+              const isActive = item === this.state.timeLapseChartSelection;
+              return (
+                <MenuItem
+                  text={item}
+                  disabled={isActive}
+                  onClick={(e: any) => handleClick(e)}
+                />
+              );
+            }}
+          >
+            <Button
+              rightIcon="caret-down"
+              text={this.state.timeLapseChartSelection}
+            />
+          </TimeLapseSelect>
+        </CoinHoldingsControls>
+        <ChartContainer style={{ marginTop: 6 }}>
+          <ResponsiveContainer width="100%" height={600} minWidth="0">
+            <LineChart
+              width={730}
+              height={250}
+              data={timeLapseData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip formatter={this.formatTooltipValue("TIMELAPSE")} />
+              {Object.entries(timeLapseData[0])
+                .filter((item) => item[0] !== "date")
+                .map((coinItem, index) => {
+                  const coin = coinItem[0];
+                  return (
+                    <Line
+                      type="monotone"
+                      dataKey={coin}
+                      stroke={portfolioPieColors[index]}
+                    />
+                  );
+                })}
+            </LineChart>
+          </ResponsiveContainer>
+        </ChartContainer>
+      </div>
+    );
   };
 }
 
