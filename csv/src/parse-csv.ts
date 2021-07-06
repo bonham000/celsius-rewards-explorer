@@ -34,7 +34,7 @@ if (runAll) {
  *
  * See the README for more instructions.
  */
-const CSV_KEYS = ["01", "02"];
+const CSV_KEYS = ["01", "01"];
 
 // Current date identifier is the last entry in the list
 const DATE_IDENTIFIER = CSV_KEYS.pop();
@@ -113,40 +113,46 @@ const customDebugMethod = (
  * ============================================================================
  */
 
-// Define metrics object which tracks all of the CSV data
-const metrics: CelsiusRewardsMetrics = {
-  portfolio: {},
-  coinDistributions: {},
-  coinDistributionsLevels: {},
-  interestEarnedRankings: {
-    topOne: "0",
-    topTen: "0",
-    topHundred: "0",
-    topThousand: "0",
-    topTenThousand: "0",
-  },
-  loyaltyTierSummary: {
-    platinum: "0",
-    gold: "0",
-    silver: "0",
-    bronze: "0",
-    none: "0",
-  },
-  stats: {
-    totalUsers: "0",
-    totalUsersEarningInCel: "0",
-    maximumPortfolioSize: "0",
-    totalInterestPaidInUsd: "0",
-    averageNumberOfCoinsPerUser: "0",
-    totalPortfolioCoinPositions: "0",
-    maxInterestEarned: "0",
-    averageInterestPerUser: "0",
-  },
+const getInitialMetrics = () => {
+  // Define metrics object which tracks all of the CSV data
+  const metrics: CelsiusRewardsMetrics = {
+    portfolio: {},
+    coinDistributions: {},
+    coinDistributionsLevels: {},
+    interestEarnedRankings: {
+      topOne: "0",
+      topTen: "0",
+      topHundred: "0",
+      topThousand: "0",
+      topTenThousand: "0",
+    },
+    loyaltyTierSummary: {
+      platinum: "0",
+      gold: "0",
+      silver: "0",
+      bronze: "0",
+      none: "0",
+    },
+    stats: {
+      totalUsers: "0",
+      totalUsersEarningInCel: "0",
+      maximumPortfolioSize: "0",
+      totalInterestPaidInUsd: "0",
+      averageNumberOfCoinsPerUser: "0",
+      totalPortfolioCoinPositions: "0",
+      maxInterestEarned: "0",
+      averageInterestPerUser: "0",
+    },
+  };
+
+  return metrics;
 };
 
 const interestEarnedPerUserList: string[] = [];
 
 const processCSV = (csvFileKey: string): void => {
+  const metrics = getInitialMetrics();
+
   const { inputFile, outputFile } = getFileNames(csvFileKey);
 
   // Read the CSV data using the NodeJS stream interface
