@@ -61,6 +61,14 @@ interface CoinDistributionLevels {
   topTenThousand: string;
 }
 
+interface InterestEarnedRankings {
+  topOne: string;
+  topTen: string;
+  topHundred: string;
+  topThousand: string;
+  topTenThousand: string;
+}
+
 type CoinDistribution = Array<string[]>;
 type CoinDistributions = { [coin: string]: CoinDistribution };
 type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
@@ -69,12 +77,13 @@ interface CelsiusRewardsDataType {
   portfolio: Portfolio;
   coinDistributions: CoinDistributions;
   coinDistributionsLevels: CoinDistributionLevelsMap;
+  interestEarnedRankings: InterestEarnedRankings;
   loyaltyTierSummary: {
-    platinum: number;
-    gold: number;
-    silver: number;
-    bronze: number;
-    none: number;
+    platinum: string;
+    gold: string;
+    silver: string;
+    bronze: string;
+    none: string;
   };
   stats: {
     totalUsers: string;
@@ -923,11 +932,28 @@ class Main extends React.Component<{}, IState> {
                   <Row style={{ marginBottom: 6 }}>
                     <CardTitle>Yield Stats</CardTitle>
                   </Row>
-                  <Subtitle>Yield is the second killer app of crypto.</Subtitle>
-                  <p>
-                    <b>Total Interest Paid:</b> $
-                    {this.formatValue(data.stats.totalInterestPaidInUsd, 2)}
-                  </p>
+                  <Subtitle>Rankings for top earning users.</Subtitle>
+                  {[
+                    ["Top 1", "topOne"],
+                    ["Top 10", "topTen"],
+                    ["Top 100", "topHundred"],
+                    ["Top 1,000", "topThousand"],
+                    ["Top 10,000", "topTenThousand"],
+                  ].map((item) => {
+                    const [title, key] = item as [
+                      string,
+                      keyof CoinDistributionLevels,
+                    ];
+                    const rankings = data.interestEarnedRankings;
+                    const value = rankings[key];
+                    const formattedValue = this.formatValue(value, 2);
+                    const label = `$${formattedValue}`;
+                    return (
+                      <p>
+                        <b>{title}:</b> {`${label}`}
+                      </p>
+                    );
+                  })}
                   <p>
                     <b>Average Interest Per User:</b> $
                     {this.formatValue(data.stats.averageInterestPerUser, 2)}
@@ -938,15 +964,6 @@ class Main extends React.Component<{}, IState> {
                       parseFloat(data.stats.averageInterestPerUser) * 52,
                       2,
                     )}
-                  </p>
-                  <p>
-                    <b>Annualized 52 Week Interest Yield:</b>
-                    {this.state.totalAssetValue === null
-                      ? " Loading..."
-                      : this.getProjectedAnnualYield(
-                          data.stats.totalInterestPaidInUsd,
-                          this.state.totalAssetValue,
-                        )}
                   </p>
                 </>
               </Card>
@@ -1191,8 +1208,8 @@ class Main extends React.Component<{}, IState> {
         const color = loyaltyTierColors[key as keyof typeof loyaltyTierColors];
         return {
           tier: key,
-          value,
           fill: color,
+          value: parseFloat(value),
         };
       },
     );

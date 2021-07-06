@@ -16293,12 +16293,19 @@
       "topTenThousand": "0"
     }
   },
+  "interestEarnedRankings": {
+    "topOne": "217646.3024471728720579787500846674726",
+    "topTen": "32394.8731357786400280375853606375704",
+    "topHundred": "6498.9510628161068237145108624369",
+    "topThousand": "972.94162842060510673952466134320398",
+    "topTenThousand": "128.54108404897184864232743459326168"
+  },
   "loyaltyTierSummary": {
-    "platinum": 53654,
-    "gold": 5496,
-    "silver": 3819,
-    "bronze": 5558,
-    "none": 229626
+    "platinum": "53654",
+    "gold": "5496",
+    "silver": "3819",
+    "bronze": "5558",
+    "none": "229626"
   },
   "stats": {
     "totalUsers": "298153",

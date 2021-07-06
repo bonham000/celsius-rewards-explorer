@@ -62,6 +62,14 @@ interface CoinDistributionLevels {
   topTenThousand: string;
 }
 
+interface InterestEarnedRankings {
+  topOne: string;
+  topTen: string;
+  topHundred: string;
+  topThousand: string;
+  topTenThousand: string;
+}
+
 type Portfolio = { [coin: string]: PortfolioEntry };
 
 type CoinDistribution = [string, string][];
@@ -69,11 +77,11 @@ type CoinDistributions = { [coin: string]: CoinDistribution };
 type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
 
 interface LoyaltyTierSummary {
-  platinum: number;
-  gold: number;
-  silver: number;
-  bronze: number;
-  none: number;
+  platinum: string;
+  gold: string;
+  silver: string;
+  bronze: string;
+  none: string;
 }
 
 interface Stats {
@@ -92,6 +100,7 @@ export interface CelsiusRewardsMetrics {
   loyaltyTierSummary: LoyaltyTierSummary;
   coinDistributions: CoinDistributions;
   coinDistributionsLevels: CoinDistributionLevelsMap;
+  interestEarnedRankings: InterestEarnedRankings;
   stats: Stats;
 }
 
@@ -104,6 +113,7 @@ export const processIndividualUserRewardsRecord = (
   uuid: string,
   rewardsData: CoinDataMap,
   metrics: CelsiusRewardsMetrics,
+  interestEarnedPerUserList: string[],
 ) => {
   let tier = "";
   let isEarningInCel = false;
@@ -226,6 +236,9 @@ export const processIndividualUserRewardsRecord = (
     metrics.stats.totalInterestPaidInUsd = totalInterest;
   }
 
+  // Add the current user's interest to the list of all user's interest
+  interestEarnedPerUserList.push(interestPerUser);
+
   // Increment the total user count
   const currentMaxInterest = metrics.stats.maxInterestEarned;
   const maxInterest = Math.max(
@@ -268,8 +281,11 @@ export const processIndividualUserRewardsRecord = (
 
   // Increment loyalty tier count
   if (tierKey in metrics.loyaltyTierSummary) {
-    metrics.loyaltyTierSummary[tierKey] =
-      metrics.loyaltyTierSummary[tierKey] + 1;
+    metrics.loyaltyTierSummary[tierKey] = new BigNumber(
+      metrics.loyaltyTierSummary[tierKey],
+    )
+      .plus(1)
+      .toString();
   } else {
     console.warn(`Unexpected loyalty tier title found: ${tier}`);
   }

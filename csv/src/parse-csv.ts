@@ -61,7 +61,7 @@ const debugFlag = process.argv[2] === "debug";
 debug = debugFlag;
 
 let count = 0;
-const max = 50;
+const max = 500;
 const debugOutput = {};
 
 /**
@@ -92,12 +92,19 @@ const metrics: CelsiusRewardsMetrics = {
   portfolio: {},
   coinDistributions: {},
   coinDistributionsLevels: {},
+  interestEarnedRankings: {
+    topOne: "0",
+    topTen: "0",
+    topHundred: "0",
+    topThousand: "0",
+    topTenThousand: "0",
+  },
   loyaltyTierSummary: {
-    platinum: 0,
-    gold: 0,
-    silver: 0,
-    bronze: 0,
-    none: 0,
+    platinum: "0",
+    gold: "0",
+    silver: "0",
+    bronze: "0",
+    none: "0",
   },
   stats: {
     totalUsers: "0",
@@ -110,6 +117,8 @@ const metrics: CelsiusRewardsMetrics = {
     averageInterestPerUser: "0",
   },
 };
+
+const interestEarnedPerUserList: string[] = [];
 
 const processCSV = (): void => {
   if (debug) {
@@ -145,7 +154,12 @@ const processCSV = (): void => {
     data = JSON.parse(json);
 
     // Process the rest of the row data
-    processIndividualUserRewardsRecord(uuid, data, metrics);
+    processIndividualUserRewardsRecord(
+      uuid,
+      data,
+      metrics,
+      interestEarnedPerUserList,
+    );
 
     // Exit early if debug is enabled
     if (debug) {
@@ -164,6 +178,10 @@ const processCSV = (): void => {
    * data is written to files as JSON.
    */
   lineReaderInterface.on("close", () => {
+    console.log(
+      "- Finished processing row data. Now working on some summary stats.",
+    );
+
     // Calculate average coins held per user
     const averageNumberOfCoinsPerUser = new BigNumber(
       metrics.stats.totalPortfolioCoinPositions,
@@ -183,11 +201,10 @@ const processCSV = (): void => {
     // Sort the coin distributions in place to update them, and then take
     // the top holders only
     for (const [coin, values] of Object.entries(metrics.coinDistributions)) {
-      // NOTE: This sort probably accounts for a lot of the slowness of the
-      // script running. To improve this, the coinDistribution values could
-      // be inserted in order so they don't have to be inserted later.
-      const sortedValues = values.sort((a, b) =>
-        new BigNumber(b[1]).minus(a[1]).toNumber(),
+      // NOTE: Use parseFloat for these sort comparisons is much faster than
+      // converted the values back using BigNumber and comparing them that way.
+      const sortedValues = values.sort(
+        (a, b) => parseFloat(b[1]) - parseFloat(a[1]),
       );
 
       const distributionLevels = {
@@ -204,6 +221,20 @@ const processCSV = (): void => {
         const value = sortedValues[index];
         if (value !== undefined) {
           distributionLevels[key] = value[1];
+        }
+      }
+
+      // Sort the interest earned list
+      const sortedInterestList = interestEarnedPerUserList.sort(
+        (a, b) => parseFloat(b) - parseFloat(a),
+      );
+
+      // Fill in the interest earned rankings
+      for (const level of levels) {
+        const [index, key] = level;
+        const value = sortedInterestList[index];
+        if (value !== undefined) {
+          metrics.interestEarnedRankings[key] = value;
         }
       }
 
@@ -227,6 +258,8 @@ const processCSV = (): void => {
         TOP_HOLDERS_LIMIT,
       );
     }
+
+    console.log("- Data processed. Ready to save the results.");
 
     if (debug) {
       writeJSON(metrics, debugMeticsFile);
