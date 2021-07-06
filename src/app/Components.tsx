@@ -98,6 +98,7 @@ export const Page = styled.div`
   padding: 75px;
   padding-top: 15px;
   padding-bottom: 0;
+  text-align: center;
 
   @media ${MOBILE} {
     padding: 8px;
