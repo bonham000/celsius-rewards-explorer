@@ -944,7 +944,7 @@ class Main extends React.Component<{}, IState> {
               >
                 <>
                   <Row style={{ marginBottom: 6 }}>
-                    <CardTitle>Yield Stats</CardTitle>
+                    <CardTitle>Weekly Reward Rankings</CardTitle>
                   </Row>
                   <Subtitle>Rankings for top earning users.</Subtitle>
                   {[
