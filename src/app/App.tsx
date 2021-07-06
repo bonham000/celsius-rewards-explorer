@@ -16,7 +16,6 @@ import {
   Toast,
   Icon,
 } from "@blueprintjs/core";
-import styled from "styled-components";
 import { Select } from "@blueprintjs/select";
 import {
   BarChart,
@@ -33,71 +32,54 @@ import {
   Line,
   LineChart,
 } from "recharts";
-import rewards_01 from "../data/01-rewards.json";
-import rewards_02 from "../data/02-rewards.json";
-import coinSymbolMapJSON from "../data/coins.json";
 import originalCSV from "../data/csv-row-sample.json";
-import axios from "axios";
 import JSONPretty from "react-json-pretty";
-
-/** ===========================================================================
- * JSON rewards data type
- * ============================================================================
- */
-
-interface PortfolioCoinEntry {
-  total: string;
-  totalEarnInCEL: string;
-  totalInterestInCoin: string;
-  totalInterestInUsd: string;
-  numberOfUsersHolding: string;
-}
-
-type Portfolio = { [coin: string]: PortfolioCoinEntry };
-
-interface CoinDistributionLevels {
-  topOne: string;
-  topTen: string;
-  topHundred: string;
-  topThousand: string;
-  topTenThousand: string;
-}
-
-interface InterestEarnedRankings {
-  topOne: string;
-  topTen: string;
-  topHundred: string;
-  topThousand: string;
-  topTenThousand: string;
-}
-
-type CoinDistribution = Array<string[]>;
-type CoinDistributions = { [coin: string]: CoinDistribution };
-type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
-
-interface CelsiusRewardsDataType {
-  portfolio: Portfolio;
-  coinDistributions: CoinDistributions;
-  coinDistributionsLevels: CoinDistributionLevelsMap;
-  interestEarnedRankings: InterestEarnedRankings;
-  loyaltyTierSummary: {
-    platinum: string;
-    gold: string;
-    silver: string;
-    bronze: string;
-    none: string;
-  };
-  stats: {
-    totalUsers: string;
-    maximumPortfolioSize: string;
-    totalInterestPaidInUsd: string;
-    totalUsersEarningInCel: string;
-    averageNumberOfCoinsPerUser: string;
-    totalPortfolioCoinPositions: string;
-    maxInterestEarned: string;
-    averageInterestPerUser: string;
-  };
-}
+import {
+  getPortfolioSelectText,
+  Page,
+  DialogBodyContent,
+  RightSide,
+  PageTitle,
+  Subtitle,
+  ChartTitleRow,
+  ChartTitle,
+  ChartControls,
+  ChartContainer,
+  ChartLoading,
+  RANDOM_COLOR,
+  SummaryRow,
+  Row,
+  CardTitle,
+  PortfolioContainer,
+  portfolioPieColors,
+  CoinHoldingsControls,
+  loyaltyTierColors,
+  earnInCelTooltipContent,
+  loyaltyTiersTooltipContent,
+  topHoldersTooltipContent,
+} from "./Components";
+import {
+  chartKeyMap,
+  formatValue,
+  copyToClipboard,
+  getProjectedAnnualYield,
+  fetchCoinPriceAsync,
+  readCachedCoinPriceData,
+  CoinPriceMap,
+  CelsiusRewardsDataType,
+  cacheCoinPriceMap,
+  PortfolioAllocations,
+  handleGetChartData,
+  ChartType,
+  chartKeys,
+  renderCustomPieChartLabel,
+  handleFormatTooltipValue,
+  rankingsArray,
+  Nullable,
+  TimeLapseChartView,
+  handleGetPortfolioTimeLapseData,
+} from "./utils";
+import { dateRanges, DateRangesType, getRewardsDataMap } from "./rewards";
 
 /** ===========================================================================
  * Types & Config
@@ -107,75 +89,7 @@ interface CelsiusRewardsDataType {
 // Disable focus styles when clicking Blueprint elements
 FocusStyleManager.onlyShowFocusOnTabs();
 
-interface CoinGeckoCoin {
-  id: string;
-  name: string;
-  symbol: string;
-}
-
-type CoinPriceMap = { [key: string]: number };
-type CoinSymbolMap = { [key: string]: CoinGeckoCoin };
-
-const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
-
-const PRICE_MAP_KEY = "PRICE_MAP_KEY";
-
-type PortfolioAllocations = Array<{
-  coin: string;
-  value: number;
-  numberOfCoins: number;
-}>;
-
-const chartKeyMap = {
-  total: {
-    title: "Total Value",
-    description: "Total Asset Value Held in Each Coin (USD)",
-  },
-  interest_paid: {
-    title: "Interest Paid",
-    description: "Total Interest Paid for Each Coins (USD)",
-  },
-  earning_in_cel: {
-    title: "Earning in CEL",
-    description: "Number of Users Earning in CEL for Each Coin",
-  },
-  number_of_users: {
-    title: "Number of Users",
-    description: "Number of Users Holding Each Coin",
-  },
-};
-
-type ChartType = keyof typeof chartKeyMap;
-
-const chartKeys = Object.keys(chartKeyMap) as ChartType[];
-
-/**
- * Add more date ranges here for future weekly datasets.
- */
-type DateRangesType =
-  | "June 18, 2021 - June 25, 2021"
-  | "June 25, 2021 - July 2, 2021";
-
-const dateRanges: DateRangesType[] = [
-  "June 18, 2021 - June 25, 2021",
-  "June 25, 2021 - July 2, 2021",
-];
-
-const rewardsDataMap: Map<DateRangesType, CelsiusRewardsDataType> = new Map();
-
-/**
- * Initialize map with data. This is where the DATE_IDENTIFIER values
- * from the csv script get mapped to specific date ranges which the
- * app can understand.
- *
- * Add additional rewards data here in the future when needed.
- */
-rewardsDataMap.set(dateRanges[0], rewards_01);
-rewardsDataMap.set(dateRanges[1], rewards_02);
-
-type PortfolioView = "all" | "top" | "bottom";
-
-type TimeLapseChartView = "holders" | "tokens";
+export type PortfolioView = "all" | "top" | "bottom";
 
 const DateSelect = Select.ofType<DateRangesType>();
 const ChartSelect = Select.ofType<ChartType>();
@@ -202,23 +116,25 @@ interface IState {
   currentPortfolioAllocation: PortfolioAllocations;
 }
 
+// Initialize the rewards data
+const rewardsDataMap = getRewardsDataMap();
+
 /** ===========================================================================
- * Main Component
- * ----------------------------------------------------------------------------
- * This is a big file. If it grows any more it might be worth refactoring it
- * to reduce the size.
+ * App Component
  * ============================================================================
  */
 
-class App extends React.Component<{}, IState> {
-  // @ts-ignore
-  private toaster: Toaster;
-  private refHandlers = {
+export default class App extends React.Component<{}, IState> {
+  toaster: Nullable<Toaster>;
+
+  refHandlers = {
     toaster: (ref: Toaster) => (this.toaster = ref),
   };
 
   constructor(props: {}) {
     super(props);
+
+    this.toaster = null;
 
     this.state = {
       toasts: [],
@@ -271,51 +187,17 @@ class App extends React.Component<{}, IState> {
   };
 
   restorePriceDataFromCache = (): "success" | "failure" => {
-    const cachedPriceMap = localStorage.getItem(PRICE_MAP_KEY);
-    if (cachedPriceMap) {
-      try {
-        // Try to restore coin price data from local cache
-        const priceMap: { timestamp: number; coinPriceMap: CoinPriceMap } =
-          JSON.parse(cachedPriceMap);
-
-        const { timestamp, coinPriceMap } = priceMap;
-        const now = Date.now();
-        const elapsed = now - timestamp;
-        let sixHoursInMilliseconds = 1000 * 60 * 60 * 6;
-        // Uncomment to bust the cache.
-        // Note that the CoinGecko API will quickly rate limit requests.
-        // sixHoursInMilliseconds = 5000;
-
-        const dataset = this.getCurrentDataSet();
-        const coins = Object.keys(dataset.portfolio);
-
-        // Bust the cache if the dataset has a coin not found in the cache.
-        for (const coin of coins) {
-          if (!(coin in coinPriceMap)) {
-            console.warn(`Found missing coin in cached data: ${coin}.`);
-            return "failure";
-          }
-        }
-
-        // Ensure we are still within the 6 hour window
-        if (elapsed <= sixHoursInMilliseconds) {
-          console.log("Using cached price data.");
-          this.setState(
-            { loading: false, coinPriceMap },
-            this.calculateTotalAssetsAndPortfolio,
-          );
-          return "success";
-        }
-      } catch (err) {
-        // If any error happens fall through to fetch the price data again
-        console.warn(
-          "Unexpected error restoring price data from cache, error: ",
-          err,
-        );
-      }
+    const dataset = this.getCurrentDataSet();
+    const coinPriceMap = readCachedCoinPriceData(dataset);
+    if (coinPriceMap) {
+      this.setState(
+        { loading: false, coinPriceMap },
+        this.calculateTotalAssetsAndPortfolio,
+      );
+      return "success";
+    } else {
+      return "failure";
     }
-
-    return "failure";
   };
 
   fetchCoinPriceData = async () => {
@@ -324,7 +206,7 @@ class App extends React.Component<{}, IState> {
     const coins = Object.keys(data.portfolio);
 
     // Fetch the price for each coin
-    const prices = await Promise.all(coins.map(this.fetchCoinPrice));
+    const prices = await Promise.all(coins.map(fetchCoinPriceAsync));
 
     // Reduce list of prices into a map
     const coinPriceMap = prices.filter(Boolean).reduce((map, result) => {
@@ -338,36 +220,9 @@ class App extends React.Component<{}, IState> {
 
     // Update state and calculate total asset value using the new prices
     this.setState({ loading: false, coinPriceMap }, () => {
-      this.cacheCoinPriceMap();
+      cacheCoinPriceMap(this.state.coinPriceMap);
       this.calculateTotalAssetsAndPortfolio();
     });
-  };
-
-  fetchCoinPrice = async (coin: string) => {
-    try {
-      // TCAD... reference: https://www.coingecko.com/en/coins/truecad
-      if (coin === "TCAD") {
-        return ["TCAD", 0.777879];
-      }
-
-      const id = coinSymbolMap[coin].id;
-      type CoinGeckoResponse = { [id: string]: { usd: number } };
-      const response = await axios.get<CoinGeckoResponse>(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
-      );
-      const price = response.data[id].usd;
-      return [coin, price];
-    } catch (err) {
-      console.warn(`Failed to fetch prices for coin: ${coin}`);
-      return null;
-    }
-  };
-
-  cacheCoinPriceMap = () => {
-    const { coinPriceMap } = this.state;
-    const timestamp = Date.now();
-    const serializedData = JSON.stringify({ timestamp, coinPriceMap });
-    localStorage.setItem(PRICE_MAP_KEY, serializedData);
   };
 
   render() {
@@ -381,14 +236,6 @@ class App extends React.Component<{}, IState> {
         filterable={false}
         activeItem={this.state.dateRange}
         onItemSelect={(item) => {
-          /**
-           * Update state with the new data rage.
-           *
-           * NOTE: It's possible the new dataset has coins which
-           * don't have price data yet (i.e.) did not exist in the
-           * previous dataset. If that happens we want to re-fetch
-           * coin prices here.
-           */
           this.setState({ dateRange: item }, this.initializePriceData);
         }}
         itemRenderer={(item, { handleClick }) => {
@@ -474,9 +321,9 @@ class App extends React.Component<{}, IState> {
         onItemSelect={(item) => {
           this.setState({ coinDistributionChartSelection: item });
         }}
-        itemPredicate={(query, item) => {
-          return item.toLowerCase().includes(query.toLowerCase());
-        }}
+        itemPredicate={(query, item) =>
+          item.toLowerCase().includes(query.toLowerCase())
+        }
         itemRenderer={(item, { handleClick }) => {
           const isActive = item === this.state.coinDistributionChartSelection;
           return (
@@ -597,7 +444,7 @@ class App extends React.Component<{}, IState> {
                   tickFormatter={(tick) => tick.toLocaleString()}
                   fontSize={10}
                 />
-                <Tooltip formatter={this.formatTooltipValue("BAR")} />
+                <Tooltip formatter={this.formatTooltipValue("bar")} />
                 <Bar dataKey="value" fill={RANDOM_COLOR} />
               </BarChart>
             </ResponsiveContainer>
@@ -625,49 +472,30 @@ class App extends React.Component<{}, IState> {
                 />
               </Row>
               <p>
-                <b>Total Users Earning:</b>{" "}
-                {this.formatValue(data.stats.totalUsers)}
+                <b>Total Users Earning:</b> {formatValue(data.stats.totalUsers)}
               </p>
               <p>
                 <b>Total Users Earning in CEL:</b>{" "}
-                {this.formatValue(data.stats.totalUsersEarningInCel)}
-                <Tooltip2
-                  position="top"
-                  content={
-                    <div style={{ maxWidth: isMobile ? 300 : 500 }}>
-                      <p>
-                        This number is counted from each user who for at least
-                        one coin holding has elected to earn in CEL (referencing
-                        the <code>earningInterestInCel</code> field in the CSV
-                        data) OR is holding CEL and earning CEL.
-                      </p>
-                      <p>
-                        This may not be consistent with the earn in CEL
-                        percentage displayed by Celsius. I am not sure where the
-                        discrepancy is and I am happy to change the data
-                        interpretation here.
-                      </p>
-                    </div>
-                  }
-                >
+                {formatValue(data.stats.totalUsersEarningInCel)}
+                <Tooltip2 position="top" content={earnInCelTooltipContent}>
                   <Icon style={{ marginLeft: 4 }} icon="error" />
                 </Tooltip2>
               </p>
               <p>
                 <b>Total Interest Paid in USD:</b> $
-                {this.formatValue(data.stats.totalInterestPaidInUsd)}
+                {formatValue(data.stats.totalInterestPaidInUsd)}
               </p>
               <p>
                 <b>Total Asset Value in USD:</b>
                 {this.state.totalAssetValue === null
                   ? " Loading..."
-                  : ` $${this.formatValue(String(this.state.totalAssetValue))}`}
+                  : ` $${formatValue(String(this.state.totalAssetValue))}`}
               </p>
               <p>
                 <b>Annualized 52 Week Interest Yield:</b>
                 {this.state.totalAssetValue === null
                   ? " Loading..."
-                  : this.getProjectedAnnualYield(
+                  : getProjectedAnnualYield(
                       data.stats.totalInterestPaidInUsd,
                       this.state.totalAssetValue,
                     )}
@@ -693,27 +521,7 @@ class App extends React.Component<{}, IState> {
             >
               <Row style={{ marginBottom: 6 }}>
                 <CardTitle>Celsius Loyalty Tiers</CardTitle>
-                <Tooltip2
-                  position="top"
-                  content={
-                    <div style={{ maxWidth: isMobile ? 300 : 500 }}>
-                      <p>
-                        Many users are labeled with the <code>NONE</code>{" "}
-                        loyalty tier, which does not appear to be correct. This
-                        is inconsistent with the rewards distribution data and
-                        the in-app reported number of "earn in CEL" users, which
-                        is over 50%.
-                      </p>
-                      <p>
-                        I counted these by relying on the{" "}
-                        <code>loyaltyTier.title</code> field for each user in
-                        the CSV file, and doubled checked the logic and results
-                        were correct. I may still have made a mistake, but I
-                        could not find where.
-                      </p>
-                    </div>
-                  }
-                >
+                <Tooltip2 position="top" content={loyaltyTiersTooltipContent}>
                   <Button icon="help" />
                 </Tooltip2>
               </Row>
@@ -725,7 +533,7 @@ class App extends React.Component<{}, IState> {
                   // capitalize the label
                   formatter={(label) => label[0].toUpperCase() + label.slice(1)}
                 />
-                <Tooltip formatter={this.formatTooltipValue("PIE")} />
+                <Tooltip formatter={this.formatTooltipValue("pie")} />
                 <Pie
                   nameKey="tier"
                   dataKey="value"
@@ -755,7 +563,7 @@ class App extends React.Component<{}, IState> {
                 width={isMobile ? 250 : 400}
                 height={isMobile ? 200 : 400}
               >
-                <Tooltip formatter={this.formatTooltipValue("PORTFOLIO")} />
+                <Tooltip formatter={this.formatTooltipValue("portfolio")} />
                 <Pie
                   cx={isMobile ? "50%" : "55%"}
                   cy="50%"
@@ -797,11 +605,11 @@ class App extends React.Component<{}, IState> {
                 <>
                   <p>
                     <b>Total Portfolio Value:</b>{" "}
-                    {`$${this.formatValue(String(this.state.totalAssetValue))}`}
+                    {`$${formatValue(String(this.state.totalAssetValue))}`}
                   </p>
                   <p>
                     <b>Total Coins Held:</b>{" "}
-                    {this.formatValue(this.state.portfolioAllocations.length)}
+                    {formatValue(this.state.portfolioAllocations.length)}
                   </p>
                   <p>
                     <b>Most Held Coin:</b>{" "}
@@ -817,11 +625,11 @@ class App extends React.Component<{}, IState> {
                   </p>
                   <p>
                     <b>Average Number of Coins Held Per User:</b>{" "}
-                    {this.formatValue(data.stats.averageNumberOfCoinsPerUser)}
+                    {formatValue(data.stats.averageNumberOfCoinsPerUser)}
                   </p>
                   <p>
                     <b>Maximum Single User Portfolio Holdings:</b>{" "}
-                    {this.formatValue(data.stats.maximumPortfolioSize)}
+                    {formatValue(data.stats.maximumPortfolioSize)}
                   </p>
                 </>
               )}
@@ -848,21 +656,7 @@ class App extends React.Component<{}, IState> {
               }
             />
             {CoinDistributionSelectMenu}
-            <Tooltip2
-              position="top"
-              content={
-                <div style={{ maxWidth: isMobile ? 300 : 500 }}>
-                  <p>
-                    Only the top 100 holders are displayed. This is because the
-                    distribution is dramatically skewed by the top 1-3 whales
-                    and a long tail of very small holders. The overall number of
-                    holders is also huge, which can be unwieldy to work with and
-                    visualize. Limiting to the top 100 is more practical and
-                    still provides useful insights.
-                  </p>
-                </div>
-              }
-            >
+            <Tooltip2 position="top" content={topHoldersTooltipContent}>
               <Button style={{ marginLeft: 8 }} icon="help" />
             </Tooltip2>
           </CoinHoldingsControls>
@@ -873,9 +667,9 @@ class App extends React.Component<{}, IState> {
                 <XAxis
                   interval={8}
                   tickLine={false}
-                  tickFormatter={() => ""}
                   fontSize={10}
                   dataKey="coin"
+                  tickFormatter={() => ""}
                   label={`Top 100 ${this.state.coinDistributionChartSelection} holders`}
                 />
                 <YAxis
@@ -889,13 +683,13 @@ class App extends React.Component<{}, IState> {
                 />
                 {!isMobile && (
                   <Tooltip
-                    formatter={this.formatTooltipValue("DISTRIBUTION")}
+                    formatter={this.formatTooltipValue("distribution")}
                   />
                 )}
                 <Bar
-                  onClick={this.handleClickDistributionBar}
                   dataKey="value"
                   fill={RANDOM_COLOR}
+                  onClick={this.handleClickDistributionBar}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -925,7 +719,7 @@ class App extends React.Component<{}, IState> {
                     {CoinDistributionSelectMenu}
                   </Row>
                   <Subtitle>
-                    {this.formatValue(
+                    {formatValue(
                       data.portfolio[this.state.coinDistributionChartSelection]
                         .numberOfUsersHolding,
                     )}{" "}
@@ -934,17 +728,8 @@ class App extends React.Component<{}, IState> {
                   <Subtitle>
                     Breakdown of top holders at various levels:
                   </Subtitle>
-                  {[
-                    ["Top 1", "topOne"],
-                    ["Top 10", "topTen"],
-                    ["Top 100", "topHundred"],
-                    ["Top 1,000", "topThousand"],
-                    ["Top 10,000", "topTenThousand"],
-                  ].map((item) => {
-                    const [title, key] = item as [
-                      string,
-                      keyof CoinDistributionLevels,
-                    ];
+                  {rankingsArray.map((item) => {
+                    const [title, key] = item;
                     const { coinPriceMap, coinDistributionChartSelection } =
                       this.state;
 
@@ -953,8 +738,8 @@ class App extends React.Component<{}, IState> {
                     const levels = data.coinDistributionsLevels;
                     const amount = levels[coinDistributionChartSelection][key];
                     const usdValue = price * parseFloat(amount);
-                    const formattedAmount = this.formatValue(amount, 2);
-                    const formattedValue = this.formatValue(usdValue);
+                    const formattedAmount = formatValue(amount, 2);
+                    const formattedValue = formatValue(usdValue);
                     const label = `${formattedAmount} tokens ($${formattedValue})`;
                     return (
                       <p>
@@ -978,20 +763,11 @@ class App extends React.Component<{}, IState> {
                     <CardTitle>Weekly Reward Rankings</CardTitle>
                   </Row>
                   <Subtitle>Rankings for top earning users.</Subtitle>
-                  {[
-                    ["Top 1", "topOne"],
-                    ["Top 10", "topTen"],
-                    ["Top 100", "topHundred"],
-                    ["Top 1,000", "topThousand"],
-                    ["Top 10,000", "topTenThousand"],
-                  ].map((item) => {
-                    const [title, key] = item as [
-                      string,
-                      keyof CoinDistributionLevels,
-                    ];
+                  {rankingsArray.map((item) => {
+                    const [title, key] = item;
                     const rankings = data.interestEarnedRankings;
                     const value = rankings[key];
-                    const formattedValue = this.formatValue(value, 2);
+                    const formattedValue = formatValue(value, 2);
                     const label = `$${formattedValue}`;
                     return (
                       <p>
@@ -1001,11 +777,11 @@ class App extends React.Component<{}, IState> {
                   })}
                   <p>
                     <b>Average Interest Per User:</b> $
-                    {this.formatValue(data.stats.averageInterestPerUser, 2)}
+                    {formatValue(data.stats.averageInterestPerUser, 2)}
                   </p>
                   <p>
                     <b>Annualized Average Interest Per User:</b> $
-                    {this.formatValue(
+                    {formatValue(
                       parseFloat(data.stats.averageInterestPerUser) * 52,
                       2,
                     )}
@@ -1040,40 +816,9 @@ class App extends React.Component<{}, IState> {
     this.setState({ currentPortfolioAllocation: result });
   };
 
-  renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }: any) => {
+  renderCustomizedLabel = (args: any) => {
     const { currentPortfolioAllocation } = this.state;
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.3;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    // Find the corresponding coin allocation this slice represents
-    const allocation = currentPortfolioAllocation[index];
-
-    // Exclude small percentages from having a label (there are too many)
-    if (percent <= 0.01) {
-      return null;
-    }
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        dominantBaseline="central"
-        textAnchor={x > cx ? "start" : "end"}
-      >
-        {`${allocation.coin} ${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
+    return renderCustomPieChartLabel(args, currentPortfolioAllocation);
   };
 
   handleClickDistributionBar = (data: any) => {
@@ -1083,57 +828,17 @@ class App extends React.Component<{}, IState> {
   };
 
   formatTooltipValue =
-    (chart: "BAR" | "PIE" | "PORTFOLIO" | "DISTRIBUTION" | "TIMELAPSE") =>
+    (chart: "bar" | "pie" | "portfolio" | "distribution" | "timelapse") =>
     (value: string, _: any, item: any) => {
-      const { displayFiatInDistributionChart } = this.state;
-      const formattedValue = this.formatValue(value);
-
-      if (chart === "PIE") {
-        return `${formattedValue} users`;
-      } else if (chart === "PORTFOLIO") {
-        return `$${formattedValue}`;
-      } else if (chart === "DISTRIBUTION") {
-        const { uuid } = item.payload;
-        if (displayFiatInDistributionChart) {
-          return (
-            <span>
-              ${formattedValue}
-              <br />
-              Anonymized User ID: {uuid}
-            </span>
-          );
-        } else {
-          return (
-            <span>
-              {formattedValue} total tokens
-              <br />
-              Anonymized User ID: {uuid}
-            </span>
-          );
-        }
-      } else if (chart === "TIMELAPSE") {
-        return formattedValue;
-      }
-
-      switch (this.state.chartType) {
-        case "total": {
-          const { coin, numberOfCoins } = item.payload;
-          return (
-            <span>
-              ${formattedValue}
-              <br />
-              {this.formatValue(numberOfCoins)} total {coin}
-            </span>
-          );
-        }
-        case "interest_paid": {
-          return `$${formattedValue}`;
-        }
-        case "number_of_users":
-        case "earning_in_cel": {
-          return `${formattedValue} users`;
-        }
-      }
+      const { chartType, displayFiatInDistributionChart } = this.state;
+      const displayFiat = displayFiatInDistributionChart;
+      return handleFormatTooltipValue({
+        item,
+        value,
+        chart,
+        chartType,
+        displayFiat,
+      });
     };
 
   getCurrentDataSet = (): CelsiusRewardsDataType => {
@@ -1208,46 +913,14 @@ class App extends React.Component<{}, IState> {
   };
 
   getChartData = () => {
-    const { chartType, portfolioAllocations } = this.state;
-    let chart = [];
-
+    const { chartType, viewTopCoins, portfolioAllocations } = this.state;
     const portfolio = this.getCoinPortfolioEntries();
-
-    switch (chartType) {
-      case "total": {
-        chart = portfolioAllocations;
-        break;
-      }
-      case "interest_paid": {
-        for (const [coin, values] of portfolio) {
-          chart.push({ coin, value: parseFloat(values.totalInterestInUsd) });
-        }
-        break;
-      }
-      case "earning_in_cel": {
-        for (const [coin, values] of portfolio) {
-          chart.push({ coin, value: parseFloat(values.totalEarnInCEL) });
-        }
-        break;
-      }
-      case "number_of_users": {
-        for (const [coin, values] of portfolio) {
-          chart.push({ coin, value: parseFloat(values.numberOfUsersHolding) });
-        }
-        break;
-      }
-    }
-
-    // Sort by value
-    const sortedResult = chart.sort((a, b) => b.value - a.value);
-
-    if (this.state.viewTopCoins) {
-      // Limit to less on mobile
-      const limit = isMobile ? 10 : 20;
-      return sortedResult.slice(0, limit);
-    } else {
-      return sortedResult;
-    }
+    return handleGetChartData({
+      chartType,
+      portfolio,
+      viewTopCoins,
+      portfolioAllocations,
+    });
   };
 
   getSortedDistributionSelectMenuOptions = () => {
@@ -1316,58 +989,13 @@ class App extends React.Component<{}, IState> {
     }
   };
 
-  formatValue = (value: string | number, decimals?: number) => {
-    const stringValue: string =
-      typeof value === "number" ? String(value) : value;
-
-    const options = {
-      minimumFractionDigits: decimals || 0,
-      maximumFractionDigits: decimals || 0,
-    };
-
-    return parseFloat(stringValue).toLocaleString("en", options);
-  };
-
-  getProjectedAnnualYield = (
-    totalInterestPaid: string,
-    totalAssetValue: number,
-  ) => {
-    const interest = parseFloat(totalInterestPaid) / totalAssetValue;
-    const annualized = interest * 52;
-    const percent = annualized * 100;
-    const label = ` ${percent.toFixed(2)}%`;
-    return label;
-  };
-
   getPortfolioTimeLapseData = () => {
     const { timeLapseChartSelection, timeLapseChartView } = this.state;
-    let result = [];
-
-    for (const [dateRange, dataset] of Array.from(rewardsDataMap.entries())) {
-      const { portfolio } = dataset;
-      const coinTokenMap = Object.entries(portfolio)
-        // Filter only the selected coin
-        .filter(([coin]) => coin === timeLapseChartSelection)
-        // Reduce the coin data to a single map
-        .reduce((coinToTokenMap, entry) => {
-          const [coin, data] = entry;
-          const value =
-            timeLapseChartView === "holders"
-              ? data.numberOfUsersHolding
-              : data.total;
-          return {
-            ...coinToTokenMap,
-            [coin]: parseFloat(value),
-          };
-        }, {});
-
-      result.push({
-        date: dateRange,
-        ...coinTokenMap,
-      });
-    }
-
-    return result;
+    return handleGetPortfolioTimeLapseData({
+      rewardsDataMap,
+      chartView: timeLapseChartView,
+      chartSelection: timeLapseChartSelection,
+    });
   };
 
   renderTimeLapsePortfolioChart = () => {
@@ -1433,7 +1061,7 @@ class App extends React.Component<{}, IState> {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip formatter={this.formatTooltipValue("TIMELAPSE")} />
+              <Tooltip formatter={this.formatTooltipValue("timelapse")} />
               {Object.entries(timeLapseData[0])
                 .filter((item) => item[0] !== "date")
                 .map((coinItem, index) => {
@@ -1453,289 +1081,3 @@ class App extends React.Component<{}, IState> {
     );
   };
 }
-
-/** ===========================================================================
- * Styles
- * ============================================================================
- */
-
-const loyaltyTierColors = {
-  platinum: "rgb(161, 167, 195)",
-  gold: "rgb(206, 165, 98)",
-  silver: "rgb(214, 214, 214)",
-  bronze: "rgb(254, 189, 149)",
-  none: "rgb(50, 50, 50)",
-};
-
-const portfolioPieColors = [
-  "rgb(112, 31, 191)",
-  "rgb(188, 62, 179)",
-  "rgb(244, 65, 171)",
-  "rgb(215, 64, 176)",
-  "rgb(15, 27, 100)",
-  "#027ed1",
-  "#4C66F5",
-  "#4F99FF",
-  "#54B9E8",
-  "#ff5f97",
-  "#f95d6a",
-  "#eb4034",
-  "#ff5b39",
-  "#ff7c43",
-  "#ffa600",
-  "#0A2239",
-  "#003f5c",
-  "#2f4b7c",
-  "#665191",
-  "#8902d1",
-  "#b76fd2",
-  "#a05195",
-  "#d45087",
-  "#11d47c",
-  "#56d162",
-  "#7ace49",
-  "#99c930",
-  "#2a262b",
-  "#4a3243",
-  "#713c54",
-  "#9a465a",
-  "#c15356",
-  "#ffb23e",
-  "#ffbf61",
-  "#ffcb81",
-  "#ffd8a0",
-  "#ffe5c0",
-  "#ff1f55",
-  "#ff0073",
-  "#e6194b",
-  "#2F243A",
-  "#ec4e20",
-  "#FFBC42",
-  "#D81159",
-  "#0496FF",
-  "#006BA6",
-];
-
-const CelsiusColors = [
-  "rgb(15, 27, 100)",
-  "rgb(112, 31, 191)",
-  "rgb(112, 31, 185)",
-  "rgb(188, 62, 179)",
-  "rgb(215, 64, 176)",
-  "rgb(244, 65, 171)",
-];
-
-const getColor = () => {
-  return CelsiusColors[Math.floor(Math.random() * CelsiusColors.length)];
-};
-
-const RANDOM_COLOR = getColor();
-
-const getPortfolioSelectText = (view: PortfolioView) => {
-  let text = "";
-  if (view === "all") {
-    text = "View all coins";
-  } else if (view === "top") {
-    text = "View most held 15 coins only";
-  } else {
-    text = "View least held 20 coins only";
-  }
-  return text;
-};
-
-const MOBILE = `(max-width: 768px)`;
-
-const Page = styled.div`
-  padding: 75px;
-  padding-top: 15px;
-  padding-bottom: 0;
-
-  @media ${MOBILE} {
-    padding: 8px;
-    padding-bottom: 50px;
-  }
-`;
-
-const PageTitle = styled.h1`
-  font-weight: 600;
-  margin-bottom: 4px;
-`;
-
-const Subtitle = styled.p`
-  font-size: 12px;
-`;
-
-const CardTitle = styled.h2`
-  margin-top: 2px;
-  margin-bottom: 2px;
-`;
-
-const ChartTitle = styled.h3`
-  margin: 0;
-  margin-left: 2px;
-`;
-
-const ChartControls = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-
-  @media ${MOBILE} {
-    margin-top: 12px;
-  }
-`;
-
-const ChartContainer = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
-const ChartLoading = styled.div`
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ChartTitleRow = styled.div`
-  padding-left: 65px;
-  padding-right: 10px;
-  padding-bottom: 2px;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
-
-  @media ${MOBILE} {
-    padding: 8px;
-    flex-direction: column;
-  }
-`;
-
-const SummaryRow = styled.div`
-  margin-top: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-
-  @media ${MOBILE} {
-    padding: 0px;
-    flex-direction: column;
-    justify-content: center;
-  }
-`;
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-const PortfolioContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  width: 80vw;
-  padding-bottom: 50px;
-
-  @media ${MOBILE} {
-    width: auto;
-    flex-direction: column;
-    justify-content: center;
-  }
-`;
-
-const RightSide = styled.div`
-  padding-top: 4px;
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`;
-
-const CoinHoldingsControls = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-`;
-
-const DialogBodyContent = (
-  <>
-    <b>Observations:</b>
-    <p>
-      • There is a strong preference for users to earn in CEL. Over 75% of BTC
-      holders, which is the largest coin holding (CEL is 2nd), are earning in
-      CEL.
-    </p>
-    <p>
-      • All of the charts appear to follow a power law distribution, with most
-      of users concentrated around a few coins and a long tail of smaller coins
-      with few holders.{" "}
-    </p>
-    <p>
-      • The smallest coins have very few users, e.g. ZUSD only has 3 holders.
-    </p>
-    <p>• The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and USDC.</p>
-    <b>Source Code:</b>
-    <p>
-      • This project is open source and relies on the public CSV Proof of
-      Community data published by Celsius. You can find the{" "}
-      <a
-        target="__blank"
-        href="https://github.com/bonham000/celsius-rewards-explorer"
-      >
-        project source code on GitHub
-      </a>
-      .
-    </p>
-    <b>Original CSV Files:</b>
-    <p>
-      • The CSV files are very large (over 1GB) and are not included in this app
-      or associated codebase. If you want to inspect the data directly, please
-      download the files from Celsius.
-    </p>
-    <b>Issues or Bugs:</b>
-    <p>
-      • All of the data displayed here comes from the Celsius Proof of Community
-      CSV. If you find any issues or problems, feel free to bring them up in The
-      Celsians Club Discord or{" "}
-      <a
-        target="__blank"
-        href="https://github.com/bonham000/celsius-rewards-explorer/issues/new"
-      >
-        open an issue on GitHub
-      </a>
-      .
-    </p>
-    <b>By the Way:</b>
-    <p>
-      • If you happen to know anyone at Celsius, I am interested in working for
-      them,{" "}
-      <a target="__blank" href="mailto:sean.smith.2009@gmail.com">
-        you can reach me here
-      </a>{" "}
-      🙂
-    </p>
-  </>
-);
-
-// Copy some text to the clipboard
-const copyToClipboard = (text: string) => {
-  const el = document.createElement("textarea");
-  el.value = text;
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand("copy");
-  document.body.removeChild(el);
-};
-
-/** ===========================================================================
- * Export
- * ============================================================================
- */
-
-export default App;
