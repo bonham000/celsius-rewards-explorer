@@ -7,13 +7,14 @@ import {
   processIndividualUserRewardsRecord,
 } from "./utils";
 
-// Read command argument
+// Read command arguments
 const commandArgument = process.argv[2];
+const argumentFileKey = process.argv[3];
 
 const runAll = commandArgument === "all";
 
 if (runAll) {
-  console.log("- NOTE: Processing all CSV files.\n");
+  console.log("- [NOTE]: Processing all CSV files.\n");
 }
 
 /**
@@ -34,10 +35,17 @@ if (runAll) {
  *
  * See the README for more instructions.
  */
-const CSV_KEYS = ["01", "01"];
+const CSV_KEYS = ["01", "02"];
 
 // Current date identifier is the last entry in the list
-const DATE_IDENTIFIER = CSV_KEYS.pop();
+let DATE_IDENTIFIER = CSV_KEYS.pop();
+
+if (argumentFileKey !== undefined) {
+  console.log(
+    `- [NOTE]: Using command argument for file key: ${argumentFileKey}`,
+  );
+  DATE_IDENTIFIER = argumentFileKey;
+}
 
 const getFileNames = (identifier: string) => {
   const inputFile = `csv/original-csv-data/${identifier}-rewards.csv`;
@@ -74,13 +82,15 @@ let debug = false;
 // Override with command line flag
 debug = commandArgument === "debug";
 
-if (debug) {
-  console.log("- [NOTE]: Running in debug mode.\n");
-}
-
 let count = 0;
 const max = 100;
 const debugOutput = {};
+
+if (debug) {
+  console.log(
+    `- [NOTE]: Running in debug mode. Processing rows from ${count} to ${max}.\n`,
+  );
+}
 
 /**
  * Modify this function to apply custom logic when processing the CSV
@@ -99,7 +109,7 @@ const customDebugMethod = (
   debugOutput: any,
 ) => {
   // e.g. record a user with a specific uuid
-  if (uuid === "<the uuid of interest here>") {
+  if (uuid === "<custom-uuid>") {
     // Add any other custom transformations you want here
     debugOutput[uuid] = data;
   }
@@ -113,8 +123,8 @@ const customDebugMethod = (
  * ============================================================================
  */
 
+// Define metrics object which tracks all of the CSV data
 const getInitialMetrics = () => {
-  // Define metrics object which tracks all of the CSV data
   const metrics: CelsiusRewardsMetrics = {
     portfolio: {},
     coinDistributions: {},
@@ -151,6 +161,7 @@ const getInitialMetrics = () => {
 const interestEarnedPerUserList: string[] = [];
 
 const processCSV = (csvFileKey: string): void => {
+  // Initialize a new metrics object for tallying up the results
   const metrics = getInitialMetrics();
 
   const { inputFile, outputFile } = getFileNames(csvFileKey);
