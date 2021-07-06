@@ -210,7 +210,7 @@ interface IState {
  * ============================================================================
  */
 
-class Main extends React.Component<{}, IState> {
+class App extends React.Component<{}, IState> {
   // @ts-ignore
   private toaster: Toaster;
   private refHandlers = {
@@ -1738,4 +1738,4 @@ const copyToClipboard = (text: string) => {
  * ============================================================================
  */
 
-export default Main;
+export default App;
