@@ -40,8 +40,6 @@ import originalCSV from "../data/csv-row-sample.json";
 import axios from "axios";
 import JSONPretty from "react-json-pretty";
 
-const bleg: string = true;
-
 /** ===========================================================================
  * JSON rewards data type
  * ============================================================================
