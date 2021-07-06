@@ -21,7 +21,7 @@ There are two relevant folders, `csv/` which contains the code for processing th
 
 # Getting Started
 
-It's recommended to have [Node](https://nodejs.org/en/), [npm](https://www.npmjs.com/), and [yarn](https://yarnpkg.com/lang/en/docs/) installed. You can use [nvm](https://github.com/nvm-sh/nvm) to manage different versions of Node.
+It's recommended to have [Node](https://nodejs.org/en/), [npm](https://www.npmjs.com/), and [yarn](https://yarnpkg.com/lang/en/docs/) installed.
 
 ```
 # Install dependencies
