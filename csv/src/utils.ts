@@ -269,6 +269,11 @@ export const processIndividualUserRewardsRecord = (
   const newMax = Math.max(currentMax, currentSize);
   metrics.stats.maximumPortfolioSize = String(newMax);
 
+  /**
+   * If the current user is earning in CEL (i.e. earningInterestInCel is true
+   * or they have CEL earning CEL), increment the totalUsersEarningInCel
+   * count.
+   */
   if (isEarningInCel) {
     metrics.stats.totalUsersEarningInCel = new BigNumber(
       metrics.stats.totalUsersEarningInCel,
