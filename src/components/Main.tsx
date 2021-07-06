@@ -14,6 +14,7 @@ import {
   Toaster,
   FocusStyleManager,
   Toast,
+  Icon,
 } from "@blueprintjs/core";
 import styled from "styled-components";
 import { Select } from "@blueprintjs/select";
@@ -621,6 +622,27 @@ class Main extends React.Component<{}, IState> {
               <p>
                 <b>Total Users Earning in CEL:</b>{" "}
                 {this.formatValue(data.stats.totalUsersEarningInCel)}
+                <Tooltip2
+                  position="top"
+                  content={
+                    <div style={{ maxWidth: isMobile ? 300 : 500 }}>
+                      <p>
+                        This number is counted from each user who for at least
+                        one coin holding has elected to earn in CEL (referencing
+                        the <code>earningInterestInCel</code> field in the CSV
+                        data) OR is holding CEL and earning CEL.
+                      </p>
+                      <p>
+                        This may not be consistent with the earn in CEL
+                        percentage displayed by Celsius. I am not sure where the
+                        discrepancy is and I am happy to change the data
+                        interpretation here.
+                      </p>
+                    </div>
+                  }
+                >
+                  <Icon style={{ marginLeft: 4 }} icon="error" />
+                </Tooltip2>
               </p>
               <p>
                 <b>Total Interest Paid in USD:</b> $

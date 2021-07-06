@@ -24,7 +24,7 @@ import {
  * building the output dataset, you would need to add the new data range
  * to the Main.tsx app file and import the new dataset there.
  *
- *  See the README for more instructions.
+ * See the README for more instructions.
  */
 const DATE_IDENTIFIER = "02";
 const inputFile = `csv/original-csv-data/${DATE_IDENTIFIER}-rewards.csv`;
