@@ -705,7 +705,7 @@ export default class App extends React.Component<{}, IState> {
               <Card
                 elevation={Elevation.TWO}
                 style={{
-                  minHeight: 300,
+                  minHeight: 330,
                   textAlign: "left",
                   marginRight: isMobile ? 0 : 24,
                   width: isMobile ? "95vw" : 400,
@@ -747,12 +747,13 @@ export default class App extends React.Component<{}, IState> {
                       </p>
                     );
                   })}
+                  {this.renderMeanAndMedianHoldersInfo(data)}
                 </>
               </Card>
               <Card
                 elevation={Elevation.TWO}
                 style={{
-                  minHeight: 300,
+                  minHeight: 330,
                   textAlign: "left",
                   marginTop: isMobile ? 24 : "auto",
                   width: isMobile ? "95vw" : 400,
@@ -775,17 +776,7 @@ export default class App extends React.Component<{}, IState> {
                       </p>
                     );
                   })}
-                  <p>
-                    <b>Average Interest Per User:</b> $
-                    {formatValue(data.stats.averageInterestPerUser, 2)}
-                  </p>
-                  <p>
-                    <b>Annualized Average Interest Per User:</b> $
-                    {formatValue(
-                      parseFloat(data.stats.averageInterestPerUser) * 52,
-                      2,
-                    )}
-                  </p>
+                  {this.renderMeanAndMedianInterestRankingsInfo(data)}
                 </>
               </Card>
             </>
@@ -996,6 +987,58 @@ export default class App extends React.Component<{}, IState> {
       chartView: timeLapseChartView,
       chartSelection: timeLapseChartSelection,
     });
+  };
+
+  renderMeanAndMedianHoldersInfo = (data: CelsiusRewardsDataType) => {
+    const { coinPriceMap, coinDistributionChartSelection } = this.state;
+
+    const coin = coinDistributionChartSelection;
+    const price = coinPriceMap[coin];
+    const levels = data.coinDistributionsLevels;
+    const { total, numberOfUsersHolding } = data.portfolio[coin];
+
+    const averageHoldings =
+      parseFloat(total) / parseFloat(numberOfUsersHolding);
+    const averageUsdValue = price * averageHoldings;
+    const formattedAverage = formatValue(averageHoldings, 2);
+    const formattedAverageValue = formatValue(averageUsdValue, 2);
+    const averageLabel = `${formattedAverage} tokens ($${formattedAverageValue})`;
+
+    const { medianValue } = levels[coin];
+    const usdValue = price * parseFloat(medianValue);
+    const formattedAmount = formatValue(medianValue, 2);
+    const formattedValue = formatValue(usdValue);
+    const medianLabel = `${formattedAmount} tokens ($${formattedValue})`;
+
+    return (
+      <>
+        <p>
+          <b>Median Value:</b> {`${medianLabel}`}
+        </p>
+        <p>
+          <b>Average Value:</b> {`${averageLabel}`}
+        </p>
+      </>
+    );
+  };
+
+  renderMeanAndMedianInterestRankingsInfo = (data: CelsiusRewardsDataType) => {
+    const median = formatValue(data.interestEarnedRankings.medianValue, 2);
+    return (
+      <>
+        <p>
+          <b>Median Value:</b> ${median}
+        </p>
+        <p>
+          <b>Average Interest Per User:</b> $
+          {formatValue(data.stats.averageInterestPerUser, 2)}
+        </p>
+        <p>
+          <b>Annualized Average Interest Per User:</b> $
+          {formatValue(parseFloat(data.stats.averageInterestPerUser) * 52, 2)}
+        </p>
+      </>
+    );
   };
 
   renderTimeLapsePortfolioChart = () => {
