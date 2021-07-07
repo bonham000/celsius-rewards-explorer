@@ -29,11 +29,11 @@ export interface RankingsLevels {
 }
 
 export const rankingsArray: Array<[string, keyof RankingsLevels]> = [
-  ["Top 1", "topOne"],
-  ["Top 10", "topTen"],
-  ["Top 100", "topHundred"],
-  ["Top 1,000", "topThousand"],
-  ["Top 10,000", "topTenThousand"],
+  ["Rank 1", "topOne"],
+  ["Rank 10", "topTen"],
+  ["Rank 100", "topHundred"],
+  ["Rank 1,000", "topThousand"],
+  ["Rank 10,000", "topTenThousand"],
 ];
 
 type CoinDistribution = Array<string[]>;
