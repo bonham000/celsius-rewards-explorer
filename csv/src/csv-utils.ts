@@ -290,9 +290,9 @@ export const onLineReaderClose = (
   metrics.stats.averageNumberOfCoinsPerUser =
     averageNumberOfCoinsPerUser.toString();
 
-  const levels = [
-    [0, "topOne"],
-    [10, "topTen"], // Off by 1... should by 9? ... erhm, umm...?
+  const levels: [number, string][] = [
+    [1, "topOne"],
+    [10, "topTen"],
     [100, "topHundred"],
     [1000, "topThousand"],
     [10000, "topTenThousand"],
@@ -319,7 +319,7 @@ export const onLineReaderClose = (
     // Determine the balance held at each level for this coin
     for (const level of levels) {
       const [index, key] = level;
-      const value = sortedValues[index];
+      const value = sortedValues[index - 1]; // Adjust by 0 indexed array
       if (value !== undefined) {
         distributionLevels[key] = value[1];
       }
@@ -347,7 +347,7 @@ export const onLineReaderClose = (
   // Fill in the interest earned rankings
   for (const level of levels) {
     const [index, key] = level;
-    const value = sortedInterestList[index];
+    const value = sortedInterestList[index - 1]; // Adjust by 0 indexed array
     if (value !== undefined) {
       metrics.interestEarnedRankings[key] = value;
     }
