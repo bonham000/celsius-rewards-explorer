@@ -10,7 +10,6 @@ import {
 
 // Read command arguments
 const commandArgument = process.argv[2];
-const argumentFileKey = process.argv[3];
 
 const runAll = commandArgument === "all";
 
@@ -40,13 +39,6 @@ const CSV_KEYS = ["01", "02"];
 
 // Current date identifier is the last entry in the list
 let DATE_IDENTIFIER = CSV_KEYS.pop();
-
-if (argumentFileKey !== undefined) {
-  console.log(
-    `- [NOTE]: Using command argument for file key: ${argumentFileKey}`,
-  );
-  DATE_IDENTIFIER = argumentFileKey;
-}
 
 const getFileNames = (identifier: string) => {
   const inputFile = `csv/original-csv-data/${identifier}-rewards.csv`;
