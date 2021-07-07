@@ -1,5 +1,10 @@
 import BigNumber from "bignumber.js";
-import { CoinDataMap, CelsiusRewardsMetrics, PortfolioEntry } from "./types";
+import {
+  CoinDataMap,
+  CelsiusRewardsMetrics,
+  PortfolioEntry,
+  RankingsLevels,
+} from "./types";
 
 /** ===========================================================================
  * Parse CSV Row Logic
@@ -20,6 +25,7 @@ export const getInitialDefaultGlobalStateValues = () => {
       topHundred: "0",
       topThousand: "0",
       topTenThousand: "0",
+      medianValue: "0",
     },
     loyaltyTierSummary: {
       platinum: "0",
@@ -301,12 +307,13 @@ export const onLineReaderClose = (
       (a, b) => parseFloat(b[1]) - parseFloat(a[1]),
     );
 
-    const distributionLevels = {
+    const distributionLevels: RankingsLevels = {
       topOne: "0",
       topTen: "0",
       topHundred: "0",
       topThousand: "0",
       topTenThousand: "0",
+      medianValue: "0",
     };
 
     // Determine the balance held at each level for this coin
@@ -318,30 +325,12 @@ export const onLineReaderClose = (
       }
     }
 
-    // Sort the interest earned list
-    const sortedInterestList = interestEarnedPerUserList.sort(
-      (a, b) => parseFloat(b) - parseFloat(a),
-    );
-
-    // Fill in the interest earned rankings
-    for (const level of levels) {
-      const [index, key] = level;
-      const value = sortedInterestList[index];
-      if (value !== undefined) {
-        metrics.interestEarnedRankings[key] = value;
-      }
-    }
-
-    const { totalUsers, totalInterestPaidInUsd } = metrics.stats;
-
-    // Compute average interest paid per user
-    const averageInterest = new BigNumber(totalInterestPaidInUsd)
-      .dividedBy(totalUsers)
-      .toString();
-    metrics.stats.averageInterestPerUser = averageInterest;
-
     // Set the distribution levels on the metrics object
     metrics.coinDistributionsLevels[coin] = distributionLevels;
+
+    // Set median interest earned
+    const medianHoldings = sortedValues[Math.floor(sortedValues.length / 2)][1];
+    metrics.coinDistributionsLevels[coin].medianValue = medianHoldings;
 
     // Take only the top 100. There are too many holders and the top 1-3
     // whales skew the entire list anyway.
@@ -349,4 +338,31 @@ export const onLineReaderClose = (
 
     metrics.coinDistributions[coin] = sortedValues.slice(0, TOP_HOLDERS_LIMIT);
   }
+
+  // Sort the interest earned list
+  const sortedInterestList = interestEarnedPerUserList.sort(
+    (a, b) => parseFloat(b) - parseFloat(a),
+  );
+
+  // Fill in the interest earned rankings
+  for (const level of levels) {
+    const [index, key] = level;
+    const value = sortedInterestList[index];
+    if (value !== undefined) {
+      metrics.interestEarnedRankings[key] = value;
+    }
+  }
+
+  // Set median interest earned
+  const medianInterest =
+    sortedInterestList[Math.floor(sortedInterestList.length / 2)];
+  metrics.interestEarnedRankings.medianValue = medianInterest;
+
+  const { totalUsers, totalInterestPaidInUsd } = metrics.stats;
+
+  // Compute average interest paid per user
+  const averageInterest = new BigNumber(totalInterestPaidInUsd)
+    .dividedBy(totalUsers)
+    .toString();
+  metrics.stats.averageInterestPerUser = averageInterest;
 };

@@ -25,6 +25,7 @@ export interface RankingsLevels {
   topHundred: string;
   topThousand: string;
   topTenThousand: string;
+  medianValue: string;
 }
 
 export const rankingsArray: Array<[string, keyof RankingsLevels]> = [

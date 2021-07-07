@@ -16303,294 +16303,336 @@
       "topTen": "144253.231968035161250833",
       "topHundred": "26508.20753559",
       "topThousand": "4027.805704951198871706",
-      "topTenThousand": "0.312790697953744802"
+      "topTenThousand": "0.312790697953744802",
+      "medianHoldings": "191.951971114649692886"
     },
     "BTC": {
       "topOne": "2210.998398569928328492",
       "topTen": "310.542573035104971637",
       "topHundred": "72.224922689715100822",
       "topThousand": "9.609042419551396448",
-      "topTenThousand": "1.270312203839636671"
+      "topTenThousand": "1.270312203839636671",
+      "medianHoldings": "0.002401620522772288"
     },
     "CEL": {
       "topOne": "41053472.322057039744965735",
       "topTen": "3379594.284287434936772105",
       "topHundred": "256682.287666367014828613",
       "topThousand": "24607.60423924029910785",
-      "topTenThousand": "951.808148959614848476"
+      "topTenThousand": "951.808148959614848476",
+      "medianHoldings": "1.196688589087228553"
     },
     "DASH": {
       "topOne": "9182.418228761164695021",
       "topTen": "1005.174533594055244761",
       "topHundred": "146.5",
       "topThousand": "14.768380418677241226",
-      "topTenThousand": "0.000631470708737363"
+      "topTenThousand": "0.000631470708737363",
+      "medianHoldings": "0.490650133471021262"
     },
     "ETH": {
       "topOne": "16251.1547024028611706",
       "topTen": "6013.676311800735880448",
       "topHundred": "1021.434886285156093484",
       "topThousand": "118.290929690117371558",
-      "topTenThousand": "12.119466737355325739"
+      "topTenThousand": "12.119466737355325739",
+      "medianHoldings": "0.345818191327297986"
     },
     "LTC": {
       "topOne": "11499.999",
       "topTen": "2052.987811357237270196",
       "topHundred": "401.754166483420204105",
       "topThousand": "52.86211578",
-      "topTenThousand": "2.410692122929701821"
+      "topTenThousand": "2.410692122929701821",
+      "medianHoldings": "0.72480008"
     },
     "MANA": {
       "topOne": "263923.141330336042707624",
       "topTen": "83569.65965580679594715",
       "topHundred": "18088.634963781960156568",
       "topThousand": "2002.496824496331737994",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "302.418738030716565712"
     },
     "MATIC": {
       "topOne": "4651484.489024980806388336",
       "topTen": "1306807.019717538076923692",
       "topHundred": "347030.1",
       "topThousand": "56483.635715831453548728",
-      "topTenThousand": "3671.966411459883184616"
+      "topTenThousand": "3671.966411459883184616",
+      "medianHoldings": "734.8"
     },
     "SNX": {
       "topOne": "69732.1550271806212761",
       "topTen": "28044.986792770397699297",
       "topHundred": "6055.684044619874364234",
       "topThousand": "946.749553188388777786",
-      "topTenThousand": "61.757128884700126118"
+      "topTenThousand": "61.757128884700126118",
+      "medianHoldings": "30.617100487127030846"
     },
     "XLM": {
       "topOne": "8654104.440696802851002275",
       "topTen": "966175.148539323534407257",
       "topHundred": "127907.3122785",
       "topThousand": "18533.7827767",
-      "topTenThousand": "948.938951633105673307"
+      "topTenThousand": "948.938951633105673307",
+      "medianHoldings": "171.220123829892406817"
     },
     "ZRX": {
       "topOne": "817030.674410238534137263",
       "topTen": "81226.977520766394547113",
       "topHundred": "19295.276735103943708732",
       "topThousand": "2679.347964998223702798",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "162.105852678891496715"
     },
     "AAVE": {
       "topOne": "2696.81596607",
       "topTen": "909.866813722716206777",
       "topHundred": "173.683780036809206818",
       "topThousand": "25",
-      "topTenThousand": "0.081516075640212415"
+      "topTenThousand": "0.081516075640212415",
+      "medianHoldings": "1.885550605198905321"
     },
     "BCH": {
       "topOne": "8897.59439121264698327",
       "topTen": "661.737376895699144232",
       "topHundred": "75.1",
       "topThousand": "6.30754027",
-      "topTenThousand": "0.000723129965041175"
+      "topTenThousand": "0.000723129965041175",
+      "medianHoldings": "0.07933015"
     },
     "DOT": {
       "topOne": "85356.135726964837316504",
       "topTen": "8312.425149194866599682",
       "topHundred": "2000.520809558660621985",
       "topThousand": "285.874631532425453493",
-      "topTenThousand": "7.31973065"
+      "topTenThousand": "7.31973065",
+      "medianHoldings": "20.439479283826305753"
     },
     "LINK": {
       "topOne": "144930.124869262345538678",
       "topTen": "65083.484100357856874225",
       "topHundred": "10463.055237886743261235",
       "topThousand": "1169.53492184760396893",
-      "topTenThousand": "51.950703782173778367"
+      "topTenThousand": "51.950703782173778367",
+      "medianHoldings": "17.287652808363714948"
     },
     "UNI": {
       "topOne": "35448.749748884880358148",
       "topTen": "8197.652251343095901056",
       "topHundred": "2178.14685413629660891",
       "topThousand": "418.799187721636702685",
-      "topTenThousand": "2.776115179051833473"
+      "topTenThousand": "2.776115179051833473",
+      "medianHoldings": "19.962568852983115162"
     },
     "USDC": {
       "topOne": "17226679.226550995538432155",
       "topTen": "5342912.785495242721803423",
       "topHundred": "878907.586929182632784344",
       "topThousand": "119930.637372952124256396",
-      "topTenThousand": "6042.176353"
+      "topTenThousand": "6042.176353",
+      "medianHoldings": "139.967000604095433554"
     },
     "GUSD": {
       "topOne": "2898880.872117967152141104",
       "topTen": "558679.475562882320551002",
       "topHundred": "101397.375136873404204503",
       "topThousand": "5186.541161523890958083",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "403.98"
     },
     "BUSD": {
       "topOne": "6769910.301615331078042106",
       "topTen": "451727.847812041425833537",
       "topHundred": "86000",
       "topThousand": "3765.959281963313290093",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "328.164099999999983616"
     },
     "EOS": {
       "topOne": "370640.438725307389727785",
       "topTen": "44824.7451",
       "topHundred": "3951.792724983289701372",
       "topThousand": "273.580509411045804907",
-      "topTenThousand": "0.001612637474675796"
+      "topTenThousand": "0.001612637474675796",
+      "medianHoldings": "5.124419577551845095"
     },
     "USDT": {
       "topOne": "7088374.407025692573729169",
       "topTen": "1958593.250732",
       "topHundred": "250180",
       "topThousand": "24000.725311710521741255",
-      "topTenThousand": "168.141952327359200812"
+      "topTenThousand": "168.141952327359200812",
+      "medianHoldings": "27.654169"
     },
     "ZEC": {
       "topOne": "6455.25623308",
       "topTen": "1078.04758254935963839",
       "topHundred": "101.527998892360331667",
       "topThousand": "10.06736355",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "0.874505886232792516"
     },
     "COMP": {
       "topOne": "1003.11374254",
       "topTen": "244.946449774216584381",
       "topHundred": "40.021466816419729189",
       "topThousand": "5.296066497344073057",
-      "topTenThousand": "0.000040891401537949"
+      "topTenThousand": "0.000040891401537949",
+      "medianHoldings": "0.185610707413847468"
     },
     "XRP": {
       "topOne": "4217761.118572",
       "topTen": "684479.0885",
       "topHundred": "127564.856543883442382016",
       "topThousand": "14500.869245",
-      "topTenThousand": "194.684404"
+      "topTenThousand": "194.684404",
+      "medianHoldings": "124.687466"
     },
     "DAI": {
       "topOne": "806738.426963530683583465",
       "topTen": "160226.130192474286619441",
       "topHundred": "18347.914568418277407538",
       "topThousand": "1016.08060972589644891",
-      "topTenThousand": "40"
+      "topTenThousand": "40",
+      "medianHoldings": "30.35710809478796555"
     },
     "BNT": {
       "topOne": "33432.94924",
       "topTen": "2923.516617315026490364",
       "topHundred": "608.541382785271691299",
       "topThousand": "0.043051911739640538",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "77.60328767"
     },
     "OMG": {
       "topOne": "132961.127742773753266412",
       "topTen": "19645.862525706454667244",
       "topHundred": "1944.871116063988583614",
       "topThousand": "211.554858520499168776",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "24.682429428939912029"
     },
     "ETC": {
       "topOne": "18513.139792801670510999",
       "topTen": "3737.832423797026742824",
       "topHundred": "427.8664866",
       "topThousand": "32.688495010389013273",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "3.149361318030804265"
     },
     "BSV": {
       "topOne": "2317.527455065024614976",
       "topTen": "409.544695639993905957",
       "topHundred": "25.66501576",
       "topThousand": "1.14138062",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "0.195024240129008427"
     },
     "PAX": {
       "topOne": "4345635.867119033190958983",
       "topTen": "355996.668616471532438423",
       "topHundred": "13448.786138297295702917",
       "topThousand": "23.634670847945331516",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "19.1"
     },
     "KNC": {
       "topOne": "151378.420798353539371751",
       "topTen": "14257.078121101989818935",
       "topHundred": "3090.412679939267878611",
       "topThousand": "427.109750266601083682",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "95.938681512683700199"
     },
     "UMA": {
       "topOne": "10799.517851931934928131",
       "topTen": "1499.898674014114865587",
       "topHundred": "199.910852501509902712",
       "topThousand": "11.526212424974864499",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "6.46100939510728864"
     },
     "TUSD": {
       "topOne": "2999755.345124152946531367",
       "topTen": "255173.056810858597630776",
       "topHundred": "18684.653576455862665743",
       "topThousand": "107.120269800616852267",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "13.563508498652979331"
     },
     "PAXG": {
       "topOne": "1677.949351096723372992",
       "topTen": "175.035765844",
       "topHundred": "24.188863082217751507",
       "topThousand": "0.987841950137067146",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "0.264209390719575061"
     },
     "TCAD": {
       "topOne": "1006029.055863233625339339",
       "topTen": "93439.29",
       "topHundred": "4428.877931500123218783",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "1000"
     },
     "THKD": {
       "topOne": "1364472.563389434665311507",
       "topTen": "665017.45145601396997254",
       "topHundred": "64061.286022495979586623",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "17383.699138543210263326"
     },
     "XAUT": {
       "topOne": "154.04813448980004158",
       "topTen": "10.152367344756332439",
       "topHundred": "0.203398",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "0.064007"
     },
     "TGBP": {
       "topOne": "1047978.228920546798282318",
       "topTen": "176170.572455301447238679",
       "topHundred": "12812.4",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "472.279677467164118731"
     },
     "TAUD": {
       "topOne": "1181245.67409647913790707",
       "topTen": "200981.58",
       "topHundred": "21007.215954596320818275",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "1000.885984797898860399"
     },
     "BNB": {
       "topOne": "170.09979",
       "topTen": "14",
       "topHundred": "0",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "2.81856898"
     },
     "ZUSD": {
       "topOne": "336016.126995001826754143",
       "topTen": "0",
       "topHundred": "0",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "3018.757383298075306765"
     },
     "WDGLD": {
       "topOne": "1834.481364449293619132",
       "topTen": "0",
       "topHundred": "0",
       "topThousand": "0",
-      "topTenThousand": "0"
+      "topTenThousand": "0",
+      "medianHoldings": "47.34635474"
     }
   },
   "interestEarnedRankings": {
@@ -16598,7 +16640,8 @@
     "topTen": "31898.3537999530895500304477325300829",
     "topHundred": "6460.5922411708742089398651904441701",
     "topThousand": "962.3582565003825188777148770776064",
-    "topTenThousand": "126.8290182693372775917866625211653"
+    "topTenThousand": "126.8290182693372775917866625211653",
+    "medianInterest": "0.5835175786806990241462218272339"
   },
   "loyaltyTierSummary": {
     "platinum": "54889",

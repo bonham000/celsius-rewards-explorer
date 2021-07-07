@@ -52,27 +52,20 @@ export interface PortfolioEntry {
   numberOfUsersHolding: string;
 }
 
-export interface CoinDistributionLevels {
+export interface RankingsLevels {
   topOne: string;
   topTen: string;
   topHundred: string;
   topThousand: string;
   topTenThousand: string;
-}
-
-export interface InterestEarnedRankings {
-  topOne: string;
-  topTen: string;
-  topHundred: string;
-  topThousand: string;
-  topTenThousand: string;
+  medianValue: string;
 }
 
 type Portfolio = { [coin: string]: PortfolioEntry };
 
 type CoinDistribution = [string, string][];
 type CoinDistributions = { [coin: string]: CoinDistribution };
-type CoinDistributionLevelsMap = { [coin: string]: CoinDistributionLevels };
+type CoinDistributionLevelsMap = { [coin: string]: RankingsLevels };
 
 export interface LoyaltyTierSummary {
   platinum: string;
@@ -98,6 +91,6 @@ export interface CelsiusRewardsMetrics {
   loyaltyTierSummary: LoyaltyTierSummary;
   coinDistributions: CoinDistributions;
   coinDistributionsLevels: CoinDistributionLevelsMap;
-  interestEarnedRankings: InterestEarnedRankings;
+  interestEarnedRankings: RankingsLevels;
   stats: Stats;
 }
