@@ -501,12 +501,10 @@ export default class App extends React.Component<{}, IState> {
                     )}
               </p>
               <p>
-                The data on this page is compiled from the recently launched{" "}
-                <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
-                  Celsius Proof of Community
-                </a>{" "}
-                feature, which summarizes the weekly Celsius rewards
-                distributions.
+                The data displayed here represents the rewards payout data from
+                the Celsius CSV proof of community data. What you see includes
+                all coin balances earning rewards and excludes collateral locked
+                for loans.
               </p>
             </Card>
           </div>

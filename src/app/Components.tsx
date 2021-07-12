@@ -215,6 +215,14 @@ export const CoinHoldingsControls = styled.div`
 
 export const DialogBodyContent = (
   <>
+    <b>Rewards Data:</b>
+    <p>
+      • The data on this page is compiled from the recently launched{" "}
+      <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
+        Celsius Proof of Community
+      </a>{" "}
+      feature, which summarizes the weekly Celsius rewards distributions.
+    </p>
     <b>Source Code:</b>
     <p>
       • This project is open source and relies on the public CSV Proof of
