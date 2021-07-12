@@ -1047,6 +1047,7 @@ export default class App extends React.Component<{}, IState> {
     let min = Infinity;
     let max = -Infinity;
 
+    // Find the min and max values in the dataset
     for (const entry of timeLapseData) {
       // @ts-ignore
       const value = entry[timeLapseChartSelection];
@@ -1054,6 +1055,7 @@ export default class App extends React.Component<{}, IState> {
       max = Math.max(max, value as number);
     }
 
+    // Set upper and lower bounds at 10% the min and max values
     const lower = Math.floor(min - min * 0.01);
     const upper = Math.floor(max + max * 0.01);
 
