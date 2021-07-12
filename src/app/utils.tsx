@@ -2,7 +2,7 @@ import React from "react";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import coinSymbolMapJSON from "../data/coins.json";
-import { RewardsDataMap } from "./rewards";
+import { DateRangesType, RewardsDataMap } from "./rewards";
 
 /** ===========================================================================
  * Type Definitions
@@ -380,24 +380,23 @@ export const handleGetPortfolioTimeLapseData = ({
 
   for (const [dateRange, dataset] of Array.from(rewardsDataMap.entries())) {
     const { portfolio } = dataset;
-    const coinTokenMap = Object.entries(portfolio)
-      // Filter only the selected coin
+    // Filter only the entry matching the selected coin
+    const entry = Object.entries(portfolio)
       .filter(([coin]) => coin === chartSelection)
-      // Reduce the coin data to a single map
-      .reduce((coinToTokenMap, entry) => {
-        const [coin, data] = entry;
-        const value =
-          chartView === "holders" ? data.numberOfUsersHolding : data.total;
-        return {
-          ...coinToTokenMap,
-          [coin]: parseFloat(value),
-        };
-      }, {});
+      .filter(Boolean)[0];
 
-    result.push({
-      date: dateRange,
-      ...coinTokenMap,
-    });
+    // Confirm entry exists
+    if (entry) {
+      const [coin, data] = entry;
+      const value =
+        chartView === "holders" ? data.numberOfUsersHolding : data.total;
+
+      // Push value onto results array
+      result.push({
+        date: dateRange,
+        [coin]: parseFloat(value),
+      });
+    }
   }
 
   return result;

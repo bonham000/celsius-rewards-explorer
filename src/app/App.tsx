@@ -441,8 +441,8 @@ export default class App extends React.Component<{}, IState> {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis fontSize={10} dataKey="coin" />
                 <YAxis
-                  tickFormatter={(tick) => tick.toLocaleString()}
-                  fontSize={10}
+                  tick={{ fontSize: 10 }}
+                  tickFormatter={(x) => x.toLocaleString()}
                 />
                 <Tooltip formatter={this.formatTooltipValue("bar")} />
                 <Bar dataKey="value" fill={RANDOM_COLOR} />
@@ -673,13 +673,13 @@ export default class App extends React.Component<{}, IState> {
                   label={`Top 100 ${this.state.coinDistributionChartSelection} holders`}
                 />
                 <YAxis
+                  tick={{ fontSize: 10 }}
+                  tickFormatter={(x) => x.toLocaleString()}
                   tickCount={10}
                   domain={[
                     0,
                     Math.ceil(parseFloat(coinHoldersDistribution[0].value)),
                   ]}
-                  tickFormatter={(tick) => tick.toLocaleString()}
-                  fontSize={10}
                 />
                 {!isMobile && (
                   <Tooltip
@@ -782,9 +782,7 @@ export default class App extends React.Component<{}, IState> {
             </>
           )}
         </SummaryRow>
-        {/* Enable this in the future to display the time lapse chart,
-            e.g. when we have more data series to view. */}
-        {2 > 3 && this.renderTimeLapsePortfolioChart()}
+        {this.renderTimeLapsePortfolioChart()}
       </Page>
     );
   }
@@ -1043,9 +1041,25 @@ export default class App extends React.Component<{}, IState> {
 
   renderTimeLapsePortfolioChart = () => {
     const timeLapseData = this.getPortfolioTimeLapseData();
+    const { timeLapseChartSelection } = this.state;
+
+    // Get the upper and lower ranges for setting the y axis
+    let min = Infinity;
+    let max = -Infinity;
+
+    for (const entry of timeLapseData) {
+      // @ts-ignore
+      const value = entry[timeLapseChartSelection];
+      min = Math.min(min, value as number);
+      max = Math.max(max, value as number);
+    }
+
+    const lower = Math.floor(min - min * 0.01);
+    const upper = Math.floor(max + max * 0.01);
+
     return (
       <div style={{ marginTop: 24, marginBottom: 48 }}>
-        <PageTitle>Coin Holding Time Lapse</PageTitle>
+        <PageTitle>Asset Time Lapse</PageTitle>
         <Subtitle>View how asset holdings change over time.</Subtitle>
         <CoinHoldingsControls>
           <Switch
@@ -1094,7 +1108,7 @@ export default class App extends React.Component<{}, IState> {
           </TimeLapseSelect>
         </CoinHoldingsControls>
         <ChartContainer style={{ marginTop: 6 }}>
-          <ResponsiveContainer width="100%" height={600} minWidth="0">
+          <ResponsiveContainer width="100%" height={450} minWidth="0">
             <LineChart
               width={730}
               height={250}
@@ -1103,7 +1117,11 @@ export default class App extends React.Component<{}, IState> {
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis />
+              <YAxis
+                tick={{ fontSize: 10 }}
+                domain={[lower, upper]}
+                tickFormatter={(x) => x.toLocaleString()}
+              />
               <Tooltip formatter={this.formatTooltipValue("timelapse")} />
               {Object.entries(timeLapseData[0])
                 .filter((item) => item[0] !== "date")
@@ -1113,7 +1131,7 @@ export default class App extends React.Component<{}, IState> {
                     <Line
                       type="monotone"
                       dataKey={coin}
-                      stroke={portfolioPieColors[index]}
+                      stroke={RANDOM_COLOR}
                     />
                   );
                 })}
