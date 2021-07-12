@@ -215,21 +215,6 @@ export const CoinHoldingsControls = styled.div`
 
 export const DialogBodyContent = (
   <>
-    <b>Observations:</b>
-    <p>
-      • There is a strong preference for users to earn in CEL. Over 75% of BTC
-      holders, which is the largest coin holding (CEL is 2nd), are earning in
-      CEL.
-    </p>
-    <p>
-      • All of the charts appear to follow a power law distribution, with most
-      of users concentrated around a few coins and a long tail of smaller coins
-      with few holders.{" "}
-    </p>
-    <p>
-      • The smallest coins have very few users, e.g. ZUSD only has 3 holders.
-    </p>
-    <p>• The top coin holdings are, unsurprisingly, BTC, ETH, CEL, and USDC.</p>
     <b>Source Code:</b>
     <p>
       • This project is open source and relies on the public CSV Proof of
@@ -260,15 +245,6 @@ export const DialogBodyContent = (
         open an issue on GitHub
       </a>
       .
-    </p>
-    <b>By the Way:</b>
-    <p>
-      • If you happen to know anyone at Celsius, I am interested in working for
-      them,{" "}
-      <a target="__blank" href="mailto:sean.smith.2009@gmail.com">
-        you can reach me here
-      </a>{" "}
-      🙂
     </p>
   </>
 );
