@@ -2,7 +2,7 @@ import React from "react";
 import { isMobile } from "react-device-detect";
 import axios from "axios";
 import coinSymbolMapJSON from "../data/coins.json";
-import { DateRangesType, RewardsDataMap } from "./rewards";
+import { RewardsDataMap } from "./rewards";
 
 /** ===========================================================================
  * Type Definitions
