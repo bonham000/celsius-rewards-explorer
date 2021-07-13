@@ -797,7 +797,7 @@ export default class App extends React.Component<{}, IState> {
         result = portfolioAllocations;
         break;
       case "top":
-        result = portfolioAllocations.slice(0, 15);
+        result = portfolioAllocations.slice(0, 10);
         break;
       case "bottom":
         result = portfolioAllocations.slice(20);

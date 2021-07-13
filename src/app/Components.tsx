@@ -85,7 +85,7 @@ export const getPortfolioSelectText = (view: PortfolioView) => {
   if (view === "all") {
     text = "View all coins";
   } else if (view === "top") {
-    text = "View most held 15 coins only";
+    text = "View most held 10 coins only";
   } else {
     text = "View least held 20 coins only";
   }
