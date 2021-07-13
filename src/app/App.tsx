@@ -247,6 +247,7 @@ export default class App extends React.Component<{}, IState> {
           const isActive = item === this.state.dateRange;
           return (
             <MenuItem
+              key={item}
               text={item}
               disabled={isActive}
               onClick={(e: any) => handleClick(e)}
@@ -273,6 +274,7 @@ export default class App extends React.Component<{}, IState> {
           return (
             <MenuItem
               disabled={isActive}
+              key={chartKeyMap[item].title}
               text={chartKeyMap[item].title}
               onClick={(e: any) => handleClick(e)}
             />
@@ -302,6 +304,7 @@ export default class App extends React.Component<{}, IState> {
           return (
             <MenuItem
               disabled={isActive}
+              key={getPortfolioSelectText(item)}
               text={getPortfolioSelectText(item)}
               onClick={(e: any) => handleClick(e)}
             />
@@ -333,6 +336,7 @@ export default class App extends React.Component<{}, IState> {
           const isActive = item === this.state.coinDistributionChartSelection;
           return (
             <MenuItem
+              key={item}
               text={item}
               disabled={isActive}
               onClick={(e: any) => handleClick(e)}
@@ -744,7 +748,7 @@ export default class App extends React.Component<{}, IState> {
                     const formattedValue = formatValue(usdValue);
                     const label = `${formattedAmount} tokens ($${formattedValue})`;
                     return (
-                      <p>
+                      <p key={title}>
                         <b>{title}:</b> {`${label}`}
                       </p>
                     );
@@ -773,7 +777,7 @@ export default class App extends React.Component<{}, IState> {
                     const formattedValue = formatValue(value, 2);
                     const label = `$${formattedValue}`;
                     return (
-                      <p>
+                      <p key={title}>
                         <b>{title}:</b> {`${label}`}
                       </p>
                     );
@@ -1075,6 +1079,7 @@ export default class App extends React.Component<{}, IState> {
               return (
                 <MenuItem
                   disabled={isActive}
+                  key={renderChartSelectTitle(item)}
                   text={renderChartSelectTitle(item)}
                   onClick={(e: any) => handleClick(e)}
                 />
@@ -1106,6 +1111,7 @@ export default class App extends React.Component<{}, IState> {
               const isActive = item === this.state.timeLapseChartSelection;
               return (
                 <MenuItem
+                  key={item}
                   text={item}
                   disabled={isActive}
                   onClick={(e: any) => handleClick(e)}
@@ -1142,6 +1148,7 @@ export default class App extends React.Component<{}, IState> {
                   const coin = coinItem[0];
                   return (
                     <Line
+                      key={coin}
                       type="monotone"
                       dataKey={coin}
                       stroke={RANDOM_COLOR}
