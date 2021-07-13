@@ -78,6 +78,8 @@ import {
   Nullable,
   TimeLapseChartView,
   handleGetPortfolioTimeLapseData,
+  timeLapseChartViewOptions,
+  capitalize,
 } from "./utils";
 import { dateRanges, DateRangesType, getRewardsDataMap } from "./rewards";
 
@@ -96,6 +98,7 @@ const ChartSelect = Select.ofType<ChartType>();
 const PortfolioSelect = Select.ofType<PortfolioView>();
 const CoinDistributionSelect = Select.ofType<string>();
 const TimeLapseSelect = Select.ofType<string>();
+const TimeLapseChartViewSelect = Select.ofType<TimeLapseChartView>();
 
 interface IState {
   toasts: any[];
@@ -148,7 +151,7 @@ export default class App extends React.Component<{}, IState> {
       portfolioView: "all",
       portfolioAllocations: [],
       currentPortfolioAllocation: [],
-      timeLapseChartView: "tokens",
+      timeLapseChartView: "Tokens",
       displayFiatInDistributionChart: false,
       timeLapseChartSelection: "CEL",
       coinDistributionChartSelection: "CEL",
@@ -528,8 +531,7 @@ export default class App extends React.Component<{}, IState> {
                   align="right"
                   layout="vertical"
                   verticalAlign="middle"
-                  // capitalize the label
-                  formatter={(label) => label[0].toUpperCase() + label.slice(1)}
+                  formatter={(label) => capitalize(label)}
                 />
                 <Tooltip formatter={this.formatTooltipValue("pie")} />
                 <Pie
@@ -956,13 +958,6 @@ export default class App extends React.Component<{}, IState> {
     }));
   };
 
-  handleToggleTimeLapseChartView = () => {
-    this.setState((prevState) => ({
-      timeLapseChartView:
-        prevState.timeLapseChartView === "tokens" ? "holders" : "tokens",
-    }));
-  };
-
   toast = (message: string, type?: "warning" | "error") => {
     const className =
       type === "warning"
@@ -1039,7 +1034,7 @@ export default class App extends React.Component<{}, IState> {
 
   renderTimeLapsePortfolioChart = () => {
     const timeLapseData = this.getPortfolioTimeLapseData();
-    const { timeLapseChartSelection } = this.state;
+    const { timeLapseChartSelection, timeLapseChartView } = this.state;
 
     // Get the upper and lower ranges for setting the y axis
     let min = Infinity;
@@ -1047,8 +1042,13 @@ export default class App extends React.Component<{}, IState> {
 
     // Find the min and max values in the dataset
     for (const entry of timeLapseData) {
+      const key =
+        timeLapseChartView === "Total Tokens"
+          ? "Total Tokens"
+          : timeLapseChartSelection;
+
       // @ts-ignore
-      const value = entry[timeLapseChartSelection];
+      const value = entry[key];
       min = Math.min(min, value as number);
       max = Math.max(max, value as number);
     }
@@ -1057,27 +1057,50 @@ export default class App extends React.Component<{}, IState> {
     const lower = Math.floor(min - min * 0.01);
     const upper = Math.floor(max + max * 0.01);
 
+    const renderItemTitle = (item: TimeLapseChartView) => {
+      return item !== "Total Tokens"
+        ? `View ${item} for ${timeLapseChartSelection}`
+        : "View Total Tokens Held in App";
+    };
+
     return (
       <div style={{ marginTop: 24, marginBottom: 48 }}>
         <PageTitle>Asset Time Lapse</PageTitle>
-        <Subtitle>View how asset holdings change over time.</Subtitle>
+        <Subtitle>
+          View how asset holdings change over time. Note that this only
+          represents coins earning rewards and excludes coins locked as
+          collateral.
+        </Subtitle>
         <CoinHoldingsControls>
-          <Switch
-            style={{
-              margin: 0,
-              marginRight: 4,
-              width: 225,
-              textAlign: "left",
+          <TimeLapseChartViewSelect
+            filterable={false}
+            items={timeLapseChartViewOptions}
+            activeItem={this.state.timeLapseChartView}
+            onItemSelect={(item) => {
+              this.setState({ timeLapseChartView: item });
             }}
-            checked={this.state.timeLapseChartView === "tokens"}
-            onChange={this.handleToggleTimeLapseChartView}
-            label={
-              this.state.timeLapseChartView === "tokens"
-                ? "Viewing Token Holdings"
-                : "Viewing Number of Holders"
-            }
-          />
+            itemRenderer={(item, { handleClick }) => {
+              const isActive = item === this.state.timeLapseChartView;
+              return (
+                <MenuItem
+                  disabled={isActive}
+                  text={renderItemTitle(item)}
+                  onClick={(e: any) => handleClick(e)}
+                />
+              );
+            }}
+          >
+            <Button
+              rightIcon="caret-down"
+              style={{ marginRight: 8 }}
+              text={renderItemTitle(this.state.timeLapseChartView).replace(
+                "View",
+                "Viewing",
+              )}
+            />
+          </TimeLapseChartViewSelect>
           <TimeLapseSelect
+            disabled={timeLapseChartView === "Total Tokens"}
             filterable={!isMobile}
             popoverProps={{
               popoverClassName: "coin-distribution-select",
@@ -1104,6 +1127,7 @@ export default class App extends React.Component<{}, IState> {
             <Button
               rightIcon="caret-down"
               text={this.state.timeLapseChartSelection}
+              disabled={timeLapseChartView === "Total Tokens"}
             />
           </TimeLapseSelect>
         </CoinHoldingsControls>

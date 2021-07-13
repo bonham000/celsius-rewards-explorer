@@ -85,7 +85,13 @@ const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
 export type Nullable<T> = T | null;
 
-export type TimeLapseChartView = "holders" | "tokens";
+export type TimeLapseChartView = "Holders" | "Tokens" | "Total Tokens";
+
+export const timeLapseChartViewOptions: TimeLapseChartView[] = [
+  "Holders",
+  "Tokens",
+  "Total Tokens",
+];
 
 /** ===========================================================================
  * Utils
@@ -343,7 +349,7 @@ export const handleFormatTooltipValue = ({
       );
     }
   } else if (chart === "timelapse") {
-    return formattedValue;
+    return capitalize(formattedValue);
   }
 
   switch (chartType) {
@@ -367,6 +373,8 @@ export const handleFormatTooltipValue = ({
   }
 };
 
+export const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1);
+
 export const handleGetPortfolioTimeLapseData = ({
   chartSelection,
   chartView,
@@ -380,22 +388,41 @@ export const handleGetPortfolioTimeLapseData = ({
 
   for (const [dateRange, dataset] of Array.from(rewardsDataMap.entries())) {
     const { portfolio } = dataset;
-    // Filter only the entry matching the selected coin
-    const entry = Object.entries(portfolio)
-      .filter(([coin]) => coin === chartSelection)
-      .filter(Boolean)[0];
 
-    // Confirm entry exists
-    if (entry) {
-      const [coin, data] = entry;
-      const value =
-        chartView === "holders" ? data.numberOfUsersHolding : data.total;
+    if (chartView === "Total Tokens") {
+      const key = chartView;
+      const total = Object.entries(portfolio).reduce(
+        (aggregate, item) => {
+          const data = item[1];
+          const value = data.total;
 
-      // Push value onto results array
-      result.push({
-        date: dateRange,
-        [coin]: parseFloat(value),
-      });
+          return {
+            ...aggregate,
+            [key]: parseFloat(value) + aggregate[key],
+          };
+        },
+        { [key]: 0 },
+      );
+
+      result.push({ ...total, date: dateRange });
+    } else {
+      // Filter only the entry matching the selected coin
+      const entry = Object.entries(portfolio)
+        .filter(([coin]) => coin === chartSelection)
+        .filter(Boolean)[0];
+
+      // Confirm entry exists
+      if (entry) {
+        const [coin, data] = entry;
+        const value =
+          chartView === "Holders" ? data.numberOfUsersHolding : data.total;
+
+        // Push value onto results array
+        result.push({
+          date: dateRange,
+          [coin]: parseFloat(value),
+        });
+      }
     }
   }
 
