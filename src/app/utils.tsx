@@ -85,12 +85,17 @@ const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
 export type Nullable<T> = T | null;
 
-export type TimeLapseChartView = "Holders" | "Tokens" | "Total Tokens";
+export type TimeLapseChartView =
+  | "Holders"
+  | "Tokens"
+  | "Total Tokens"
+  | "Total Users";
 
 export const timeLapseChartViewOptions: TimeLapseChartView[] = [
   "Holders",
   "Tokens",
   "Total Tokens",
+  "Total Users",
 ];
 
 /** ===========================================================================
@@ -389,8 +394,13 @@ export const handleGetPortfolioTimeLapseData = ({
   for (const [dateRange, dataset] of Array.from(rewardsDataMap.entries())) {
     const { portfolio } = dataset;
 
-    if (chartView === "Total Tokens") {
-      const key = chartView;
+    if (chartView === "Total Users") {
+      const { totalUsers } = dataset.stats;
+      result.push({
+        date: dateRange,
+        [chartView]: totalUsers,
+      });
+    } else if (chartView === "Total Tokens") {
       const total = Object.entries(portfolio).reduce(
         (aggregate, item) => {
           const data = item[1];
@@ -398,10 +408,10 @@ export const handleGetPortfolioTimeLapseData = ({
 
           return {
             ...aggregate,
-            [key]: parseFloat(value) + aggregate[key],
+            [chartView]: parseFloat(value) + aggregate[chartView],
           };
         },
-        { [key]: 0 },
+        { [chartView]: 0 },
       );
 
       result.push({ ...total, date: dateRange });

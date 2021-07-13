@@ -1036,16 +1036,19 @@ export default class App extends React.Component<{}, IState> {
     const timeLapseData = this.getPortfolioTimeLapseData();
     const { timeLapseChartSelection, timeLapseChartView } = this.state;
 
+    const isTokenOnlyView = (view: TimeLapseChartView) => {
+      return view === "Total Tokens" || view === "Total Users";
+    };
+
     // Get the upper and lower ranges for setting the y axis
     let min = Infinity;
     let max = -Infinity;
 
     // Find the min and max values in the dataset
     for (const entry of timeLapseData) {
-      const key =
-        timeLapseChartView === "Total Tokens"
-          ? "Total Tokens"
-          : timeLapseChartSelection;
+      const view = timeLapseChartView;
+      const coin = timeLapseChartSelection;
+      const key = isTokenOnlyView(view) ? view : coin;
 
       // @ts-ignore
       const value = entry[key];
@@ -1058,9 +1061,13 @@ export default class App extends React.Component<{}, IState> {
     const upper = Math.floor(max + max * 0.01);
 
     const renderItemTitle = (item: TimeLapseChartView) => {
-      return item !== "Total Tokens"
-        ? `View ${item} for ${timeLapseChartSelection}`
-        : "View Total Tokens Held in App";
+      if (item === "Total Tokens") {
+        return "View Total Tokens Held in App";
+      } else if (item === "Total Users") {
+        return "View Total Users Earning Rewards";
+      } else {
+        return `View ${item} for ${timeLapseChartSelection}`;
+      }
     };
 
     return (
@@ -1100,7 +1107,6 @@ export default class App extends React.Component<{}, IState> {
             />
           </TimeLapseChartViewSelect>
           <TimeLapseSelect
-            disabled={timeLapseChartView === "Total Tokens"}
             filterable={!isMobile}
             popoverProps={{
               popoverClassName: "coin-distribution-select",
@@ -1127,7 +1133,7 @@ export default class App extends React.Component<{}, IState> {
             <Button
               rightIcon="caret-down"
               text={this.state.timeLapseChartSelection}
-              disabled={timeLapseChartView === "Total Tokens"}
+              disabled={isTokenOnlyView(timeLapseChartView)}
             />
           </TimeLapseSelect>
         </CoinHoldingsControls>
