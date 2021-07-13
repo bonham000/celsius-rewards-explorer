@@ -80,6 +80,8 @@ import {
   handleGetPortfolioTimeLapseData,
   timeLapseChartViewOptions,
   capitalize,
+  isTimeLapseChartTokenOnlyView,
+  getAxisBoundsForTimeLapseChart,
 } from "./utils";
 import { dateRanges, DateRangesType, getRewardsDataMap } from "./rewards";
 
@@ -1036,31 +1038,13 @@ export default class App extends React.Component<{}, IState> {
     const timeLapseData = this.getPortfolioTimeLapseData();
     const { timeLapseChartSelection, timeLapseChartView } = this.state;
 
-    const isTokenOnlyView = (view: TimeLapseChartView) => {
-      return view === "Total Tokens" || view === "Total Users";
-    };
+    const { lower, upper } = getAxisBoundsForTimeLapseChart(
+      timeLapseData,
+      timeLapseChartView,
+      timeLapseChartSelection,
+    );
 
-    // Get the upper and lower ranges for setting the y axis
-    let min = Infinity;
-    let max = -Infinity;
-
-    // Find the min and max values in the dataset
-    for (const entry of timeLapseData) {
-      const view = timeLapseChartView;
-      const coin = timeLapseChartSelection;
-      const key = isTokenOnlyView(view) ? view : coin;
-
-      // @ts-ignore
-      const value = entry[key];
-      min = Math.min(min, value as number);
-      max = Math.max(max, value as number);
-    }
-
-    // Set upper and lower bounds at 10% the min and max values
-    const lower = Math.floor(min - min * 0.01);
-    const upper = Math.floor(max + max * 0.01);
-
-    const renderItemTitle = (item: TimeLapseChartView) => {
+    const renderChartSelectTitle = (item: TimeLapseChartView) => {
       if (item === "Total Tokens") {
         return "View Total Tokens Held in App";
       } else if (item === "Total Users") {
@@ -1091,7 +1075,7 @@ export default class App extends React.Component<{}, IState> {
               return (
                 <MenuItem
                   disabled={isActive}
-                  text={renderItemTitle(item)}
+                  text={renderChartSelectTitle(item)}
                   onClick={(e: any) => handleClick(e)}
                 />
               );
@@ -1100,10 +1084,9 @@ export default class App extends React.Component<{}, IState> {
             <Button
               rightIcon="caret-down"
               style={{ marginRight: 8 }}
-              text={renderItemTitle(this.state.timeLapseChartView).replace(
-                "View",
-                "Viewing",
-              )}
+              text={renderChartSelectTitle(
+                this.state.timeLapseChartView,
+              ).replace("View", "Viewing")}
             />
           </TimeLapseChartViewSelect>
           <TimeLapseSelect
@@ -1133,7 +1116,7 @@ export default class App extends React.Component<{}, IState> {
             <Button
               rightIcon="caret-down"
               text={this.state.timeLapseChartSelection}
-              disabled={isTokenOnlyView(timeLapseChartView)}
+              disabled={isTimeLapseChartTokenOnlyView(timeLapseChartView)}
             />
           </TimeLapseSelect>
         </CoinHoldingsControls>
@@ -1155,7 +1138,7 @@ export default class App extends React.Component<{}, IState> {
               <Tooltip formatter={this.formatTooltipValue("timelapse")} />
               {Object.entries(timeLapseData[0])
                 .filter((item) => item[0] !== "date")
-                .map((coinItem, index) => {
+                .map((coinItem) => {
                   const coin = coinItem[0];
                   return (
                     <Line

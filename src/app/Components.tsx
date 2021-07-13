@@ -113,6 +113,12 @@ export const PageTitle = styled.h1`
 
 export const Subtitle = styled.p`
   font-size: 12px;
+
+  @media ${MOBILE} {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 `;
 
 export const CardTitle = styled.h2`
