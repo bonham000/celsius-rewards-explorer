@@ -227,7 +227,10 @@ export const DialogBodyContent = (
       <a target="__blank" href="https://youtu.be/XIMQKJXUke8">
         Celsius Proof of Community
       </a>{" "}
-      feature, which summarizes the weekly Celsius rewards distributions.
+      feature, which summarizes the weekly Celsius rewards distributions. Please
+      note that it only includes balances earning rewards, and does not
+      represent assets which are locked as collateral or other assets owned by
+      Celsius which are not earning rewards.
     </p>
     <b>Source Code:</b>
     <p>

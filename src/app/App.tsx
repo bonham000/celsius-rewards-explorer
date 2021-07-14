@@ -466,10 +466,10 @@ export default class App extends React.Component<{}, IState> {
               elevation={Elevation.TWO}
               style={{
                 margin: 0,
-                minHeight: 300,
+                minHeight: 310,
                 textAlign: "left",
                 marginRight: isMobile ? 0 : 24,
-                width: isMobile ? "95vw" : 500,
+                width: isMobile ? "95vw" : 550,
               }}
             >
               <Row style={{ marginBottom: 6 }}>
@@ -501,7 +501,7 @@ export default class App extends React.Component<{}, IState> {
                   : ` $${formatValue(String(this.state.totalAssetValue))}`}
               </p>
               <p>
-                <b>Annualized 52 Week Interest Yield:</b>
+                <b>Est. Annualized Interest Yield:</b>
                 {this.state.totalAssetValue === null
                   ? " Loading..."
                   : getProjectedAnnualYield(
@@ -510,10 +510,18 @@ export default class App extends React.Component<{}, IState> {
                     )}
               </p>
               <p>
+                <b>Est. Annualized Interest Paid:</b>
+                {this.state.totalAssetValue === null
+                  ? " Loading..."
+                  : ` $${formatValue(
+                      parseFloat(data.stats.totalInterestPaidInUsd) * 52,
+                    )}`}
+              </p>
+              <p style={{ fontSize: 13 }}>
                 The data displayed here represents the rewards payout data from
-                the Celsius CSV proof of community data. What you see includes
-                all coin balances earning rewards and excludes collateral locked
-                for loans.
+                the weekly Celsius CSV proof of community data. It includes all
+                coin balances earning rewards and excludes collateral locked for
+                loans and other assets owned by Celsius.
               </p>
             </Card>
           </div>
@@ -521,9 +529,9 @@ export default class App extends React.Component<{}, IState> {
             <Card
               elevation={Elevation.TWO}
               style={{
-                minHeight: 300,
+                minHeight: 310,
                 textAlign: "left",
-                width: isMobile ? "95vw" : 500,
+                width: isMobile ? "95vw" : 550,
               }}
             >
               <Row style={{ marginBottom: 6 }}>
