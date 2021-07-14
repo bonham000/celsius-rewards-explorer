@@ -104,13 +104,13 @@ const TimeLapseChartViewSelect = Select.ofType<TimeLapseChartView>();
 
 interface IState {
   toasts: any[];
-  loading: boolean;
   dialogOpen: boolean;
   viewTopCoins: boolean;
-  chartType: ChartType;
-  coinPriceMap: CoinPriceMap;
-  dateRange: DateRangesType;
   drawerOpen: boolean;
+  chartType: ChartType;
+  dateRange: DateRangesType;
+  coinPriceMap: CoinPriceMap;
+  loadingPriceData: boolean;
   totalAssetValue: number | null;
   portfolioView: PortfolioView;
   timeLapseChartSelection: string;
@@ -143,7 +143,7 @@ export default class App extends React.Component<{}, IState> {
 
     this.state = {
       toasts: [],
-      loading: true,
+      loadingPriceData: true,
       drawerOpen: false,
       viewTopCoins: true,
       dialogOpen: false,
@@ -177,7 +177,7 @@ export default class App extends React.Component<{}, IState> {
    * supports and allows fetch prices for only these coins.
    */
   initializePriceData = () => {
-    this.setState({ loading: true }, () => {
+    this.setState({ loadingPriceData: true }, () => {
       // First try to restore price data from local cache
       const didRestorePriceDataFromCache = this.restorePriceDataFromCache();
 
@@ -196,7 +196,7 @@ export default class App extends React.Component<{}, IState> {
     const coinPriceMap = readCachedCoinPriceData(dataset);
     if (coinPriceMap) {
       this.setState(
-        { loading: false, coinPriceMap },
+        { loadingPriceData: false, coinPriceMap },
         this.calculateTotalAssetsAndPortfolio,
       );
       return "success";
@@ -224,7 +224,7 @@ export default class App extends React.Component<{}, IState> {
     }, {});
 
     // Update state and calculate total asset value using the new prices
-    this.setState({ loading: false, coinPriceMap }, () => {
+    this.setState({ loadingPriceData: false, coinPriceMap }, () => {
       cacheCoinPriceMap(this.state.coinPriceMap);
       this.calculateTotalAssetsAndPortfolio();
     });
@@ -440,7 +440,7 @@ export default class App extends React.Component<{}, IState> {
           </ChartControls>
         </ChartTitleRow>
         <ChartContainer>
-          {this.state.loading ? (
+          {this.state.loadingPriceData ? (
             <ChartLoading>
               <span>Loading chart data...</span>
             </ChartLoading>
@@ -565,33 +565,39 @@ export default class App extends React.Component<{}, IState> {
               height={isMobile ? 450 : 500}
               minWidth="0"
             >
-              <PieChart
-                width={isMobile ? 250 : 400}
-                height={isMobile ? 200 : 400}
-              >
-                <Tooltip formatter={this.formatTooltipValue("portfolio")} />
-                <Pie
-                  cx={isMobile ? "50%" : "55%"}
-                  cy="50%"
-                  nameKey="coin"
-                  dataKey="value"
-                  labelLine={false}
-                  isAnimationActive={false}
-                  innerRadius={isMobile ? 60 : 80}
-                  outerRadius={isMobile ? 160 : 240}
-                  data={currentPortfolioAllocation}
-                  label={this.renderCustomizedLabel}
+              {this.state.loadingPriceData ? (
+                <ChartLoading style={{ height: isMobile ? 200 : 400 }}>
+                  <span>Loading chart data...</span>
+                </ChartLoading>
+              ) : (
+                <PieChart
+                  width={isMobile ? 250 : 400}
+                  height={isMobile ? 200 : 400}
                 >
-                  {currentPortfolioAllocation.map((_entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={
-                        portfolioPieColors[index % portfolioPieColors.length]
-                      }
-                    />
-                  ))}
-                </Pie>
-              </PieChart>
+                  <Tooltip formatter={this.formatTooltipValue("portfolio")} />
+                  <Pie
+                    cx={isMobile ? "50%" : "55%"}
+                    cy="50%"
+                    nameKey="coin"
+                    dataKey="value"
+                    labelLine={false}
+                    isAnimationActive={false}
+                    innerRadius={isMobile ? 60 : 80}
+                    outerRadius={isMobile ? 160 : 240}
+                    data={currentPortfolioAllocation}
+                    label={this.renderCustomizedLabel}
+                  >
+                    {currentPortfolioAllocation.map((_entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          portfolioPieColors[index % portfolioPieColors.length]
+                        }
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              )}
             </ResponsiveContainer>
             <Card
               elevation={Elevation.TWO}
@@ -702,7 +708,7 @@ export default class App extends React.Component<{}, IState> {
           </ChartContainer>
         </div>
         <SummaryRow style={{ marginBottom: 75 }}>
-          {this.state.loading ? (
+          {this.state.loadingPriceData ? (
             <div style={{ height: 200 }}>
               <span>Loading...</span>
             </div>
