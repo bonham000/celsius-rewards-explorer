@@ -35,7 +35,7 @@ if (runAll) {
  *
  * See the README for more instructions.
  */
-const CSV_KEYS = ["01", "02", "03"];
+const CSV_KEYS = ["01", "02", "03", "04"];
 
 // Current date identifier is the last entry in the list
 let DATE_IDENTIFIER = CSV_KEYS.pop();
