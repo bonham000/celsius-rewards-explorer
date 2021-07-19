@@ -57,6 +57,7 @@ import {
   earnInCelTooltipContent,
   loyaltyTiersTooltipContent,
   topHoldersTooltipContent,
+  InfoText,
 } from "./Components";
 import {
   chartKeyMap,
@@ -738,16 +739,16 @@ export default class App extends React.Component<{}, IState> {
                     </CardTitle>
                     {CoinDistributionSelectMenu}
                   </Row>
-                  <Subtitle>
+                  <InfoText>
                     {formatValue(
                       data.portfolio[this.state.coinDistributionChartSelection]
                         .numberOfUsersHolding,
                     )}{" "}
                     users hold {this.state.coinDistributionChartSelection}.
-                  </Subtitle>
-                  <Subtitle>
+                  </InfoText>
+                  <InfoText>
                     Breakdown of top holders at various levels:
-                  </Subtitle>
+                  </InfoText>
                   {rankingsArray.map((item) => {
                     const [title, key] = item;
                     const { coinPriceMap, coinDistributionChartSelection } =
@@ -783,7 +784,7 @@ export default class App extends React.Component<{}, IState> {
                   <Row style={{ marginBottom: 6 }}>
                     <CardTitle>Weekly Reward Rankings</CardTitle>
                   </Row>
-                  <Subtitle>Rankings for top earning users.</Subtitle>
+                  <InfoText>Rankings for top earning users.</InfoText>
                   {rankingsArray.map((item) => {
                     const [title, key] = item;
                     const rankings = data.interestEarnedRankings;

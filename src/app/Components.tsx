@@ -121,6 +121,10 @@ export const Subtitle = styled.p`
   }
 `;
 
+export const InfoText = styled.p`
+  font-size: 12px;
+`;
+
 export const CardTitle = styled.h2`
   margin-top: 2px;
   margin-bottom: 2px;
