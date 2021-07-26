@@ -29,8 +29,8 @@ import {
   Cell,
   PieChart,
   ResponsiveContainer,
-  Line,
-  LineChart,
+  AreaChart,
+  Area,
 } from "recharts";
 import originalCSV from "../data/csv-row-sample.json";
 import JSONPretty from "react-json-pretty";
@@ -1143,12 +1143,22 @@ export default class App extends React.Component<{}, IState> {
         </CoinHoldingsControls>
         <ChartContainer style={{ marginTop: 6 }}>
           <ResponsiveContainer width="100%" height={450} minWidth="0">
-            <LineChart
+            <AreaChart
               width={730}
               height={250}
               data={timeLapseData}
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >
+              <defs>
+                <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopOpacity={1} stopColor={RANDOM_COLOR} />
+                  <stop
+                    offset="100%"
+                    stopOpacity={0.1}
+                    stopColor={RANDOM_COLOR}
+                  />
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
               <YAxis
@@ -1162,15 +1172,17 @@ export default class App extends React.Component<{}, IState> {
                 .map((coinItem) => {
                   const coin = coinItem[0];
                   return (
-                    <Line
-                      key={coin}
+                    <Area
                       type="monotone"
+                      key={coin}
                       dataKey={coin}
+                      fillOpacity={1}
                       stroke={RANDOM_COLOR}
+                      fill="url(#colorUv)"
                     />
                   );
                 })}
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </ChartContainer>
       </div>
