@@ -22,6 +22,7 @@
   "LTC": { "id": "litecoin", "symbol": "ltc", "name": "Litecoin" },
   "XLM": { "id": "stellar", "symbol": "xlm", "name": "Stellar" },
   "AAVE": { "id": "aave", "symbol": "aave", "name": "Aave" },
+  "LUNA": { "id": "terra-luna", "symbol": "luna", "name": "Terra" },
   "BAT": {
     "id": "basic-attention-token",
     "symbol": "bat",
