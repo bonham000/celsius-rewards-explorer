@@ -23,15 +23,15 @@ export type DateRangesType =
   | "June 18, 2021 - June 25, 2021"
   | "June 25, 2021 - July 2, 2021"
   | "July 2, 2021 - July 9, 2021"
-  | "July 9, 2021 - July 15, 2021"
-  | "July 15, 2021 - July 22, 2021";
+  | "July 9, 2021 - July 16, 2021"
+  | "July 16, 2021 - July 23, 2021";
 
 export const dateRanges: DateRangesType[] = [
   "June 18, 2021 - June 25, 2021",
   "June 25, 2021 - July 2, 2021",
   "July 2, 2021 - July 9, 2021",
-  "July 9, 2021 - July 15, 2021",
-  "July 15, 2021 - July 22, 2021",
+  "July 9, 2021 - July 16, 2021",
+  "July 16, 2021 - July 23, 2021",
 ];
 
 export type RewardsDataMap = Map<DateRangesType, CelsiusRewardsDataType>;
