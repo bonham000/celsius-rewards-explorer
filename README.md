@@ -42,21 +42,19 @@ $ yarn build
 This application uses the CSV files provided by the Celsius Proof of Community feature. These CSV files are very large (over 1GB) and exist in the `csv/original-csv-data/` folder, which is ignored from version control because the files are so large. To work with the raw data locally following the follow steps:
 
 1. Download a CSV file from the Celsius Proof of Community Feature.
-2. Open the `main.ts` file and check the `CSV_KEYS` list. If the CSV you have is new, add another value in this list, e.g. after `01` would be `02`. This value corresponds to the file name for that CSV.
-3. Name the file following the format `{identifier}-rewards.csv`, e.g. `02-rewards.csv`.
-4. Move the file to the `csv/original-csv-data/` directory.
-5. Run the `csv` command, e.g.`yarn csv`. This will read the CSV you entered and then save the data as JSON.
-6. Now you can run the app with `yarn start` to visualize the new data.
+2. Name the file following the format `{identifier}-rewards.csv`, e.g. `02-rewards.csv`.
+3. Move the file to the `csv/original-csv-data/` directory.
+4. Run the `csv` command, e.g.`yarn csv`. This will read the CSV you entered and then save the data as JSON.
+5. Now you can run the app with `yarn start` to visualize the new data.
 
 ### How does the identifier work?
 
 The `CSV_KEYS` is used to identify which rewards dataset is being used currently. Each rewards dataset maps to a specific weekly rewards date range. See the `rewardsDataMap` in `App.tsx` for details. Basically, to add a new dataset in a future week you would following the following steps:
 
 1. Download the new CSV file and move it to `csv/original-csv-data/`.
-2. Add a new value in the `CSV_KEYS` list, e.g. for the next week after June 18 - 25, you would add `02` to the list.
-3. Run `yarn csv` to process the new file.
-4. Update the `rewards.ts` file, see that file for details.
-5. You may need to add additional coin data, if the new week's dataset includes new coins. Find the appropriate coin id for the CoinGecko API (https://api.coingecko.com/api/v3/coins/list) and add it to the `coins.json` file.
+2. Run `yarn csv` to process the new file.
+3. Update the `rewards.ts` file, see that file for details.
+4. You may need to add additional coin data, if the new week's dataset includes new coins. Find the appropriate coin id for the CoinGecko API (https://api.coingecko.com/api/v3/coins/list) and add it to the `coins.json` file.
 
 That's it, the app should then allow users to select that week's date range.
 
