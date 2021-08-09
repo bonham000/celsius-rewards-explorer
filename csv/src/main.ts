@@ -17,25 +17,9 @@ if (runAll) {
   console.log("- [NOTE]: Processing all CSV files.\n");
 }
 
-/**
- * Increment the identifier when adding a future CSV file.
- *
- * NOTE: This CSV_KEYS array is used to identify the CSV which is currently
- * being processed. The CSV files each represent a week's worth of rewards
- * and the idea here is to just increment them as the move into the future,
- * e.g. the next week would have an identifier of "02". This identifier
- * is used to identify the original CSV rewards file and the output file,
- * which the app uses and maps to a specific data range (which must be
- * manually entered).
- *
- * "01" corresponds to the first week's data set, which is from June 18 -15.
- * This value simply increments for future weeks, e.g. the next (2nd) week
- * would correspond to "02". To add a new dataset, add the next identifier
- * key in the CSV_KEYS array.
- *
- * See the README for more instructions.
- */
-const CSV_KEYS = ["01", "02", "03", "04", "05", "06"];
+const CSV_KEYS = fs.readdirSync("csv/original-csv-data").map((file) => {
+  return file.slice(0, 2);
+});
 
 // Current date identifier is the last entry in the list
 let DATE_IDENTIFIER = CSV_KEYS.pop();

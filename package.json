@@ -13,9 +13,9 @@
     "eslint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
     "format": "yarn prettier:fix && yarn eslint:fix",
     "lint": "yarn prettier && yarn eslint",
-    "csv": "ts-node csv/src/main.ts",
-    "csv:all": "ts-node csv/src/main.ts all",
-    "csv:debug": "ts-node csv/src/main.ts debug"
+    "csv": "NODE_OPTIONS='--max_old_space_size=8192' ts-node csv/src/main.ts",
+    "csv:all": "NODE_OPTIONS='--max_old_space_size=8192' ts-node csv/src/main.ts all",
+    "csv:debug": "NODE_OPTIONS='--max_old_space_size=8192' ts-node csv/src/main.ts debug"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.46.0",

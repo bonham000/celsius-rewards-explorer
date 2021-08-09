@@ -4,6 +4,7 @@ import rewards_03 from "../data/03-rewards.json";
 import rewards_04 from "../data/04-rewards.json";
 import rewards_05 from "../data/05-rewards.json";
 import rewards_06 from "../data/06-rewards.json";
+import rewards_07 from "../data/07-rewards.json";
 
 import { CelsiusRewardsDataType } from "./utils";
 
@@ -16,9 +17,18 @@ import { CelsiusRewardsDataType } from "./utils";
  * 1. Import and process the CSV file.
  * 2. Import the JSON result here.
  * 3. Add the corresponding data range.
- * 4. Add the entry to the rewardsDataMap.
  * ============================================================================
  */
+
+const rewardsData: CelsiusRewardsDataType[] = [
+  rewards_01,
+  rewards_02,
+  rewards_03,
+  rewards_04,
+  rewards_05,
+  rewards_06,
+  rewards_07,
+];
 
 export type DateRangesType =
   | "June 18, 2021 - June 25, 2021"
@@ -26,7 +36,8 @@ export type DateRangesType =
   | "July 2, 2021 - July 9, 2021"
   | "July 9, 2021 - July 16, 2021"
   | "July 16, 2021 - July 23, 2021"
-  | "July 23, 2021 - July 30, 2021";
+  | "July 23, 2021 - July 30, 2021"
+  | "July 30, 2021 - August 6, 2021";
 
 export const dateRanges: DateRangesType[] = [
   "June 18, 2021 - June 25, 2021",
@@ -35,6 +46,7 @@ export const dateRanges: DateRangesType[] = [
   "July 9, 2021 - July 16, 2021",
   "July 16, 2021 - July 23, 2021",
   "July 23, 2021 - July 30, 2021",
+  "July 30, 2021 - August 6, 2021",
 ];
 
 export type RewardsDataMap = Map<DateRangesType, CelsiusRewardsDataType>;
@@ -42,13 +54,11 @@ export type RewardsDataMap = Map<DateRangesType, CelsiusRewardsDataType>;
 export const getRewardsDataMap = () => {
   const rewardsDataMap: RewardsDataMap = new Map();
 
-  // Add future datasets here
-  rewardsDataMap.set(dateRanges[0], rewards_01);
-  rewardsDataMap.set(dateRanges[1], rewards_02);
-  rewardsDataMap.set(dateRanges[2], rewards_03);
-  rewardsDataMap.set(dateRanges[3], rewards_04);
-  rewardsDataMap.set(dateRanges[4], rewards_05);
-  rewardsDataMap.set(dateRanges[5], rewards_06);
+  for (let i = 0; i < rewardsData.length; i++) {
+    const rewards = rewardsData[i];
+    const date = dateRanges[i];
+    rewardsDataMap.set(date, rewards);
+  }
 
   return rewardsDataMap;
 };
