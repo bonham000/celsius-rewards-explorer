@@ -39,6 +39,7 @@ export const rankingsArray: Array<[string, keyof RankingsLevels]> = [
 
 interface CoinDistribution {
   uuid: string;
+  total: string;
   balance: string;
   collateral: string;
 }

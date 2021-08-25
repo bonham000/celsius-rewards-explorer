@@ -66,9 +66,9 @@ type Portfolio = { [coin: string]: PortfolioEntry };
 
 interface CoinDistribution {
   uuid: string;
+  total: string;
   balance: string;
   collateral: string;
-  total: string;
 }
 type CoinDistributions = { [coin: string]: CoinDistribution[] };
 type CoinDistributionLevelsMap = { [coin: string]: RankingsLevels };

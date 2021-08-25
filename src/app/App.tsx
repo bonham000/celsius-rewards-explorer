@@ -58,7 +58,7 @@ import {
   loyaltyTiersTooltipContent,
   topHoldersTooltipContent,
   InfoText,
-  CELSIUS_ORANGE,
+  ORANGE,
   lockedCollateralTooltipContent,
 } from "./Components";
 import {
@@ -740,7 +740,7 @@ export default class App extends React.Component<{}, IState> {
                 <Bar
                   dataKey="collateralValue"
                   stackId="coinStack"
-                  fill={CELSIUS_ORANGE}
+                  fill={ORANGE}
                   onClick={this.handleClickDistributionBar}
                 />
               </BarChart>
@@ -946,8 +946,7 @@ export default class App extends React.Component<{}, IState> {
     const { coinDistributions } = data;
     const distributions = coinDistributions[coin];
 
-    return distributions.map(({ uuid, balance, collateral }) => {
-      const total = balance + collateral;
+    return distributions.map(({ uuid, total, balance, collateral }) => {
       return {
         uuid,
         coin,
