@@ -59,6 +59,7 @@ import {
   topHoldersTooltipContent,
   InfoText,
   CELSIUS_ORANGE,
+  lockedCollateralTooltipContent,
 } from "./Components";
 import {
   chartKeyMap,
@@ -84,6 +85,7 @@ import {
   capitalize,
   isTimeLapseChartTokenOnlyView,
   getAxisBoundsForTimeLapseChart,
+  calculateTotalCollateralInUSD,
 } from "./utils";
 import { dateRanges, DateRangesType, getRewardsDataMap } from "./rewards";
 
@@ -235,7 +237,8 @@ export default class App extends React.Component<{}, IState> {
   render() {
     const data = this.getCurrentDataSet();
     const coinHoldersDistribution = this.getHoldersDistributionData();
-    const { currentPortfolioAllocation } = this.state;
+    const { currentPortfolioAllocation, coinPriceMap } = this.state;
+    const loading = this.state.totalAssetValue === null;
 
     const DateRangeSelect = (
       <DateSelect
@@ -468,7 +471,7 @@ export default class App extends React.Component<{}, IState> {
               elevation={Elevation.TWO}
               style={{
                 margin: 0,
-                minHeight: 310,
+                minHeight: 315,
                 textAlign: "left",
                 marginRight: isMobile ? 0 : 24,
                 width: isMobile ? "95vw" : 550,
@@ -498,7 +501,7 @@ export default class App extends React.Component<{}, IState> {
               </p>
               <p>
                 <b>Total Asset Value in USD:</b>
-                {this.state.totalAssetValue === null
+                {loading
                   ? " Loading..."
                   : ` $${formatValue(String(this.state.totalAssetValue))}`}
               </p>
@@ -513,17 +516,32 @@ export default class App extends React.Component<{}, IState> {
               </p>
               <p>
                 <b>Est. Annualized Interest Paid:</b>
-                {this.state.totalAssetValue === null
+                {loading
                   ? " Loading..."
                   : ` $${formatValue(
                       parseFloat(data.stats.totalInterestPaidInUsd) * 52,
                     )}`}
               </p>
+              <p>
+                <b>Collateral Locked in Past 7 Days in USD:</b>
+                {loading
+                  ? " Loading..."
+                  : ` $${formatValue(
+                      calculateTotalCollateralInUSD(
+                        data.portfolio,
+                        coinPriceMap,
+                      ),
+                    )}`}
+                <Tooltip2
+                  position="top"
+                  content={lockedCollateralTooltipContent}
+                >
+                  <Icon style={{ marginLeft: 4 }} icon="error" />
+                </Tooltip2>
+              </p>
               <p style={{ fontSize: 13 }}>
                 The data displayed here represents the rewards payout data from
-                the weekly Celsius CSV proof of community data. It includes all
-                coin balances earning rewards and excludes collateral locked for
-                loans and other assets owned by Celsius.
+                the weekly Celsius CSV proof of community data.
               </p>
             </Card>
           </div>
@@ -531,7 +549,7 @@ export default class App extends React.Component<{}, IState> {
             <Card
               elevation={Elevation.TWO}
               style={{
-                minHeight: 310,
+                minHeight: 315,
                 textAlign: "left",
                 width: isMobile ? "95vw" : 550,
               }}
@@ -660,7 +678,10 @@ export default class App extends React.Component<{}, IState> {
         </div>
         <div style={{ marginTop: 24, marginBottom: 48 }}>
           <PageTitle>Top Holders Overview by Coin</PageTitle>
-          <Subtitle>An overview of the top holders for each coin.</Subtitle>
+          <Subtitle>
+            An overview of the top holders for each coin. Coins locked as
+            collateral in the past 7 days are displayed in orange.
+          </Subtitle>
           <CoinHoldingsControls>
             <Switch
               style={{
@@ -941,11 +962,13 @@ export default class App extends React.Component<{}, IState> {
   };
 
   getChartData = () => {
-    const { chartType, viewTopCoins, portfolioAllocations } = this.state;
+    const { chartType, coinPriceMap, viewTopCoins, portfolioAllocations } =
+      this.state;
     const portfolio = this.getCoinPortfolioEntries();
     return handleGetChartData({
       chartType,
       portfolio,
+      coinPriceMap,
       viewTopCoins,
       portfolioAllocations,
     });

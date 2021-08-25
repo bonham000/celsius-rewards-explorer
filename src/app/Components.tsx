@@ -288,6 +288,17 @@ export const earnInCelTooltipContent = (
   </div>
 );
 
+export const lockedCollateralTooltipContent = (
+  <div style={{ maxWidth: isMobile ? 300 : 500 }}>
+    <p>
+      This represents collateral locked in the past 7 days, by adding up all
+      negative balance entries in the <code>coinDistribution</code> data. It
+      DOES NOT represent all locked collateral. This data is not available in
+      the CSV dataset.
+    </p>
+  </div>
+);
+
 export const loyaltyTiersTooltipContent = (
   <div style={{ maxWidth: isMobile ? 300 : 500 }}>
     <p>

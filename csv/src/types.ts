@@ -50,6 +50,7 @@ export interface PortfolioEntry {
   totalInterestInCoin: string;
   totalInterestInUsd: string;
   numberOfUsersHolding: string;
+  lockedCollateral: string;
 }
 
 export interface RankingsLevels {

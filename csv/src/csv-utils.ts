@@ -137,6 +137,7 @@ export const processIndividualUserRewardsRecord = (
       totalInterestInCoin: "0",
       totalInterestInUsd: "0",
       numberOfUsersHolding: "0",
+      lockedCollateral: "0",
     };
 
     // Initialize coin distribution if it does not exist yet
@@ -214,6 +215,9 @@ export const processIndividualUserRewardsRecord = (
       total: total.toString(),
       totalEarnInCEL: totalEarnInCEL.toString(),
       numberOfUsersHolding: numberOfUsersHolding.toString(),
+      lockedCollateral: totalCollateral
+        .plus(existingCoin.lockedCollateral)
+        .toString(),
     };
 
     // Update interest coin in portfolio metrics total

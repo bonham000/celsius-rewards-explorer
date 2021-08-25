@@ -15,6 +15,7 @@ interface PortfolioCoinEntry {
   totalInterestInCoin: string;
   totalInterestInUsd: string;
   numberOfUsersHolding: string;
+  lockedCollateral: string;
 }
 
 type Portfolio = { [coin: string]: PortfolioCoinEntry };
@@ -70,11 +71,13 @@ export interface CelsiusRewardsDataType {
   };
 }
 
-export type PortfolioAllocations = Array<{
+interface PortfolioAllocation {
   coin: string;
   value: number;
   numberOfCoins: number;
-}>;
+}
+
+export type PortfolioAllocations = Array<PortfolioAllocation>;
 
 interface CoinGeckoCoin {
   id: string;
@@ -227,6 +230,10 @@ export const chartKeyMap = {
     title: "Number of Users",
     description: "Number of Users Holding Each Coin",
   },
+  locked_collateral: {
+    title: "Locked Collateral",
+    description: "Coins Locked as Collateral in Past 7 Days",
+  },
 };
 
 export type ChartType = keyof typeof chartKeyMap;
@@ -237,10 +244,12 @@ export const handleGetChartData = ({
   chartType,
   portfolio,
   viewTopCoins,
+  coinPriceMap,
   portfolioAllocations,
 }: {
   chartType: ChartType;
   viewTopCoins: boolean;
+  coinPriceMap: CoinPriceMap;
   portfolio: [string, PortfolioCoinEntry][];
   portfolioAllocations: PortfolioAllocations;
 }) => {
@@ -265,6 +274,14 @@ export const handleGetChartData = ({
     case "number_of_users": {
       for (const [coin, values] of portfolio) {
         chart.push({ coin, value: parseFloat(values.numberOfUsersHolding) });
+      }
+      break;
+    }
+    case "locked_collateral": {
+      for (const [coin, values] of portfolio) {
+        const collateral =
+          parseFloat(values.lockedCollateral) * coinPriceMap[coin];
+        chart.push({ coin, value: collateral });
       }
       break;
     }
@@ -326,7 +343,7 @@ export const handleFormatTooltipValue = ({
   chartType,
   displayFiat,
 }: {
-  item: any;
+  item: { payload: PortfolioAllocation & { uuid: string } };
   value: string;
   displayFiat: boolean;
   chartType: ChartType;
@@ -378,6 +395,9 @@ export const handleFormatTooltipValue = ({
     case "number_of_users":
     case "earning_in_cel": {
       return `${formattedValue} users`;
+    }
+    case "locked_collateral": {
+      return `$${formatValue(value)} total USD locked in past 7 days.`;
     }
   }
 };
@@ -477,4 +497,18 @@ export const getAxisBoundsForTimeLapseChart = (
   const upper = Math.floor(max + max * 0.01);
 
   return { lower, upper };
+};
+
+export const calculateTotalCollateralInUSD = (
+  coinDistribution: Portfolio,
+  coinPriceMap: CoinPriceMap,
+) => {
+  let total = 0;
+  for (const [coin, entry] of Object.entries(coinDistribution)) {
+    const price = coinPriceMap[coin];
+    const usd = parseFloat(entry.lockedCollateral) * price;
+    total += usd;
+  }
+
+  return total;
 };
