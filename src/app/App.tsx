@@ -58,6 +58,7 @@ import {
   loyaltyTiersTooltipContent,
   topHoldersTooltipContent,
   InfoText,
+  CELSIUS_ORANGE,
 } from "./Components";
 import {
   chartKeyMap,
@@ -699,7 +700,9 @@ export default class App extends React.Component<{}, IState> {
                   tickCount={10}
                   domain={[
                     0,
-                    Math.ceil(parseFloat(coinHoldersDistribution[0].value)),
+                    Math.ceil(
+                      parseFloat(coinHoldersDistribution[0].totalValue),
+                    ),
                   ]}
                 />
                 {!isMobile && (
@@ -708,8 +711,15 @@ export default class App extends React.Component<{}, IState> {
                   />
                 )}
                 <Bar
-                  dataKey="value"
+                  dataKey="coinValue"
+                  stackId="coinStack"
                   fill={RANDOM_COLOR}
+                  onClick={this.handleClickDistributionBar}
+                />
+                <Bar
+                  dataKey="collateralValue"
+                  stackId="coinStack"
+                  fill={CELSIUS_ORANGE}
                   onClick={this.handleClickDistributionBar}
                 />
               </BarChart>
@@ -915,11 +925,19 @@ export default class App extends React.Component<{}, IState> {
     const { coinDistributions } = data;
     const distributions = coinDistributions[coin];
 
-    return distributions.map(([uuid, amount]) => ({
-      coin,
-      uuid,
-      value: useFiat ? String(parseFloat(amount) * price) : amount,
-    }));
+    return distributions.map(({ uuid, balance, collateral }) => {
+      const total = balance + collateral;
+      return {
+        uuid,
+        coin,
+        collateral,
+        totalValue: useFiat ? String(parseFloat(total) * price) : total,
+        coinValue: useFiat ? String(parseFloat(balance) * price) : balance,
+        collateralValue: useFiat
+          ? String(parseFloat(collateral) * price)
+          : collateral,
+      };
+    });
   };
 
   getChartData = () => {

@@ -36,8 +36,12 @@ export const rankingsArray: Array<[string, keyof RankingsLevels]> = [
   ["Rank 10,000", "topTenThousand"],
 ];
 
-type CoinDistribution = Array<string[]>;
-type CoinDistributions = { [coin: string]: CoinDistribution };
+interface CoinDistribution {
+  uuid: string;
+  balance: string;
+  collateral: string;
+}
+type CoinDistributions = { [coin: string]: CoinDistribution[] };
 type CoinDistributionLevelsMap = { [coin: string]: RankingsLevels };
 
 export type CoinPriceMap = { [key: string]: number };

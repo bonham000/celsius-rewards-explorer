@@ -171,8 +171,25 @@ export const processIndividualUserRewardsRecord = (
     totalInterestInUsd = totalInterestInUsd.plus(data.totalInterestInUsd);
     numberOfUsersHolding = numberOfUsersHolding.plus(1);
 
+    // Add up all locked collateral
+    let totalCollateral = new BigNumber("0");
+    for (const entry of distribution) {
+      const { type, value } = entry;
+      const amount = new BigNumber(value);
+      if (type === "collateral") {
+        if (amount.lt("0")) {
+          totalCollateral = totalCollateral.plus(amount.times(-1));
+        }
+      }
+    }
+
     // Add balance to the corresponding coin distribution
-    metrics.coinDistributions[coin].push([uuid, currentBalance]);
+    metrics.coinDistributions[coin].push({
+      uuid,
+      balance: currentBalance,
+      collateral: totalCollateral.toString(),
+      total: totalCollateral.plus(currentBalance).toString(),
+    });
 
     // Increment earningInterestInCel value
     const shouldIncrementEarnInCelCount =
@@ -304,7 +321,7 @@ export const onLineReaderClose = (
     // NOTE: Use parseFloat for these sort comparisons is much faster than
     // converted the values back using BigNumber and comparing them that way.
     const sortedValues = values.sort(
-      (a, b) => parseFloat(b[1]) - parseFloat(a[1]),
+      (a, b) => parseFloat(b.total) - parseFloat(a.total),
     );
 
     const distributionLevels: RankingsLevels = {
@@ -321,7 +338,7 @@ export const onLineReaderClose = (
       const [index, key] = level;
       const value = sortedValues[index - 1]; // Adjust by 0 indexed array
       if (value !== undefined) {
-        distributionLevels[key] = value[1];
+        distributionLevels[key] = value.total;
       }
     }
 
@@ -329,7 +346,8 @@ export const onLineReaderClose = (
     metrics.coinDistributionsLevels[coin] = distributionLevels;
 
     // Set median interest earned
-    const medianHoldings = sortedValues[Math.floor(sortedValues.length / 2)][1];
+    const medianHoldings =
+      sortedValues[Math.floor(sortedValues.length / 2)].total;
     metrics.coinDistributionsLevels[coin].medianValue = medianHoldings;
 
     // Take only the top 100. There are too many holders and the top 1-3

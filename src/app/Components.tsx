@@ -80,6 +80,8 @@ export const getColor = () => {
 
 export const RANDOM_COLOR = getColor();
 
+export const CELSIUS_ORANGE = "rgb(245, 160, 75)";
+
 export const getPortfolioSelectText = (view: PortfolioView) => {
   let text = "";
   if (view === "all") {
