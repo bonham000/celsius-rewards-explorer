@@ -5,301 +5,344 @@
       "totalEarnInCEL": "53458",
       "totalInterestInCoin": "61.065124864124531072",
       "totalInterestInUsd": "1996661.995784814149510361604242944",
-      "numberOfUsersHolding": "223063"
+      "numberOfUsersHolding": "223063",
+      "lockedCollateral": "554.80799854429303948"
     },
     "CEL": {
       "total": "258816584.287571737225955684",
       "totalEarnInCEL": "161226",
       "totalInterestInCoin": "468381.383813240006275065",
       "totalInterestInUsd": "2527861.5310792817886934561452120045015",
-      "numberOfUsersHolding": "161226"
+      "numberOfUsersHolding": "161226",
+      "lockedCollateral": "781543.975203481709500671"
     },
     "DAI": {
       "total": "10618259.87502010812991002",
       "totalEarnInCEL": "6481",
       "totalInterestInCoin": "7241.451126255653301821",
       "totalInterestInUsd": "7241.451126255653301821",
-      "numberOfUsersHolding": "23958"
+      "numberOfUsersHolding": "23958",
+      "lockedCollateral": "0"
     },
     "DOT": {
       "total": "2330945.220732246015150149",
       "totalEarnInCEL": "6521",
       "totalInterestInCoin": "2049.243826200943904033",
       "totalInterestInUsd": "27128.968599140014905396334921898034",
-      "numberOfUsersHolding": "18520"
+      "numberOfUsersHolding": "18520",
+      "lockedCollateral": "16935.952195883325342643"
     },
     "LINK": {
       "total": "9502738.172684080260048402",
       "totalEarnInCEL": "6459",
       "totalInterestInCoin": "4661.652513863558567587",
       "totalInterestInUsd": "76207.069017893895170797223021254059",
-      "numberOfUsersHolding": "31833"
+      "numberOfUsersHolding": "31833",
+      "lockedCollateral": "169477.363719651199542161"
     },
     "MATIC": {
       "total": "347116669.074518650872324234",
       "totalEarnInCEL": "7404",
       "totalInterestInCoin": "526055.197376341558582783",
       "totalInterestInUsd": "496669.44705608574446455445469780719253",
-      "numberOfUsersHolding": "47399"
+      "numberOfUsersHolding": "47399",
+      "lockedCollateral": "5256873.303382393318635603"
     },
     "BAT": {
       "total": "23582067.037259301061431589",
       "totalEarnInCEL": "2752",
       "totalInterestInCoin": "12304.369913453671466385",
       "totalInterestInUsd": "6473.8084470963120569312942744998935",
-      "numberOfUsersHolding": "11699"
+      "numberOfUsersHolding": "11699",
+      "lockedCollateral": "12886.785854273109779739"
     },
     "BUSD": {
       "total": "50248998.51589313311086285",
       "totalEarnInCEL": "1875",
       "totalInterestInCoin": "56756.978884609326396798",
       "totalInterestInUsd": "56756.978884609326396798",
-      "numberOfUsersHolding": "6003"
+      "numberOfUsersHolding": "6003",
+      "lockedCollateral": "4900"
     },
     "DASH": {
       "total": "105794.789390962755913698",
       "totalEarnInCEL": "3428",
       "totalInterestInCoin": "72.557919514382830854",
       "totalInterestInUsd": "10460.83379148685387878244405183992",
-      "numberOfUsersHolding": "12054"
+      "numberOfUsersHolding": "12054",
+      "lockedCollateral": "240.244202989044456792"
     },
     "LTC": {
       "total": "384037.217311009390757621",
       "totalEarnInCEL": "9892",
       "totalInterestInCoin": "223.79146025347829581",
       "totalInterestInUsd": "27123.5500440552421445921867249701",
-      "numberOfUsersHolding": "33093"
+      "numberOfUsersHolding": "33093",
+      "lockedCollateral": "3733.37529880616156614"
     },
     "MANA": {
       "total": "11731190.615000470526832475",
       "totalEarnInCEL": "919",
       "totalInterestInCoin": "3408.174868764749809178",
       "totalInterestInUsd": "2128.63228192140959025031124759790352",
-      "numberOfUsersHolding": "5734"
+      "numberOfUsersHolding": "5734",
+      "lockedCollateral": "46569.15083296909266623"
     },
     "XRP": {
       "total": "103368986.30671426816932354",
       "totalEarnInCEL": "12005",
       "totalInterestInCoin": "26318.436566578609215155",
       "totalInterestInUsd": "15871.16934297508752986258631927443825",
-      "numberOfUsersHolding": "22663"
+      "numberOfUsersHolding": "22663",
+      "lockedCollateral": "8212.387532776820732545"
     },
     "USDC": {
       "total": "908749974.562934152117872239",
       "totalEarnInCEL": "13464",
       "totalInterestInCoin": "1247745.73352674142486536",
       "totalInterestInUsd": "1247745.73352674142486536",
-      "numberOfUsersHolding": "64616"
+      "numberOfUsersHolding": "64616",
+      "lockedCollateral": "215004.5"
     },
     "USDT": {
       "total": "185609422.402958679478168154",
       "totalEarnInCEL": "9723",
       "totalInterestInCoin": "226278.490038303849424897",
       "totalInterestInUsd": "226278.490038303849424897",
-      "numberOfUsersHolding": "26310"
+      "numberOfUsersHolding": "26310",
+      "lockedCollateral": "7600"
     },
     "ETH": {
       "total": "1089336.567181964843048251",
       "totalEarnInCEL": "26626",
       "totalInterestInCoin": "917.44901099027340406",
       "totalInterestInUsd": "1905312.456401955948473931749263462",
-      "numberOfUsersHolding": "126113"
+      "numberOfUsersHolding": "126113",
+      "lockedCollateral": "3381.389619910310462835"
     },
     "COMP": {
       "total": "33182.080760628703463652",
       "totalEarnInCEL": "2062",
       "totalInterestInCoin": "22.941381777048839877",
       "totalInterestInUsd": "9616.88414087614016329892772482406",
-      "numberOfUsersHolding": "11190"
+      "numberOfUsersHolding": "11190",
+      "lockedCollateral": "0"
     },
     "XLM": {
       "total": "134964608.925349787856480198",
       "totalEarnInCEL": "8693",
       "totalInterestInCoin": "63632.441701627194244858",
       "totalInterestInUsd": "17091.73032664907455745349801224146752",
-      "numberOfUsersHolding": "36117"
+      "numberOfUsersHolding": "36117",
+      "lockedCollateral": "185492.000159216704622421"
     },
     "EOS": {
       "total": "3500874.065889928835271585",
       "totalEarnInCEL": "3308",
       "totalInterestInCoin": "2430.401693373859439075",
       "totalInterestInUsd": "8772.304689536960229020229984911045",
-      "numberOfUsersHolding": "11466"
+      "numberOfUsersHolding": "11466",
+      "lockedCollateral": "1759.500896316730997214"
     },
     "SNX": {
       "total": "5839242.960212866859822649",
       "totalEarnInCEL": "6570",
       "totalInterestInCoin": "10853.906039680840784383",
       "totalInterestInUsd": "95571.3028362621366624008870892195046",
-      "numberOfUsersHolding": "29009"
+      "numberOfUsersHolding": "29009",
+      "lockedCollateral": "13080.221432816673384681"
     },
     "UNI": {
       "total": "2267796.624309679189890975",
       "totalEarnInCEL": "3028",
       "totalInterestInCoin": "843.073139862381969199",
       "totalInterestInUsd": "14987.899262795807742863954188019029",
-      "numberOfUsersHolding": "15198"
+      "numberOfUsersHolding": "15198",
+      "lockedCollateral": "2244.875446127652643046"
     },
     "ZEC": {
       "total": "88933.939882456715484713",
       "totalEarnInCEL": "1704",
       "totalInterestInCoin": "26.335117880364552267",
       "totalInterestInUsd": "2586.217570934824324319273124146037",
-      "numberOfUsersHolding": "6584"
+      "numberOfUsersHolding": "6584",
+      "lockedCollateral": "931.997519764042677122"
     },
     "ZRX": {
       "total": "14418049.666778442363923353",
       "totalEarnInCEL": "1887",
       "totalInterestInCoin": "7742.385636590753413574",
       "totalInterestInUsd": "4998.86341867180039917868436277361568",
-      "numberOfUsersHolding": "9243"
+      "numberOfUsersHolding": "9243",
+      "lockedCollateral": "23539.429020669683995337"
     },
     "AAVE": {
       "total": "152154.43084002202611918",
       "totalEarnInCEL": "2341",
       "totalInterestInCoin": "135.525004928644077678",
       "totalInterestInUsd": "39375.90354136937926817596857233064",
-      "numberOfUsersHolding": "13567"
+      "numberOfUsersHolding": "13567",
+      "lockedCollateral": "427.78099333641334043"
     },
     "BSV": {
       "total": "24021.952135634441061967",
       "totalEarnInCEL": "1019",
       "totalInterestInCoin": "5.737355081991902359",
       "totalInterestInUsd": "723.02054980657010532175527992039",
-      "numberOfUsersHolding": "3948"
+      "numberOfUsersHolding": "3948",
+      "lockedCollateral": "0"
     },
     "BCH": {
       "total": "77864.888283765040771975",
       "totalEarnInCEL": "3951",
       "totalInterestInCoin": "54.83160565894076435",
       "totalInterestInUsd": "24431.234538665559028479623802478",
-      "numberOfUsersHolding": "13780"
+      "numberOfUsersHolding": "13780",
+      "lockedCollateral": "141.985821504696697049"
     },
     "UMA": {
       "total": "139057.863842687360735361",
       "totalEarnInCEL": "420",
       "totalInterestInCoin": "89.675833926652401696",
       "totalInterestInUsd": "757.4646045032494925237289658864224",
-      "numberOfUsersHolding": "2556"
+      "numberOfUsersHolding": "2556",
+      "lockedCollateral": "0"
     },
     "PAX": {
       "total": "19211804.962177564934259626",
       "totalEarnInCEL": "602",
       "totalInterestInCoin": "25781.878573442429386562",
       "totalInterestInUsd": "25781.878573442429386562",
-      "numberOfUsersHolding": "2133"
+      "numberOfUsersHolding": "2133",
+      "lockedCollateral": "0"
     },
     "ETC": {
       "total": "310776.914633569579579797",
       "totalEarnInCEL": "1302",
       "totalInterestInCoin": "139.032790452812953129",
       "totalInterestInUsd": "6408.060947796894929790998247345949",
-      "numberOfUsersHolding": "5862"
+      "numberOfUsersHolding": "5862",
+      "lockedCollateral": "0"
     },
     "BNB": {
       "total": "14007.592172486228861911",
       "totalEarnInCEL": "587",
       "totalInterestInCoin": "8.430466155229092324",
       "totalInterestInUsd": "2506.36258261289211996428102988132",
-      "numberOfUsersHolding": "1331"
+      "numberOfUsersHolding": "1331",
+      "lockedCollateral": "0"
     },
     "PAXG": {
       "total": "17361.170486079706102055",
       "totalEarnInCEL": "900",
       "totalInterestInCoin": "14.691304557561619106",
       "totalInterestInUsd": "26588.5705207388838122113027887282",
-      "numberOfUsersHolding": "3246"
+      "numberOfUsersHolding": "3246",
+      "lockedCollateral": "28.176864277147959324"
     },
     "GUSD": {
       "total": "66852864.878806412763666275",
       "totalEarnInCEL": "365",
       "totalInterestInCoin": "102636.061952178345045322",
       "totalInterestInUsd": "102636.061952178345045322",
-      "numberOfUsersHolding": "5201"
+      "numberOfUsersHolding": "5201",
+      "lockedCollateral": "4800"
     },
     "OMG": {
       "total": "1654418.04372713402446418",
       "totalEarnInCEL": "1543",
       "totalInterestInCoin": "472.498191244137644921",
       "totalInterestInUsd": "1735.0378964352838003546168921018253",
-      "numberOfUsersHolding": "5970"
+      "numberOfUsersHolding": "5970",
+      "lockedCollateral": "3400"
     },
     "TUSD": {
       "total": "14604392.509941653014428189",
       "totalEarnInCEL": "801",
       "totalInterestInCoin": "15605.707576386105904213",
       "totalInterestInUsd": "15605.707576386105904213",
-      "numberOfUsersHolding": "2611"
+      "numberOfUsersHolding": "2611",
+      "lockedCollateral": "0"
     },
     "TCAD": {
       "total": "5713156.570811644138246482",
       "totalEarnInCEL": "127",
       "totalInterestInCoin": "5038.735641906660203161",
       "totalInterestInUsd": "4008.8180767009388576348916",
-      "numberOfUsersHolding": "349"
+      "numberOfUsersHolding": "349",
+      "lockedCollateral": "0"
     },
     "TGBP": {
       "total": "9596456.558492552224412827",
       "totalEarnInCEL": "340",
       "totalInterestInCoin": "9072.895217212245508413",
       "totalInterestInUsd": "12487.9329769709347177796532",
-      "numberOfUsersHolding": "876"
+      "numberOfUsersHolding": "876",
+      "lockedCollateral": "0"
     },
     "KNC": {
       "total": "2323728.986526700737919264",
       "totalEarnInCEL": "912",
       "totalInterestInCoin": "912.52920426791278424",
       "totalInterestInUsd": "1223.179361828673103847343907298528",
-      "numberOfUsersHolding": "4764"
+      "numberOfUsersHolding": "4764",
+      "lockedCollateral": "0"
     },
     "TAUD": {
       "total": "10294728.071832379214359241",
       "totalEarnInCEL": "227",
       "totalInterestInCoin": "10253.320481719469060591",
       "totalInterestInUsd": "7565.9251834607962198100989",
-      "numberOfUsersHolding": "552"
+      "numberOfUsersHolding": "552",
+      "lockedCollateral": "0"
     },
     "THKD": {
       "total": "35404658.703342210252712138",
       "totalEarnInCEL": "113",
       "totalInterestInCoin": "41138.914044262683017765",
       "totalInterestInUsd": "5294.5782374966073043863555",
-      "numberOfUsersHolding": "305"
+      "numberOfUsersHolding": "305",
+      "lockedCollateral": "0"
     },
     "BNT": {
       "total": "379325.140121267827723377",
       "totalEarnInCEL": "469",
       "totalInterestInCoin": "241.865495799183193091",
       "totalInterestInUsd": "709.7077459576630315158985475369818",
-      "numberOfUsersHolding": "1319"
+      "numberOfUsersHolding": "1319",
+      "lockedCollateral": "0"
     },
     "XAUT": {
       "total": "435.240587263226675854",
       "totalEarnInCEL": "200",
       "totalInterestInCoin": "0.306141000883743678",
       "totalInterestInUsd": "551.7219087666718880625660609588",
-      "numberOfUsersHolding": "324"
+      "numberOfUsersHolding": "324",
+      "lockedCollateral": "0"
     },
     "ZUSD": {
       "total": "372068.97786000597790664",
       "totalEarnInCEL": "0",
       "totalInterestInCoin": "608.905189323292628798",
       "totalInterestInUsd": "608.905189323292628798",
-      "numberOfUsersHolding": "3"
+      "numberOfUsersHolding": "3",
+      "lockedCollateral": "0"
     },
     "LUNA": {
       "total": "4719.734185",
       "totalEarnInCEL": "7",
       "totalInterestInCoin": "0.11173210563467082",
       "totalInterestInUsd": "0.822934075578517077879263727726",
-      "numberOfUsersHolding": "12"
+      "numberOfUsersHolding": "12",
+      "lockedCollateral": "0"
     },
     "WDGLD": {
       "total": "2006.652448592088817125",
       "totalEarnInCEL": "2",
       "totalInterestInCoin": "2.018059730815035914",
       "totalInterestInUsd": "360.38510672894911352212",
-      "numberOfUsersHolding": "5"
+      "numberOfUsersHolding": "5",
+      "lockedCollateral": "0"
     }
   },
   "coinDistributions": {

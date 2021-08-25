@@ -1,11 +1,11 @@
-// import rewards_01 from "../data/01-rewards.json";
-// import rewards_02 from "../data/02-rewards.json";
-// import rewards_03 from "../data/03-rewards.json";
-// import rewards_04 from "../data/04-rewards.json";
-// import rewards_05 from "../data/05-rewards.json";
-// import rewards_06 from "../data/06-rewards.json";
-// import rewards_07 from "../data/07-rewards.json";
-// import rewards_08 from "../data/08-rewards.json";
+import rewards_01 from "../data/01-rewards.json";
+import rewards_02 from "../data/02-rewards.json";
+import rewards_03 from "../data/03-rewards.json";
+import rewards_04 from "../data/04-rewards.json";
+import rewards_05 from "../data/05-rewards.json";
+import rewards_06 from "../data/06-rewards.json";
+import rewards_07 from "../data/07-rewards.json";
+import rewards_08 from "../data/08-rewards.json";
 import rewards_09 from "../data/09-rewards.json";
 
 import { CelsiusRewardsDataType } from "./utils";
@@ -23,14 +23,14 @@ import { CelsiusRewardsDataType } from "./utils";
  */
 
 const rewardsData: CelsiusRewardsDataType[] = [
-  // rewards_01,
-  // rewards_02,
-  // rewards_03,
-  // rewards_04,
-  // rewards_05,
-  // rewards_06,
-  // rewards_07,
-  // rewards_08,
+  rewards_01,
+  rewards_02,
+  rewards_03,
+  rewards_04,
+  rewards_05,
+  rewards_06,
+  rewards_07,
+  rewards_08,
   rewards_09,
 ];
 
@@ -46,14 +46,14 @@ export type DateRangesType =
   | "August 13, 2021 - August 20, 2021";
 
 export const dateRanges: DateRangesType[] = [
-  // "June 18, 2021 - June 25, 2021",
-  // "June 25, 2021 - July 2, 2021",
-  // "July 2, 2021 - July 9, 2021",
-  // "July 9, 2021 - July 16, 2021",
-  // "July 16, 2021 - July 23, 2021",
-  // "July 23, 2021 - July 30, 2021",
-  // "July 30, 2021 - August 6, 2021",
-  // "August 6, 2021 - August 13, 2021",
+  "June 18, 2021 - June 25, 2021",
+  "June 25, 2021 - July 2, 2021",
+  "July 2, 2021 - July 9, 2021",
+  "July 9, 2021 - July 16, 2021",
+  "July 16, 2021 - July 23, 2021",
+  "July 23, 2021 - July 30, 2021",
+  "July 30, 2021 - August 6, 2021",
+  "August 6, 2021 - August 13, 2021",
   "August 13, 2021 - August 20, 2021",
 ];
 
