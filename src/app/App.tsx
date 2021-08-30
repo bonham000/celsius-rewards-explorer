@@ -886,9 +886,7 @@ export default class App extends React.Component<{}, IState> {
     // Return the data set at the currently selected date range.
     const { dateRange } = this.state;
     const data = rewardsDataMap.get(dateRange);
-    console.log(dateRange);
     if (data) {
-      console.log(data.stats);
       return data;
     } else {
       this.toast(
