@@ -96,7 +96,6 @@ export const processIndividualUserRewardsRecord = (
 ) => {
   let tier = "";
   let isEarningInCel = false;
-
   let interestPerUser = "0";
 
   // Process the row data and update all the values we want to track
