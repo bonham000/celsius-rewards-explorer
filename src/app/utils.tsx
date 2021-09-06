@@ -87,7 +87,15 @@ interface CoinGeckoCoin {
 }
 
 type CoinSymbolMap = { [key: string]: CoinGeckoCoin };
-const coinSymbolMap: CoinSymbolMap = coinSymbolMapJSON;
+
+const fullMap: CoinSymbolMap = coinSymbolMapJSON;
+
+// Map the ids to keys as well
+for (const coin of Object.values(fullMap)) {
+  fullMap[coin.id] = coin;
+}
+
+const coinSymbolMap: CoinSymbolMap = fullMap;
 
 const PRICE_MAP_KEY = "PRICE_MAP_KEY";
 
@@ -162,23 +170,37 @@ export const cacheCoinPriceMap = (coinPriceMap: CoinPriceMap) => {
   localStorage.setItem(PRICE_MAP_KEY, serializedData);
 };
 
-export const fetchCoinPriceAsync = async (coin: string) => {
+type PriceEntry = [string, number] | null;
+
+export const handleFetchingCoinPricesAsync = async (
+  coins: string[],
+): Promise<PriceEntry[]> => {
   try {
     // TCAD... reference: https://www.coingecko.com/en/coins/truecad
-    if (coin === "TCAD") {
-      return ["TCAD", 0.777879];
+    let results: PriceEntry[] = [["TCAD", 0.777879]];
+
+    const list = coins.filter((x) => x !== "TCAD");
+    const ids = list.map((x) => coinSymbolMap[x].id).join(",");
+    const vs = "usd,".repeat(coins.length);
+    const params = `ids=${ids}&vs_currencies=${vs}`;
+
+    // Fetch the price data
+    type CoinGeckoResponse = { [id: string]: { usd: number } };
+    const url = `https://api.coingecko.com/api/v3/simple/price?${params}`;
+    const response = await axios.get<CoinGeckoResponse>(url);
+
+    // Map the price response data
+    for (const [key, value] of Object.entries(response.data)) {
+      const price = value.usd;
+      const { symbol } = coinSymbolMap[key];
+      const entry: PriceEntry = [symbol.toUpperCase(), price];
+      results.push(entry);
     }
 
-    const id = coinSymbolMap[coin].id;
-    type CoinGeckoResponse = { [id: string]: { usd: number } };
-    const response = await axios.get<CoinGeckoResponse>(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`,
-    );
-    const price = response.data[id].usd;
-    return [coin, price];
+    return results;
   } catch (err) {
-    console.warn(`Failed to fetch prices for coin: ${coin}`);
-    return null;
+    console.error(err);
+    return [];
   }
 };
 

@@ -66,7 +66,6 @@ import {
   formatValue,
   copyToClipboard,
   getProjectedAnnualYield,
-  fetchCoinPriceAsync,
   readCachedCoinPriceData,
   CoinPriceMap,
   CelsiusRewardsDataType,
@@ -86,6 +85,7 @@ import {
   isTimeLapseChartTokenOnlyView,
   getAxisBoundsForTimeLapseChart,
   calculateTotalCollateralInUSD,
+  handleFetchingCoinPricesAsync,
 } from "./utils";
 import { dateRanges, DateRangesType, getRewardsDataMap } from "./rewards";
 
@@ -215,12 +215,12 @@ export default class App extends React.Component<{}, IState> {
     const coins = Object.keys(data.portfolio);
 
     // Fetch the price for each coin
-    const prices = await Promise.all(coins.map(fetchCoinPriceAsync));
+    const prices = await handleFetchingCoinPricesAsync(coins);
 
     // Reduce list of prices into a map
     const coinPriceMap = prices.filter(Boolean).reduce((map, result) => {
       // Null values are filtered above
-      const [coin, price] = result as [number, number];
+      const [coin, price] = result as [string, number];
       return {
         ...map,
         [coin]: price,
