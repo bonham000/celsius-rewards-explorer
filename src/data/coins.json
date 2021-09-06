@@ -45,6 +45,7 @@
   "BSV": { "id": "bitcoin-cash-sv", "symbol": "bsv", "name": "Bitcoin SV" },
   "ZRX": { "id": "0x", "symbol": "zrx", "name": "0x" },
   "UMA": { "id": "uma", "symbol": "uma", "name": "UMA" },
+  "ADA": { "id": "cardano", "symbol": "ada", "name": "Cardano" },
   "TUSD": { "id": "true-usd", "symbol": "tusd", "name": "TrueUSD" },
   "GUSD": { "id": "gemini-dollar", "symbol": "gusd", "name": "Gemini Dollar" },
   "KNC": {
