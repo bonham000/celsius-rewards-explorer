@@ -113,8 +113,6 @@ const main = (csvFileKey: string): void => {
 
   console.log(`- Processing CSV file: ${inputFile} ... Please wait a moment.`);
 
-  let COUNT = 0;
-
   // Process CSV line by line
   lineReaderInterface.on("line", (line) => {
     const result = preprocessCsvRow(line);
@@ -124,8 +122,6 @@ const main = (csvFileKey: string): void => {
     }
 
     const { uuid, data } = result;
-
-    COUNT++;
 
     // Process the rest of the row data
     processIndividualUserRewardsRecord(
