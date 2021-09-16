@@ -156,8 +156,6 @@ const main = (csvFileKey: string): void => {
       "- Finished processing row data. Now working on some summary stats.",
     );
 
-    console.log(`COUNTED: ${COUNT} ROWS`);
-
     // Running summary logic on reader close
     onLineReaderClose(metrics, interestEarnedPerUserList);
 
