@@ -53,7 +53,7 @@ The `CSV_KEYS` is used to identify which rewards dataset is being used currently
 
 1. Download the new CSV file and move it to `csv/original-csv-data/`.
 2. Run `yarn csv` to process the new file.
-3. Update the `rewards.ts` file, see that file for details.
+3. Update the `rewards.ts` file to import the JSON data and define the latest week's date range. See that file for details.
 4. You may need to add additional coin data, if the new week's dataset includes new coins. Find the appropriate coin id for the CoinGecko API (https://api.coingecko.com/api/v3/coins/list) and add it to the `coins.json` file.
 
 That's it, the app should then allow users to select that week's date range.
