@@ -11,6 +11,9 @@ import rewards_10 from "../data/10-rewards.json";
 import rewards_11 from "../data/11-rewards.json";
 import rewards_12 from "../data/12-rewards.json";
 import rewards_13 from "../data/13-rewards.json";
+import rewards_14 from "../data/14-rewards.json";
+import rewards_15 from "../data/15-rewards.json";
+import rewards_16 from "../data/16-rewards.json";
 
 import { CelsiusRewardsDataType } from "./utils";
 
@@ -40,6 +43,9 @@ const rewardsData: CelsiusRewardsDataType[] = [
   rewards_11,
   rewards_12,
   rewards_13,
+  rewards_14,
+  rewards_15,
+  rewards_16,
 ];
 
 export type DateRangesType =
@@ -55,7 +61,10 @@ export type DateRangesType =
   | "August 20, 2021 - August 27, 2021"
   | "August 27, 2021 - September 3, 2021"
   | "September 3, 2021 - September 10, 2021"
-  | "September 10, 2021 - September 17, 2021";
+  | "September 10, 2021 - September 17, 2021"
+  | "September 17, 2021 - September 24, 2021"
+  | "September 24, 2021 - October 1, 2021"
+  | "October 1, 2021 - October 8, 2021";
 
 export const dateRanges: DateRangesType[] = [
   "June 18, 2021 - June 25, 2021",
@@ -71,6 +80,9 @@ export const dateRanges: DateRangesType[] = [
   "August 27, 2021 - September 3, 2021",
   "September 3, 2021 - September 10, 2021",
   "September 10, 2021 - September 17, 2021",
+  "September 17, 2021 - September 24, 2021",
+  "September 24, 2021 - October 1, 2021",
+  "October 1, 2021 - October 8, 2021",
 ];
 
 export type RewardsDataMap = Map<DateRangesType, CelsiusRewardsDataType>;

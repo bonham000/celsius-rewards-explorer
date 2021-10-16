@@ -14,6 +14,8 @@
     "name": "Ethereum Classic"
   },
   "ETH": { "id": "ethereum", "symbol": "eth", "name": "Ethereum" },
+  "SUSHI": { "id": "sushi", "symbol": "sushi", "name": "sushi" },
+  "1INCH": { "id": "1inch", "symbol": "1inch", "name": "1inch" },
   "LINK": { "id": "chainlink", "symbol": "link", "name": "Chainlink" },
   "MATIC": { "id": "matic-network", "symbol": "matic", "name": "Polygon" },
   "USDC": { "id": "usd-coin", "symbol": "usdc", "name": "USD Coin" },

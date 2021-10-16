@@ -180,7 +180,17 @@ export const handleFetchingCoinPricesAsync = async (
     let results: PriceEntry[] = [["TCAD", 0.777879]];
 
     const list = coins.filter((x) => x !== "TCAD");
-    const ids = list.map((x) => coinSymbolMap[x].id).join(",");
+    const ids = list
+      .map((x) => {
+        const item = coinSymbolMap[x];
+        if (item === undefined) {
+          const msg = `[WARN]: Found a coin which needs to be added: ${x}`;
+          throw new Error(msg);
+        }
+
+        return item.id;
+      })
+      .join(",");
     const vs = "usd,".repeat(coins.length);
     const params = `ids=${ids}&vs_currencies=${vs}`;
 

@@ -213,7 +213,6 @@ export default class App extends React.Component<{}, IState> {
     // Fetch all price data for current dataset
     const data = this.getCurrentDataSet();
     const coins = Object.keys(data.portfolio);
-
     // Fetch the price for each coin
     const prices = await handleFetchingCoinPricesAsync(coins);
 
