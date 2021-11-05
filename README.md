@@ -1,3 +1,7 @@
+# Deprecated
+
+This repo is not updated anymore. You can clone it and add new CSV datasets if you wish.
+
 # Celsius Network Proof of Community Rewards Explorer
 
 This is a UI for visualizing the weekly [Celsius Network](https://celsius.network/) Proof of Community rewards datasets.

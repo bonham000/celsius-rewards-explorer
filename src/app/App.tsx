@@ -397,14 +397,14 @@ export default class App extends React.Component<{}, IState> {
         </Drawer>
         <PageTitle>Celsius Proof of Community Rewards Data</PageTitle>
         <Subtitle>
-          Built and maintained by the Celsius community. View the{" "}
+          This is not updated anymore. You can pull the{" "}
           <a
             target="__blank"
             href="https://github.com/bonham000/celsius-rewards-explorer"
           >
-            source code here
-          </a>
-          .
+            code
+          </a>{" "}
+          and update it if you are interested.
         </Subtitle>
         <ChartTitleRow>
           <ChartTitle>
